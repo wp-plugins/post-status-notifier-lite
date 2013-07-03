@@ -1,0 +1,327 @@
+# Copyright (C) 2013 Post Status Notifier
+# This file is distributed under the same license as the Post Status Notifier package.
+msgid ""
+msgstr ""
+"Project-Id-Version: Post Status Notifier 1.0\n"
+"Report-Msgid-Bugs-To: http://wordpress.org/tag/post-status-notifier\n"
+"POT-Creation-Date: 2013-04-17 20:01:32+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2013-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+
+#: admin/menu/controllers/PsnApplicationController.php:19
+msgid "Overview"
+msgstr ""
+
+#: admin/menu/controllers/PsnApplicationController.php:30
+#: admin/menu/controllers/PsnRulesController.php:48
+msgid "Rules"
+msgstr ""
+
+#: admin/menu/controllers/PsnIndexController.php:40
+#: admin/menu/controllers/PsnOptionsController.php:20
+#: modules/Logger/controllers/PsnLogController.php:55
+msgid "Setup"
+msgstr ""
+
+#: admin/menu/controllers/PsnIndexController.php:68
+#: admin/menu/controllers/PsnOptionsController.php:31
+#: modules/Logger/controllers/PsnLogController.php:84
+msgid "This is an overview of your plugin settings"
+msgstr ""
+
+#: admin/menu/controllers/PsnRulesController.php:51
+#: admin/menu/controllers/PsnRulesController.php:128
+#: lib/Psn/Admin/Metabox/Rules.php:51
+msgid "Create new rule"
+msgstr ""
+
+#: admin/menu/controllers/PsnRulesController.php:69
+msgid "Rule <b>%s</b> has been saved successfully."
+msgstr ""
+
+#: admin/menu/controllers/PsnRulesController.php:101
+msgid "Rule <b>%s</b> has been updated successfully."
+msgstr ""
+
+#: admin/menu/controllers/PsnRulesController.php:118
+msgid "Placeholders"
+msgstr ""
+
+#: admin/menu/controllers/PsnRulesController.php:120
+msgid "Show list of placeholders available for subject and text"
+msgstr ""
+
+#: admin/menu/controllers/PsnRulesController.php:121
+msgid "List of placeholders"
+msgstr ""
+
+#: admin/menu/controllers/PsnRulesController.php:130
+msgid "Edit notification rule"
+msgstr ""
+
+#: admin/menu/controllers/PsnRulesController.php:131
+msgid "Update"
+msgstr ""
+
+#: admin/menu/controllers/PsnRulesController.php:186
+msgid "Here you can manage your post status notification rules."
+msgstr ""
+
+#: admin/menu/controllers/PsnRulesController.php:215
+msgid "List of placeholders available for notification subject and text"
+msgstr ""
+
+#: bootstrap.php:44
+msgid "Ignore post status \"inherit\""
+msgstr ""
+
+#: bootstrap.php:45
+msgid ""
+"Status \"inherit\" is used when post revisions get created by WordPress "
+"automatically"
+msgstr ""
+
+#: bootstrap.php:55
+msgid "Settings"
+msgstr ""
+
+#: lib/Ifw/Wp/Options.php:80
+msgid "General Options"
+msgstr ""
+
+#: lib/Ifw/Wp/Plugin/Admin/Menu/Metabox/PluginInfo.php:91
+msgid "Download"
+msgstr ""
+
+#: lib/Psn/Admin/Form/NotificationRule.php:35
+#: lib/Psn/Admin/ListTable/Rules.php:45
+#: modules/Logger/lib/Service/Logger.php:72
+msgid "Rule name"
+msgstr ""
+
+#: lib/Psn/Admin/Form/NotificationRule.php:46
+msgid "all types"
+msgstr ""
+
+#: lib/Psn/Admin/Form/NotificationRule.php:48
+#: lib/Psn/Admin/ListTable/Rules.php:46
+#: modules/Logger/lib/Service/Logger.php:73
+msgid "Post type"
+msgstr ""
+
+#: lib/Psn/Admin/Form/NotificationRule.php:55
+msgid "anything"
+msgstr ""
+
+#: lib/Psn/Admin/Form/NotificationRule.php:60
+#: lib/Psn/Admin/ListTable/Rules.php:47
+#: modules/Logger/lib/Service/Logger.php:74
+msgid "Status before"
+msgstr ""
+
+#: lib/Psn/Admin/Form/NotificationRule.php:68
+#: lib/Psn/Admin/ListTable/Rules.php:48
+#: modules/Logger/lib/Service/Logger.php:75
+msgid "Status after"
+msgstr ""
+
+#: lib/Psn/Admin/Form/NotificationRule.php:76
+msgid "Subject"
+msgstr ""
+
+#: lib/Psn/Admin/Form/NotificationRule.php:77
+#: lib/Psn/Admin/Form/NotificationRule.php:87
+msgid ""
+"Open the help menu in the upper right corner to see a list of all supported "
+"placeholders."
+msgstr ""
+
+#: lib/Psn/Admin/Form/NotificationRule.php:86
+msgid "Text"
+msgstr ""
+
+#: lib/Psn/Admin/Form/NotificationRule.php:98
+msgid "Recipient"
+msgstr ""
+
+#: lib/Psn/Admin/Form/NotificationRule.php:102
+msgid "Blog admin"
+msgstr ""
+
+#: lib/Psn/Admin/Form/NotificationRule.php:103
+msgid "Post author"
+msgstr ""
+
+#: lib/Psn/Admin/Form/NotificationRule.php:108
+#: lib/Psn/Admin/ListTable/Rules.php:49
+msgid "Active"
+msgstr ""
+
+#: lib/Psn/Admin/Form/NotificationRule.php:110
+msgid "Only active rules take affect on post transition changes"
+msgstr ""
+
+#: lib/Psn/Admin/Form/NotificationRule.php:117
+#: modules/Logger/lib/ListTable/Log.php:99
+msgid "Email"
+msgstr ""
+
+#: lib/Psn/Admin/Form/NotificationRule.php:119
+msgid ""
+"When the rule matches, an email will be send to the recipient with subject "
+"and text"
+msgstr ""
+
+#: lib/Psn/Admin/Form/NotificationRule.php:129
+msgid "Add rule"
+msgstr ""
+
+#: lib/Psn/Admin/Form/Validate/Max.php:22
+msgid "You reached the maximum number of rules for the free version"
+msgstr ""
+
+#: lib/Psn/Admin/Form/Validate/StatusTransition.php:24
+msgid ""
+"Invalid status combination: before and after set to \"anything\" is not "
+"allowed"
+msgstr ""
+
+#: lib/Psn/Admin/ListTable/Rules.php:102
+msgid "Edit"
+msgstr ""
+
+#: lib/Psn/Admin/ListTable/Rules.php:103 lib/Psn/Admin/ListTable/Rules.php:142
+#: modules/Logger/lib/ListTable/Log.php:176
+msgid "Delete"
+msgstr ""
+
+#: lib/Psn/Admin/ListTable/Rules.php:118
+#: modules/Logger/lib/ListTable/Log.php:152
+msgid "Search"
+msgstr ""
+
+msgid "Name of the rule"
+msgstr ""
+
+#: lib/Psn/Admin/ListTable/Rules.php:143
+msgid "Activate"
+msgstr ""
+
+#: lib/Psn/Admin/ListTable/Rules.php:144
+msgid "Deactivate"
+msgstr ""
+
+#: lib/Psn/Admin/Metabox/Rules.php:28
+msgid "Your notification rules"
+msgstr ""
+
+#: lib/Psn/Admin/Metabox/Status.php:25
+msgid "Status"
+msgstr ""
+
+#: lib/Psn/Admin/Metabox/Status.php:34
+msgid "The required database table does not exist."
+msgstr ""
+
+#. Plugin Name of the plugin/theme
+msgid "Post Status Notifier"
+msgstr ""
+
+#. Plugin URI of the plugin/theme
+msgid "http://www.ifeelweb.de/wp-plugins/post-status-notifier/"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid ""
+"Lets you create individual notification rules to be informed about all post "
+"status transitions of your blog. Features custom email texts with many "
+"placeholders and custom post types."
+msgstr ""
+
+msgid "Add additional recipient emails. Comma separated. Supports placeholders [author_email], [blog_admin_email] and [current_user_email].""
+msgstr ""
+
+msgid "Limited to 1. Get the Premium version for unlimited Cc emails."
+msgstr ""
+
+msgid "Manage rules"
+msgstr ""
+
+msgid "In the \"Rules\" section you can manage your post status notification rules.<br>Just try it and <a href=\"%s\">create a new rule</a>."
+msgstr ""
+
+msgid "Examples"
+msgstr ""
+
+msgid "Click the buttons below to get an idea of how you can set up notification rules."
+msgstr ""
+
+msgid "The pending post"
+msgstr ""
+
+msgid "This rule sends a notification when a new post got submitted for review."
+msgstr ""
+
+msgid "The happy author"
+msgstr ""
+
+msgid "This rule sends an email to the author of a post when it got published."
+msgstr ""
+
+msgid "The pedantic admin"
+msgstr ""
+
+msgid "This rule is for blog admins who want to be informed about every single post status change."
+msgstr ""
+
+msgid "[blog_name]: New post is waiting for review"
+msgstr ""
+
+msgid "Howdy admin,\nthere is a new post by [author_display_name] waiting for review:\n\"[post_title]\".\n\nHere is the permalink: [post_guid]\n\nThe author\'s email address is [author_email]\n\n[blog_wpurl]"
+msgstr ""
+
+msgid "Your post on [blog_name] got published!"
+msgstr ""
+
+msgid "Howdy [author_display_name],\nwe are happy to tell you that your post \"[post_title]\" got published.\n\nHere is the permalink: [post_guid]\n\nThanks for your good work,\nyour [blog_name]-Team\n\n[blog_wpurl]"
+msgstr ""
+
+msgid "[blog_name]: Post status transition from [post_status_before] to [post_status_after]"
+msgstr ""
+
+msgid "Howdy admin,\na post status transition was a detected on \"[post_title]\".\n\nStatus before: [post_status_before]\nStatus after: [post_status_after]\n\nPost permalink: [post_guid]"
+msgstr ""
+
+msgid "Unlimited notification rules"
+msgstr ""
+
+msgid "Unlimited CC email recipients"
+msgstr ""
+
+msgid "No appendix in sent emails"
+msgstr ""
+
+msgid "Extensive logging (matching rules, sent mails ...) with dashboard widget"
+msgstr ""
+
+msgid "Premium Support"
+msgstr ""
+
+msgid "Options"
+msgstr ""
+
+msgid "Rule table"
+msgstr ""
+
+msgid "Checks if the database table for storing the notification rules exists"
+msgstr ""
+
+msgid "The database table could not be found"
+msgstr ""
+
+msgid "Trying to create the table..."
+msgstr ""

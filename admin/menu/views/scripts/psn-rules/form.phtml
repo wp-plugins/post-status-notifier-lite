@@ -1,0 +1,42 @@
+<?php if(isset($this->maxReached)): ?>
+    <div id="message" class="error">
+        <p class="message"><?php echo $this->maxReached; ?></p>
+    </div>
+<?php else: ?>
+<div id="rules_form" style="clear: both;">
+    <div style="float: left; min-width: 400px; max-width: 720px;">
+    <h3><?php echo $this->langHeadline; ?></h3>
+    <?php
+    echo $this->form;
+    ?>
+    </div>
+    <div style="">
+        <h3><?php echo $this->langHelp; ?></h3>
+
+        <p><?php echo $this->langListOfPlaceholdersLabel; ?>:</p>
+        <a href="javascript:void(0);" onclick="jQuery('#contextual-help-link').click();" class="ifw-wp-icon-help"><?php echo $this->langListOfPlaceholdersLink; ?></a>
+
+        <p>&nbsp;</p>
+
+        <h3><?php echo $this->langExamples; ?></h3>
+        <p><?php echo $this->langExamplesDesc; ?></p>
+
+        <dl class="example">
+            <dt><a href="javascript:void(0);" class="example_button" id="example_pending_post"><?php echo $this->langExamplesRuleThePendingPost; ?></a></dt>
+            <dd><?php echo $this->langExamplesRuleThePendingPostDesc; ?></dd>
+        </dl>
+
+        <dl class="example">
+            <dt><a href="javascript:void(0);" class="example_button" id="example_happy_author"><?php echo $this->langExamplesRuleTheHappyAuthor; ?></a></dt>
+            <dd><?php echo $this->langExamplesRuleTheHappyAuthorDesc; ?></dd>
+        </dl>
+
+        <dl class="example">
+            <dt><a href="javascript:void(0);" class="example_button" id="example_pedantic_admin"><?php echo $this->langExamplesRuleThePedanticAdmin; ?></a></dt>
+            <dd><?php echo $this->langExamplesRuleThePedanticAdminDesc; ?></dd>
+        </dl>
+
+    </div>
+    <div  style="clear: both;"></div>
+</div>
+<?php endif; ?>
