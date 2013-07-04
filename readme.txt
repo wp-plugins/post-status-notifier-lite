@@ -3,7 +3,7 @@ Tags: amazon, admin, bbcode, collections, simple, product, preview, sidebar
 Contributors: worschtebrot
 Requires at least: 3.3
 Tested up to: 3.5.2
-Stable tag: 1.0.3
+Stable tag: 1.0.4
 
 
 Lets you create **individual notification rules** to be informed about all post status transitions of your blog. Features custom email texts with many placeholders and custom post types.
@@ -61,6 +61,10 @@ Here you can find a detailed documentation:
 http://docs.ifeelweb.de/post-status-notifier/
 
 == Change Log ==
+
+= 1.0.4 =
+
+* Committing Lite version
 
 = 1.0.3 =
 
