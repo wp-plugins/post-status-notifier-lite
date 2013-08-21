@@ -1,0 +1,6 @@
+
+<p><a href="<?php echo $this->url(array('page' => $this->pm->getPathinfo()->getDirname(), 'controller' => 'rules', 'action' => 'create'), 'requestVars', true) ?>" class="ifw-wp-icon-plus" id="create_new_rule"><?php echo $this->langCreateNewRule; ?></a></p>
+
+<?php
+echo $this->listTable->display();
+?>

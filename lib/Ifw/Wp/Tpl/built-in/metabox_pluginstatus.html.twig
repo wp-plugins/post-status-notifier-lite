@@ -1,0 +1,32 @@
+<p>{% if status == 'null' %}{{ text.__('Not tested yet', 'ifw') }}{% else %}
+    {{ text.__('Last test performed', 'ifw') }}: <b>{{ timestamp }}</b>: {% if status == 'true' %}<span style="color: green;">{{ text.__('Everything is in order', 'ifw') }}</span>{% else %}<span style="color: red;">{{ text.__('A problem was recognized', 'ifw') }}</span>{% endif %}
+    {% endif %}
+</p>
+<a href="#" id="ifw-perform-plugin-tests">{{ text.__('Perform selftests', 'ifw') }}</a>
+
+<script>
+jQuery('#ifw-perform-plugin-tests').click(function(e) {
+        e.preventDefault();
+        // show ajax loading animation
+        var dialog = jQuery('<div style="display:none;" id="ifw-dialog-perform-plugin-tests"><iframe src=""></iframe></div>').appendTo('body');
+        // open the dialog
+        dialog.dialog({
+            dialogClass: 'wp-dialog',
+            // add a close listener to prevent adding multiple divs to the document
+            close: function(event, ui) {
+                // remove div with all data and events
+                dialog.remove();
+            },
+            modal: true,
+            resizable: true,
+            closeOnEscape: true,
+            width: 600,
+            height: 400,
+
+            open: function(ev, ui) {
+                console.log('{{ iframe_src }}');
+                jQuery('#ifw-dialog-perform-plugin-tests iframe').attr('src', '{% autoescape false %}{{ iframe_src }}{% endautoescape %}');
+            }
+        });
+    });
+</script>
