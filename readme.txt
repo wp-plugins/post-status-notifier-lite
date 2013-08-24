@@ -2,8 +2,8 @@
 Tags: amazon, admin, bbcode, collections, simple, product, preview, sidebar
 Contributors: worschtebrot
 Requires at least: 3.3
-Tested up to: 3.5.2
-Stable tag: 1.0.5
+Tested up to: 3.6
+Stable tag: 1.1
 
 
 Lets you create **individual notification rules** to be informed about all post status transitions of your blog. Features custom email texts with many placeholders and custom post types.
@@ -33,6 +33,7 @@ Features:
 * The Lite version features two notification rules and one CC email
 * Premium version: Optional **logging**: Logs status changes based on your rules
 * Premium version: **Dashboard widget** showing the latest log entries
+* Premium version: **SMTP support** the plugin can send the notification mails via your SMTP server
 * Get the [Premium version](http://codecanyon.net/item/post-status-notifier/4809420) for unlimited access
 
 What customers say:
@@ -62,13 +63,18 @@ http://docs.ifeelweb.de/post-status-notifier/
 
 == Change Log ==
 
+= 1.1 = 
+* New feature: Bcc field (premium)
+* New feature: SMTP support (premium)
+* Minor bugfixes
+
 = 1.0.5 =
 
-* Fixed a bug in lib/Ifw/WpDate.php (only occured with PHP 5.2)
+* Bugfix in date/time calculation (PHP5.2)
 
-= 1.0.4 =
+= 1.0.4
 
-* Committing Lite version
+* Minor bugfixes
 
 = 1.0.3 =
 
