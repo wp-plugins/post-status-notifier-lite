@@ -60,7 +60,7 @@ abstract class Ifw_Wp_Module_Bootstrap_Abstract implements Ifw_Wp_Module_Bootstr
         $classPrefix = $this->_pm->getAbbr() . '_Module_' . $this->_pathinfo->getDirname();
         Ifw_Wp_Autoloader::registerModule($classPrefix, $this->_pathinfo->getRootLib());
 
-        if ($this->_pm->isExactAdminAccess()) {
+        if ($this->_pm->getAccess()->isPlugin()) {
             $this->initTpl();
         }
 
@@ -75,7 +75,7 @@ abstract class Ifw_Wp_Module_Bootstrap_Abstract implements Ifw_Wp_Module_Bootstr
      */
     public function registerPath()
     {
-        if ($this->_pm->isExactAdminAccess()) {
+        if ($this->_pm->getAccess()->isPlugin()) {
 
             // add controller dir
             if(is_dir($this->_pathinfo->getDirnamePath() . 'controllers')) {
@@ -141,7 +141,7 @@ abstract class Ifw_Wp_Module_Bootstrap_Abstract implements Ifw_Wp_Module_Bootstr
     {
         $adminCssPath = $this->_pathinfo->getRootCss() . 'admin.css';
 
-        if (Ifw_Wp_Plugin_Admin::isAccess() && file_exists($adminCssPath)) {
+        if ($this->_pm->getAccess()->isPlugin() && !$this->_pm->getAccess()->isAjax() && file_exists($adminCssPath)) {
             $handle = $this->_env->getId() . '-' .'admin-css';
             Ifw_Wp_Proxy_Style::loadAdmin($handle, $this->_env->getUrlCss() . 'admin.css');
         }
@@ -154,7 +154,7 @@ abstract class Ifw_Wp_Module_Bootstrap_Abstract implements Ifw_Wp_Module_Bootstr
     {
         $adminJsPath = $this->_pathinfo->getRootJs() . 'admin.js';
 
-        if (Ifw_Wp_Plugin_Admin::isAccess() && file_exists($adminJsPath)) {
+        if ($this->_pm->getAccess()->isPlugin() && !$this->_pm->getAccess()->isAjax() && file_exists($adminJsPath)) {
             $handle = $this->_env->getId() . '-' .'admin-js';
             Ifw_Wp_Proxy_Script::loadAdmin($handle, $this->_env->getUrlJs() . 'admin.js');
         }

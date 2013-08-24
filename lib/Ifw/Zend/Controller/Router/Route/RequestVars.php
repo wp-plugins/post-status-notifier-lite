@@ -98,14 +98,17 @@ class Ifw_Zend_Controller_Router_Route_RequestVars implements IfwZend_Controller
             && $this->_current['action'] != $frontController->getDefaultAction()) {
             $data = array_merge(array('action'=>$this->_current['action']), $data);
         }
-        
-        $url = Ifw_Wp_Plugin_Admin_Menu::getInstance($this->_pm)->getBaseUrl();
-        
+
         if(!empty($data)) {
             $querydata = array();
             if (isset($data['page'])) {
+                $url = Ifw_Wp_Proxy_Admin::getOptionsBaseUrl();
                 $querydata['page'] = $data['page'];
                 unset($data['page']);
+            } elseif (isset($data['adminpage'])) {
+                $url = Ifw_Wp_Proxy_Admin::getAdminPageBaseUrl();
+                $querydata['page'] = $data['adminpage'];
+                unset($data['adminpage']);
             }
             if (isset($data['module'])) {
                 $querydata['mod'] = $data['module'];

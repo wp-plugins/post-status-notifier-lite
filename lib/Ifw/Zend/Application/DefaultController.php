@@ -22,16 +22,6 @@ class Ifw_Zend_Application_DefaultController extends IfwZend_Controller_Action
     protected $_pm;
 
     /**
-     * @var Ifw_Wp_Plugin_Admin
-     */
-    protected $_admin;
-
-    /**
-     * @var Ifw_Wp_Plugin_Admin_Menu
-     */
-    protected $_menu;
-
-    /**
      * Navigation object
      * @var IfwZend_Navigation
      */
@@ -73,10 +63,6 @@ class Ifw_Zend_Application_DefaultController extends IfwZend_Controller_Action
 
         $this->_pm = $this->_config['pluginmanager'];
 
-        $this->_admin = Ifw_Wp_Plugin_Admin::getInstance($this->_pm);
-
-        $this->_menu = $this->_admin->getMenu();
-
         $this->view->pm = $this->_pm;
 
         $this->_helper->layout()->setLayout('layout');
@@ -84,7 +70,9 @@ class Ifw_Zend_Application_DefaultController extends IfwZend_Controller_Action
         $this->_pageHook = 'page-'. $this->_pm->getPathinfo()->getDirname() . '-' . $this->getRequest()->getActionName();
         $this->view->pageHook = $this->_pageHook;
 
-        Ifw_Wp_Proxy_Action::addAdminInit(array($this, 'initNavigation'));
+//        Ifw_Wp_Proxy_Action::addAdminInit(array($this, 'initNavigation'));
+
+        $this->initNavigation();
 
         $this->view->isSupportedWpVersion = Ifw_Wp_Proxy_Blog::isMinimumVersion($this->_pm->getConfig()->plugin->wpMinVersion);
         $this->view->notSupportedWpVersionMessage = sprintf(__('This plugin requires WordPress version %s for full functionality. Your version is %s. <a href="%s">Please upgrade</a>.', 'ifw'),
@@ -112,11 +100,11 @@ class Ifw_Zend_Application_DefaultController extends IfwZend_Controller_Action
     {
         $this->_navigation = new IfwZend_Navigation();
 
-        Ifw_Wp_Proxy::doAction($this->_pm->getAbbrLower() . '_before_admin_navigation', $this->_navigation);
+        Ifw_Wp_Proxy_Action::doAction($this->_pm->getAbbrLower() . '_before_admin_navigation', $this->_navigation);
 
         $this->_loadNavigationPages();
 
-        Ifw_Wp_Proxy::doAction($this->_pm->getAbbrLower() . '_after_admin_navigation', $this->_navigation);
+        Ifw_Wp_Proxy_Action::doAction($this->_pm->getAbbrLower() . '_after_admin_navigation', $this->_navigation);
 
         $this->view->navigation = $this->_navigation;
     }
@@ -150,6 +138,14 @@ class Ifw_Zend_Application_DefaultController extends IfwZend_Controller_Action
         ), $extra);
 
         $this->_redirector->gotoRoute($urlOptions, 'requestVars');
+    }
+
+    /**
+     * @param $page
+     */
+    protected function _gotoPage($page)
+    {
+        header('Location: admin.php?page='. $page);
     }
 
     /**

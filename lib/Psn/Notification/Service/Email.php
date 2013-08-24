@@ -40,12 +40,23 @@ class Psn_Notification_Service_Email implements Psn_Notification_Service_Interfa
                 // for supporting [blog_admin_email] / [author_email] / [current_user_email]
                 $email->setCc($replacer->replace($rule->get('cc')));
             }
+            if ($rule->get('bcc') != '') {
+                // for supporting [blog_admin_email] / [author_email] / [current_user_email]
+                $email->setBcc($replacer->replace($rule->get('bcc')));
+            }
+
+            Ifw_Wp_Proxy_Action::doAction('psn_before_notification_email_send', $email);
+
             if ($email->send()) {
                 // mail sent successfully
-                Ifw_Wp_Proxy::doAction('psn_notification_email_sent', $email);
+                Ifw_Wp_Proxy_Action::doAction('psn_notification_email_sent', $email);
+            } else {
+                // email could not be sent
+                Ifw_Wp_Proxy_Action::doAction('psn_notification_email_send_error', $email);
             }
-        } else {
-            // email could not be sent
+
+            Ifw_Wp_Proxy_Action::doAction('psn_after_notification_email_send', $email);
         }
+
     }
 }

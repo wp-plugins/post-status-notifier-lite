@@ -47,6 +47,7 @@ class Ifw_Wp_Options_Manager
     public function addGeneralOption(Ifw_Wp_Options_Field $option)
     {
         array_push($this->_generalOptions, $option);
+        return $this;
     }
 
     /**
@@ -55,6 +56,7 @@ class Ifw_Wp_Options_Manager
     public function registerExternalOption($id)
     {
         array_push($this->_externalOptions, new Ifw_Wp_Options_Field_External($id, ''));
+        return $this;
     }
 
     /**
@@ -79,12 +81,15 @@ class Ifw_Wp_Options_Manager
     /**
      * @param $id
      * @param $value
+     * @return $this
      */
     public function updateOption($id, $value)
     {
         $options = Ifw_Wp_Proxy::getOption($this->_pm->getOptions()->getPageId());
         $options[$this->_pm->getOptions()->getOptionRealId($id)] = $value;
         Ifw_Wp_Proxy::updateOption($this->_pm->getOptions()->getPageId(), $options);
+
+        return $this;
     }
 
     /**

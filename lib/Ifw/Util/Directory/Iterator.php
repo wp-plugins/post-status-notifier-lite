@@ -41,9 +41,13 @@ class Ifw_Util_Directory_Iterator extends DirectoryIterator
      */
     public function getClassname()
     {
-        if ($this->_classname == null) {
+        if ($this->_classname == null && is_file($this->getPathname())) {
 
             $fp = fopen($this->getPathname(), 'r');
+
+            if (!$fp) {
+                return false;
+            }
 
             $class = $buffer = '';
             $i = 0;

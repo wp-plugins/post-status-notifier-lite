@@ -219,3 +219,13 @@
     padding-top: 10px;
 }
 
+.ifw-patch-success {
+    background: url(icons/button-white-check.png) left top no-repeat;
+    padding: 8px 0 8px 40px;
+}
+
+.ifw-patch-fail {
+    background: url(icons/cross.png) left top no-repeat;
+    padding: 8px 0 8px 40px;
+}
+

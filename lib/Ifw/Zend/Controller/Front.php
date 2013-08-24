@@ -214,7 +214,7 @@ class Ifw_Zend_Controller_Front extends IfwZend_Controller_Front
      * @param IfwZend_Controller_Response_Abstract $response
      * @throws Exception
      */
-    public function initController(IfwZend_Controller_Request_Abstract $request = null, IfwZend_Controller_Response_Abstract $response = null)
+    public function initController(Ifw_Wp_Plugin_Manager $pm, IfwZend_Controller_Request_Abstract $request = null, IfwZend_Controller_Response_Abstract $response = null)
     {
         if (!$this->getParam('noErrorHandler') && !$this->_plugins->hasPlugin('IfwZend_Controller_Plugin_ErrorHandler')) {
             // Register with stack index of 100
@@ -258,12 +258,16 @@ class Ifw_Zend_Controller_Front extends IfwZend_Controller_Front
             $this->setResponse($response);
         }
 
+        //Ifw_Wp_Proxy_Action::doPlugin($pm, 'before_controller_init', $this);
+
         /**
          * Register request and response objects with plugin broker
          */
         $this->_plugins
             ->setRequest($this->_request)
             ->setResponse($this->_response);
+
+        Ifw_Wp_Proxy_Action::doPlugin($pm, 'before_controller_init', $this);
 
         /**
          * Initialize router

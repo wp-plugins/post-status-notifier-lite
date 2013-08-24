@@ -25,6 +25,20 @@ class Ifw_Wp_Proxy_Action
     }
 
     /**
+     * @param Ifw_Wp_Plugin_Manager $pm
+     * @param $tag
+     * @param $function_to_add
+     * @param int $priority
+     * @param int $accepted_args
+     * @return bool|void
+     */
+    public static function addPlugin(Ifw_Wp_Plugin_Manager $pm, $tag, $function_to_add, $priority = 10, $accepted_args = 1)
+    {
+        $tag = $pm->getAbbrLower() . '_' . $tag;
+        return self::add($tag, $function_to_add, $priority, $accepted_args);
+    }
+
+    /**
      * Alias for do_action
      *
      * @param $tag
@@ -34,6 +48,17 @@ class Ifw_Wp_Proxy_Action
     public static function doAction($tag, $arg = '')
     {
         return do_action($tag, $arg);
+    }
+
+    /**
+     * @param Ifw_Wp_Plugin_Manager $pm
+     * @param $tag
+     * @param string $args
+     * @return null
+     */
+    public static function doPlugin(Ifw_Wp_Plugin_Manager $pm, $tag, $args = '')
+    {
+        return self::doAction($pm->getAbbrLower() . '_' . $tag, $args);
     }
 
     /**
@@ -81,6 +106,19 @@ class Ifw_Wp_Proxy_Action
     public static function addAdminMenu($function_to_add, $priority = 10, $accepted_args = 1)
     {
         return self::add('admin_menu', $function_to_add, $priority, $accepted_args);
+    }
+
+    /**
+     * Shortcut for add_action( 'admin_head', 'function_name' )
+     *
+     * @param $function_to_add
+     * @param int $priority
+     * @param int $accepted_args
+     * @return bool|void
+     */
+    public static function addAdminHead($function_to_add, $priority = 10, $accepted_args = 1)
+    {
+        return self::add('admin_head', $function_to_add, $priority, $accepted_args);
     }
 
     /**
@@ -208,5 +246,18 @@ class Ifw_Wp_Proxy_Action
     public static function addWpDashboardSetup($function_to_add, $priority = 10, $accepted_args = 1)
     {
         return self::add('wp_dashboard_setup', $function_to_add, $priority, $accepted_args);
+    }
+
+    /**
+     * Shortcut for add_action( 'init', 'function_name' )
+     *
+     * @param $function_to_add
+     * @param int $priority
+     * @param int $accepted_args
+     * @return bool|void
+     */
+    public static function addInit($function_to_add, $priority = 10, $accepted_args = 1)
+    {
+        return self::add('init', $function_to_add, $priority, $accepted_args);
     }
 }

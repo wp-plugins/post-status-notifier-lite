@@ -13,10 +13,10 @@ class Ifw_Zend_Application extends IfwZend_Application
      * Initialize application. Potentially initializes include_paths, PHP
      * settings, and bootstrap class.
      *
-     * @param  string                   $environment
+     * @param  string $environment
      * @param  string|array|IfwZend_Config $options String path to configuration file, or array/IfwZend_Config of configuration options
-     * @throws IfwZend_Application_Exception When invalid options are provided
-     * @return void
+     * @throws IfwZend_Application_Exception
+     * @return \Ifw_Zend_Application
      */
     public function __construct($environment, $options = null)
     {
@@ -42,7 +42,7 @@ class Ifw_Zend_Application extends IfwZend_Application
     {
         // init the controller
         $pm = $this->getOption('pluginmanager');
-        Ifw_Wp_Proxy_Action::doAction($pm->getAbbrLower() . '_before_controller_init', $this);
+//        Ifw_Wp_Proxy_Action::doPlugin($pm, 'before_controller_init', $this);
         return $this->getBootstrap()->initController();
     }
 

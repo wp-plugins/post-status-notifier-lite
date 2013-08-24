@@ -14,7 +14,7 @@ class PsnRulesController extends PsnApplicationController
     protected $_form;
 
     /**
-     * @var Ifw_Wp_Plugin_Admin_Menu_Screen_Option_PerPage
+     * @var Ifw_Wp_Plugin_Screen_Option_PerPage
      */
     protected $_perPage;
 
@@ -52,7 +52,7 @@ class PsnRulesController extends PsnApplicationController
     public function onBootstrap()
     {
         if ($this->_request->getActionName() == 'index') {
-            $this->_perPage = new Ifw_Wp_Plugin_Admin_Menu_Screen_Option_PerPage($this->_pm, __('Items per page', 'ifw'), 'psn_rules_per_page');
+            $this->_perPage = new Ifw_Wp_Plugin_Screen_Option_PerPage($this->_pm, __('Items per page', 'ifw'), 'psn_rules_per_page');
         }
     }
 
@@ -66,7 +66,6 @@ class PsnRulesController extends PsnApplicationController
 
     public function onLoad()
     {
-
     }
 
     /**
@@ -75,7 +74,11 @@ class PsnRulesController extends PsnApplicationController
     public function indexAction()
     {
         // set up contextual help
-        $this->_menu->addHelp($this->_getDefaultHelpText(), __('Rules', 'psn'), $this->_getHelpSidebar());
+        $help = new Ifw_Wp_Plugin_Menu_Help($this->_pm);
+        $help->setTitle(__('Rules', 'psn'))
+            ->setHelp($this->_getDefaultHelpText())
+            ->setSidebar($this->_getHelpSidebar())
+            ->load();
 
         $listTable = new Psn_Admin_ListTable_Rules($this->_pm);
         $listTable->setItemsPerPage($this->_perPage->getOption());
@@ -147,12 +150,18 @@ class PsnRulesController extends PsnApplicationController
     {
         if (!$this->_pm->isPremium()) {
             Ifw_Wp_Proxy_Filter::add('psn_rule_form_description_cc', create_function('$var','return $var . " " .
-                __("Limited to 1. Get the Premium version for unlimited Cc emails.");'));
+                __("Limited to 1. Get the Premium version for unlimited Cc emails.", "psn");'));
+            Ifw_Wp_Proxy_Filter::add('psn_rule_form_description_bcc', create_function('$var','return $var . " " .
+                __("(Premium feature)", "psn");'));
         }
         $this->_form = new Psn_Admin_Form_NotificationRule();
 
         $this->_helper->viewRenderer('form');
-        $this->_menu->addHelp($this->_getHelpTextPlaceholders(), __('Placeholders', 'psn'), $this->_getHelpSidebar());
+        $help = new Ifw_Wp_Plugin_Menu_Help($this->_pm);
+        $help->setTitle(__('Placeholders', 'psn'))
+            ->setHelp($this->_getHelpTextPlaceholders())
+            ->setSidebar($this->_getHelpSidebar())
+            ->load();
 
         $this->view->langListOfPlaceholdersLabel = __('Show list of placeholders available for subject and text', 'psn');
         $this->view->langListOfPlaceholdersLink = __('List of placeholders', 'psn');

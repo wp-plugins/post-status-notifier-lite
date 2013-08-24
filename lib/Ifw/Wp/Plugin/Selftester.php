@@ -50,22 +50,31 @@ class Ifw_Wp_Plugin_Selftester
 
     protected function _init()
     {
-        $this->_pm->getBootstrap()->getOptionsManager()->registerExternalOption($this->_timestampOptionName);
-        $this->_pm->getBootstrap()->getOptionsManager()->registerExternalOption($this->_statusOptionName);
-        $this->_initBuiltinTests();
-        $this->_initAutorun();
+        $this->_registerBuiltinTests();
     }
 
     /**
      * Registers the built-in tests
      */
-    protected function _initBuiltinTests()
+    protected function _registerBuiltinTests()
     {
         $dir = new Ifw_Util_Directory_Scanner($this->_pm->getPathinfo()->getRootLib() . 'Ifw/Wp/Plugin/Selftest/Case');
         $result = $dir->getClassesImplementingInterface('Ifw_Wp_Plugin_Selftest_Interface');
 
         foreach($result->getObjects() as $obj) {
             $this->addTestCase($obj);
+        }
+    }
+
+    public function activate()
+    {
+        Ifw_Wp_Proxy_Action::doPlugin($this->_pm, 'selftester_activate', $this);
+
+        $this->_pm->getBootstrap()->getOptionsManager()->registerExternalOption($this->_timestampOptionName);
+        $this->_pm->getBootstrap()->getOptionsManager()->registerExternalOption($this->_statusOptionName);
+
+        if (!$this->_skipAutorun()) {
+            $this->_initAutorun();
         }
     }
 
@@ -166,5 +175,17 @@ class Ifw_Wp_Plugin_Selftester
     public function getTimestamp()
     {
         return $this->_pm->getBootstrap()->getOptionsManager()->getOption($this->_timestampOptionName);
+    }
+
+    /**
+     * @return bool
+     */
+    protected function _skipAutorun()
+    {
+        if ($this->_pm->getBootstrap()->getUpdateManager()->getPatcher()->isPatchesAvailable()) {
+            return true;
+        }
+
+        return false;
     }
 }

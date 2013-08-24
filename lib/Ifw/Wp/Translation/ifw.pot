@@ -193,3 +193,45 @@ msgstr ""
 
 msgid "Perform selftest again"
 msgstr ""
+
+msgid "An error occured in patch \"%s\""
+msgstr ""
+
+msgid "An unexpected error occured in patch \"%s\""
+msgstr ""
+
+msgid "Patches available"
+msgstr ""
+
+msgid "You have to execute the patches before you can continue work with this plugin."
+msgstr ""
+
+msgid "Execute patches"
+msgstr ""
+
+msgid "Patches executed"
+msgstr ""
+
+msgid "Error(s) occured"
+msgstr ""
+
+msgid "You should report the error(s) to the <a href="%s" target="_blank">plugin support</a>. Proceeding could lead to errors during the working process."
+msgstr ""
+
+msgid "Proceed anyway"
+msgstr ""
+
+msgid "Patches have been executed successfully!"
+msgstr ""
+
+msgid "Continue"
+msgstr ""
+
+msgid "Nothing to patch"
+msgstr ""
+
+msgid "Patches executed with errors"
+msgstr ""
+
+msgid "You may now proceed working. If you run into errors, please contact the <a href="%s" target="_blank">plugin support</a>."
+msgstr ""

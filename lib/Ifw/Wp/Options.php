@@ -80,7 +80,7 @@ class Ifw_Wp_Options
      */
     public function load()
     {
-        if ($this->_pm->isExactAdminAccess() ||
+        if ($this->_pm->getAccess()->isPlugin() ||
             (isset($_POST['option_page']) && $_POST['option_page'] == $this->_pageId)) {
             // init the option objects only if it is a exact plugin admin page access or save request
             $generalOptions = new Ifw_Wp_Options_Section('general', __('General Options', 'ifw'));

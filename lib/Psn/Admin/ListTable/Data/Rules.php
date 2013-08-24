@@ -7,7 +7,7 @@
  * @copyright   Copyright (c) 2012-2013 ifeelweb.de
  * @package     Psn_Admin
  */
-class Psn_Admin_ListTable_Data_Rules implements Ifw_Wp_Plugin_Admin_Menu_ListTable_Data_Interface
+class Psn_Admin_ListTable_Data_Rules implements Ifw_Wp_Plugin_ListTable_Data_Interface
 {
 
     /** (non-PHPdoc)

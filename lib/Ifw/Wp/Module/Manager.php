@@ -15,7 +15,7 @@ class Ifw_Wp_Module_Manager
      * Instance store
      * @var array
      */
-    public static $_instances = array();
+//    public static $_instances = array();
 
     /**
      * @var Ifw_Wp_Plugin_Manager
@@ -45,19 +45,18 @@ class Ifw_Wp_Module_Manager
      * @param Ifw_Wp_Plugin_Manager $pm
      * @return Ifw_Wp_Module_Manager
      */
-    public static function getInstance(Ifw_Wp_Plugin_Manager $pm)
-    {
-        if (!isset(self::$_instances[$pm->getAbbr()])) {
-            self::$_instances[$pm->getAbbr()] = new self($pm);
-        }
-        return self::$_instances[$pm->getAbbr()];
-    }
+//    public static function getInstance(Ifw_Wp_Plugin_Manager $pm)
+//    {
+//        if (!isset(self::$_instances[$pm->getAbbr()])) {
+//            self::$_instances[$pm->getAbbr()] = new self($pm);
+//        }
+//        return self::$_instances[$pm->getAbbr()];
+//    }
 
     /**
-     *
      * @param Ifw_Wp_Plugin_Manager $pm
      */
-    protected function __construct(Ifw_Wp_Plugin_Manager $pm)
+    public function __construct(Ifw_Wp_Plugin_Manager $pm)
     {
         $this->_pm = $pm;
     }
@@ -167,10 +166,10 @@ class Ifw_Wp_Module_Manager
     protected function _isValidModule($module)
     {
         if (!file_exists($this->_getModuleBootstrapPath($module))) {
-            throw new Ifw_Wp_Model_Exception('Missing bootstrap.php for module "'. $module . '"');
+            throw new Ifw_Wp_Module_Exception('Missing bootstrap.php for module "'. $module . '"');
         }
         if (!file_exists($this->_getModuleXmlPath($module))) {
-            throw new Ifw_Wp_Model_Exception('Missing module.xml for module "'. $module . '"');
+            throw new Ifw_Wp_Module_Exception('Missing module.xml for module "'. $module . '"');
         }
 
         require_once $this->_getModuleBootstrapPath($module);

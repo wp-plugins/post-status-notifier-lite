@@ -46,4 +46,15 @@ class Ifw_Wp_Proxy_Admin
         $router = Ifw_Zend_Controller_Front::getInstance()->initRouter($pm)->getRouter();
         return $router->assemble($urlOptions, 'requestVars');
     }
+
+
+    public static function getOptionsBaseUrl()
+    {
+        return 'options-general.php';
+    }
+
+    public static function getAdminPageBaseUrl()
+    {
+        return 'admin.php';
+    }
 }

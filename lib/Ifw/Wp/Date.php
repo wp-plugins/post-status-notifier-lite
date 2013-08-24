@@ -51,7 +51,7 @@ class Ifw_Wp_Date
             $offset = 0;
         }
 
-        $timeTs = $dt->getTimestamp();
+        $timeTs = (int)$dt->format('U');
 
         return $timeTs + $seconds < time();
     }

@@ -46,7 +46,7 @@ class Ifw_Zend_Application_Bootstrap_Bootstrap extends IfwZend_Application_Boots
         }
 
         $front->setParam('bootstrap', $this);
-        $front->initController();
+        $front->initController($this->_pm);
     }
 
     /**
@@ -69,7 +69,7 @@ class Ifw_Zend_Application_Bootstrap_Bootstrap extends IfwZend_Application_Boots
      */
     protected function _initPlugin()
     {
-        if ($this->_pm->isExactAdminAccess()) {
+        if ($this->_pm->getAccess()->isPlugin()) {
 
             $this->bootstrap('frontController');
             $front = $this->getResource('FrontController');

@@ -34,7 +34,6 @@ class Psn_Admin_Form_NotificationRule extends Ifw_Zend_Form
             'label'          => __('Rule name', 'psn'),
             'description'    => __('Name of the rule', 'psn'),
             'required'       => true,
-            'autocomplete'   => 'off',
             'filters'        => array('StringTrim', 'StripTags'),
             'maxlength'      => 80,
             'validators'     => $_GET['action'] == 'create' ? array(new Psn_Admin_Form_Validate_Max()) : array(),
@@ -77,7 +76,6 @@ class Psn_Admin_Form_NotificationRule extends Ifw_Zend_Form
             'label'          => __('Subject', 'psn'),
             'description'    => __('Open the help menu in the upper right corner to see a list of all supported placeholders.', 'psn'),
             'required'       => true,
-            'autocomplete'   => 'off',
             'filters'        => array('StringTrim', 'StripTags'),
             'maxlength'      => 200,
             'decorators'     => $fieldDecorators
@@ -87,10 +85,9 @@ class Psn_Admin_Form_NotificationRule extends Ifw_Zend_Form
             'label'          => __('Text', 'psn'),
             'description'    => __('Open the help menu in the upper right corner to see a list of all supported placeholders.', 'psn'),
             'required'       => true,
-            'autocomplete'   => 'off',
             'filters'        => array('StringTrim', 'HtmlEntities'),
-            'cols'          => 80,
-            'rows'          => 10,
+            'cols'           => 80,
+            'rows'           => 10,
             'decorators'     => $fieldDecorators
         ));
 
@@ -100,7 +97,7 @@ class Psn_Admin_Form_NotificationRule extends Ifw_Zend_Form
             ->setDecorators($fieldDecorators)
             ->setFilters(array('StringTrim', 'StripTags'))
             ->addMultiOptions(array(
-                'admin' => __('Blog admin', 'psn'),
+                'admin'  => __('Blog admin', 'psn'),
                 'author' => __('Post author', 'psn'),
             ));
         $this->addElement($recipient);
@@ -109,11 +106,21 @@ class Psn_Admin_Form_NotificationRule extends Ifw_Zend_Form
             'label'          => __('Cc', 'psn'),
             'description'    => Ifw_Wp_Proxy_Filter::apply('psn_rule_form_description_cc',
                 __('Add additional recipient emails. Comma separated. Supports placeholders [author_email], [blog_admin_email] and [current_user_email].', 'psn')),
-            'autocomplete'   => 'off',
             'filters'        => array('StringTrim', 'HtmlEntities',
                 new Psn_Admin_Form_Filter_Cc(Ifw_Wp_Plugin_Manager::getInstance('Psn')->isPremium())),
-            'cols'          => 80,
-            'rows'          => 1,
+            'cols'           => 80,
+            'rows'           => 1,
+            'decorators'     => $fieldDecorators
+        ));
+
+        $this->addElement('textarea', 'bcc', array(
+            'label'          => __('Bcc', 'psn'),
+            'description'    => Ifw_Wp_Proxy_Filter::apply('psn_rule_form_description_bcc',
+                __('Add bcc recipient emails. Comma separated. Supports placeholders [author_email], [blog_admin_email] and [current_user_email].', 'psn')),
+            'filters'        => array('StringTrim', 'HtmlEntities',
+                new Psn_Admin_Form_Filter_Bcc(Ifw_Wp_Plugin_Manager::getInstance('Psn')->isPremium())),
+            'cols'           => 80,
+            'rows'           => 1,
             'decorators'     => $fieldDecorators
         ));
 
@@ -146,16 +153,6 @@ class Psn_Admin_Form_NotificationRule extends Ifw_Zend_Form
                 array('HtmlTag', array('tag' => 'li')),
             )
         ));
-
-//        $this->addElement('button', 'test', array(
-//            'ignore'   => true,
-//            'label'    => __('Cancel', 'psn'),
-//            'class'    => 'button',
-//            'decorators' => array(
-//                'ViewHelper',
-//                array('HtmlTag', array('tag' => 'li')),
-//            )
-//        ));
 
     }
 }

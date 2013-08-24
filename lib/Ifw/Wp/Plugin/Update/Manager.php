@@ -15,6 +15,17 @@ class Ifw_Wp_Plugin_Update_Manager
      */
     protected $_pm;
 
+    /**
+     * @var Ifw_Wp_Plugin_Update_Patcher
+     */
+    private $_patcher;
+
+    /**
+     * @var Ifw_Util_Version
+     */
+    private $_presentVersion;
+
+
 
 
     /**
@@ -23,6 +34,7 @@ class Ifw_Wp_Plugin_Update_Manager
     public function __construct(Ifw_Wp_Plugin_Manager $pm)
     {
         $this->_pm = $pm;
+        $this->_patcher = new Ifw_Wp_Plugin_Update_Patcher($pm, $this->getPresentVersion());
     }
 
     public function init()
@@ -30,6 +42,8 @@ class Ifw_Wp_Plugin_Update_Manager
         if ($this->_pm->isPremium()) {
             Ifw_Wp_Proxy_Action::add('after_plugin_row_' . $this->_pm->getPathinfo()->getFilenamePath(), array($this, 'onAfterPluginRow'), 10, 3);
         }
+
+        $this->_pm->getBootstrap()->getOptionsManager()->registerExternalOption('present_version');
     }
 
     /**
@@ -57,5 +71,33 @@ class Ifw_Wp_Plugin_Update_Manager
         $remoteVersion = Ifw_Wp_Plugin_RemoteInfo::getInstance($this->_pm->getConfig()->plugin->uniqueId)->getVersion();
 
         return version_compare($installedVersion, $remoteVersion) === -1;
+    }
+
+    /**
+     * @return Ifw_Wp_Plugin_Update_Patcher
+     */
+    public function getPatcher()
+    {
+        return $this->_patcher;
+    }
+
+    /**
+     * @return Ifw_Util_Version
+     */
+    public function getPresentVersion()
+    {
+        if ($this->_presentVersion == null) {
+            $this->_presentVersion = new Ifw_Util_Version($this->_pm->getBootstrap()->getOptionsManager()->getOption('present_version'));
+        }
+
+        return $this->_presentVersion;
+    }
+
+    /**
+     * Updates the plugin's option "present_version" to current plugin version
+     */
+    public function refreshPresentVersion()
+    {
+        $this->_pm->getBootstrap()->getOptionsManager()->updateOption('present_version', $this->_pm->getEnv()->getVersion());
     }
 }

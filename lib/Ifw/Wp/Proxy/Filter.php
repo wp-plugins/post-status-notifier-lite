@@ -38,6 +38,18 @@ class Ifw_Wp_Proxy_Filter
     }
 
     /**
+     * @param Ifw_Wp_Plugin_Manager $pm
+     * @param $function_to_add
+     * @param int $priority
+     * @param int $accepted_args
+     * @return bool|void
+     */
+    public static function addPluginActionLinks(Ifw_Wp_Plugin_Manager $pm, $function_to_add, $priority = 10)
+    {
+        return self::add('plugin_action_links_'. $pm->getPathinfo()->getFilenamePath(), $function_to_add, $priority, 2);
+    }
+
+    /**
      * Alias for has_filter
      *
      * @param $tag

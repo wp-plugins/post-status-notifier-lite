@@ -171,9 +171,7 @@ msgid "Email"
 msgstr ""
 
 #: lib/Psn/Admin/Form/NotificationRule.php:119
-msgid ""
-"When the rule matches, an email will be send to the recipient with subject "
-"and text"
+msgid "When the rule matches, an email will be send to the recipient with subject and text"
 msgstr ""
 
 #: lib/Psn/Admin/Form/NotificationRule.php:129
@@ -185,9 +183,7 @@ msgid "You reached the maximum number of rules for the free version"
 msgstr ""
 
 #: lib/Psn/Admin/Form/Validate/StatusTransition.php:24
-msgid ""
-"Invalid status combination: before and after set to \"anything\" is not "
-"allowed"
+msgid "Invalid status combination: before and after set to \"anything\" is not allowed"
 msgstr ""
 
 #: lib/Psn/Admin/ListTable/Rules.php:102
@@ -236,13 +232,10 @@ msgid "http://www.ifeelweb.de/wp-plugins/post-status-notifier/"
 msgstr ""
 
 #. Description of the plugin/theme
-msgid ""
-"Lets you create individual notification rules to be informed about all post "
-"status transitions of your blog. Features custom email texts with many "
-"placeholders and custom post types."
+msgid "Lets you create individual notification rules to be informed about all post status transitions of your blog. Features custom email texts with many placeholders and custom post types."
 msgstr ""
 
-msgid "Add additional recipient emails. Comma separated. Supports placeholders [author_email], [blog_admin_email] and [current_user_email].""
+msgid "Add additional recipient emails. Comma separated. Supports placeholders [author_email], [blog_admin_email] and [current_user_email]."
 msgstr ""
 
 msgid "Limited to 1. Get the Premium version for unlimited Cc emails."
@@ -324,4 +317,19 @@ msgid "The database table could not be found"
 msgstr ""
 
 msgid "Trying to create the table..."
+msgstr ""
+
+msgid "Add bcc recipient emails. Comma separated. Supports placeholders [author_email], [blog_admin_email] and [current_user_email]."
+msgstr ""
+
+msgid "Activate SMTP"
+msgstr ""
+
+msgid "SMTP is a premium feature. You will get all configuration options to connect to your SMTP server."
+msgstr ""
+
+msgid "Unlimited Bcc email recipients"
+msgstr ""
+
+msgid "SMTP server support"
 msgstr ""

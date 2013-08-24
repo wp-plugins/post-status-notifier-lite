@@ -47,10 +47,12 @@ class Ifw_Wp_Options_Section
 
     /**
      * @param Ifw_Wp_Options_Field $field
+     * @return $this
      */
     public function addField(Ifw_Wp_Options_Field $field)
     {
         $this->_fields[] = $field;
+        return $this;
     }
 
     /**

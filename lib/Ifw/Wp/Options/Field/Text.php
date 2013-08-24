@@ -20,9 +20,9 @@ class Ifw_Wp_Options_Field_Text extends Ifw_Wp_Options_Field
         $id = $options->getOptionRealId($this->_id);
         $name = $options->getPageId() . '['. $id .']';
 
-        $html = '<input type="text" id="'. $id .'" name="'. $name .'" value="'. $options->getOption($this->_id) .'" />';
+        $html = '<input type="text" autocomplete="off" id="'. $id .'" name="'. $name .'" value="'. $options->getOption($this->_id) .'" />';
         if (!empty($this->_description)) {
-            $html .= '<label for="'. $id .'"> '  . $this->_description . '</label>';
+            $html .= '<br><label for="'. $id .'"> '  . $this->_description . '</label>';
         }
         echo $html;
     }

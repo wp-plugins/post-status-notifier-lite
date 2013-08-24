@@ -68,6 +68,8 @@ class Ifw_Wp_Plugin_Installer
     protected function _initActivation()
     {
         $this->registerActivation();
+        // add default activation commands
+        $this->addActivation(new Ifw_Wp_Plugin_Installer_Command_ActivationPresentVersion());
     }
 
     protected function _initDeactivation()

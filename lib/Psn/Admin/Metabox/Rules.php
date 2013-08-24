@@ -7,7 +7,7 @@
  * @copyright   Copyright (c) 2012-2013 ifeelweb.de
  * @package     Psn_Admin
  */
-class Psn_Admin_Metabox_Rules extends Ifw_Wp_Plugin_Admin_Menu_Metabox_Ajax
+class Psn_Admin_Metabox_Rules extends Ifw_Wp_Plugin_Metabox_Ajax
 {
 
     /** (non-PHPdoc)
@@ -45,7 +45,7 @@ class Psn_Admin_Metabox_Rules extends Ifw_Wp_Plugin_Admin_Menu_Metabox_Ajax
         if (isset($_POST['refresh_rows'])) {
             $html = $listTable->ajax_response();
         } else {
-            $html = '<p><a href="'.  substr(Ifw_Wp_Proxy_Admin::getMenuUrl($this->_pm, 'rules', 'create'), 1) .'" class="ifw-wp-icon-plus" id="link_create_rule">'.
+            $html = '<p><a href="'.  Ifw_Wp_Proxy_Admin::getMenuUrl($this->_pm, 'rules', 'create') .'" class="ifw-wp-icon-plus" id="link_create_rule">'.
                 __('Create new rule', 'psn') .'</a></p>';
             $html .= $listTable->fetch();
         }

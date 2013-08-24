@@ -52,7 +52,7 @@ abstract class Ifw_Wp_Widget_Dashboard
 
     public function add()
     {
-        Ifw_Wp_Plugin_Admin_Skin::loadSkin($this->_pm);
+        Ifw_Wp_Plugin_Menu_Skin::loadSkin($this->_pm);
         wp_add_dashboard_widget($this->_id, $this->_title, array($this, 'render'));
     }
 

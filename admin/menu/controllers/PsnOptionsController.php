@@ -11,10 +11,16 @@ class PsnOptionsController extends PsnApplicationController
      */
     public function indexAction()
     {
+//        var_dump($this->_pm->getBootstrap()->getUpdateManager()->getPatcher()->isPatchesAvailable());
+
         Ifw_Wp_Proxy_Script::loadAdmin('psn_options', $this->_pm->getEnv()->getUrlAdminJs() . 'options.js');
 
         // set up contextual help
-        $this->_menu->addHelp($this->_getHelpText(), __('Options', 'psn'), $this->_getHelpSidebar());
+        $help = new Ifw_Wp_Plugin_Menu_Help($this->_pm);
+        $help->setTitle(__('Options', 'psn'))
+            ->setHelp($this->_getHelpText())
+            ->setSidebar($this->_getHelpSidebar())
+            ->load();
 
         $this->view->options = Ifw_Wp_Options::getInstance($this->_pm);
     }

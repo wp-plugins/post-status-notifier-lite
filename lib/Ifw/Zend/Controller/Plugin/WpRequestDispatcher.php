@@ -34,15 +34,20 @@ class Ifw_Zend_Controller_Plugin_WpRequestDispatcher extends IfwZend_Controller_
         $response->headersSentThrowsException = false;
 
         try {
+
             if ($request->getControllerName() == 'error') {
                 return;
-            }
-            
-            $customController = $this->_getCustomController($request);
+            } elseif ($this->_isPatchesRedirect($request)) {
+                $request->setModuleName('default');
+                $request->setControllerName($this->_pm->getAbbrLower() . '-patches');
+                $request->setActionName('index');
+            } else {
+                $customController = $this->_getCustomController($request);
 
-            if ($customController != false) {
-                // set the custom controller if exists
-                $request->setControllerName($customController);
+                if ($customController != false) {
+                    // set the custom controller if exists
+                    $request->setControllerName($customController);
+                }
             }
 
         } catch (Exception $e) {
@@ -58,6 +63,13 @@ class Ifw_Zend_Controller_Plugin_WpRequestDispatcher extends IfwZend_Controller_
             $error->exception = $e;
             $request->setParam('error_handler', $error);
         }
+    }
+
+    protected function _isPatchesRedirect(IfwZend_Controller_Request_Abstract $request)
+    {
+        return $this->_pm->getBootstrap()->getUpdateManager()->getPatcher()->isPatchesAvailable() &&
+            $request->getControllerName() != 'patches' &&
+            $request->getActionName() != 'execute';
     }
     
     /**

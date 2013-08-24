@@ -28,6 +28,7 @@ class Psn_Installer_Activation implements Ifw_Wp_Plugin_Installer_ActivationInte
               `notification_body` text COLLATE utf8_unicode_ci NOT NULL,
               `recipient` varchar(200) COLLATE utf8_unicode_ci NOT NULL,
               `cc` text COLLATE utf8_unicode_ci,
+              `bcc` text COLLATE utf8_unicode_ci,
               `active` tinyint(1) NOT NULL DEFAULT "1",
               `service_email` tinyint(1) NOT NULL DEFAULT "0",
               `service_log` tinyint(1) NOT NULL DEFAULT "0",

@@ -28,6 +28,11 @@ class Ifw_Wp_Plugin_Manager
      * @var Ifw_Wp_Pathinfo_Plugin
      */
     protected $_pathinfo;
+
+    /**
+     * @var Ifw_Wp_Access
+     */
+    protected $_access;
     
     /**
      * Abbreviation character length
@@ -129,15 +134,8 @@ class Ifw_Wp_Plugin_Manager
     {
         // create the plugin bootstrap object
         $this->_bootstrap = Ifw_Wp_Plugin_Bootstrap_Abstract::factory($this);
-        $this->_bootstrap->init();
 
-        // trigger event before_bootstrap
-        Ifw_Wp_Proxy_Action::doAction($this->getAbbrLower() . '_before_bootstrap', $this->_bootstrap);
-
-        $this->_bootstrap->bootstrap();
-
-        // trigger event after_bootstrap
-        Ifw_Wp_Proxy_Action::doAction($this->getAbbrLower() . '_after_bootstrap', $this->_bootstrap);
+        $this->_bootstrap->run();
     }
     
     /**
@@ -173,6 +171,17 @@ class Ifw_Wp_Plugin_Manager
     }
 
     /**
+     * @return Ifw_Wp_Access
+     */
+    public function getAccess()
+    {
+        if (empty($this->_access)) {
+            $this->_access = new Ifw_Wp_Access($this);
+        }
+        return $this->_access;
+    }
+
+    /**
      * @return IfwZend_Controller_Front|null
      */
     public function getAdminFrontController()
@@ -184,30 +193,6 @@ class Ifw_Wp_Plugin_Manager
         return null;
     }
 
-    /**
-     * Determines if the admin pages of this plugin are accessed
-     * @return bool
-     */
-    public function isExactAdminAccess()
-    {
-        // access to menu page or ajax request to exact plugin admin
-        if ((isset($_GET['page']) && strpos($_GET['page'], $this->getPathinfo()->getDirname()) !== false) ||
-            (Ifw_Wp_Ajax_Manager::isAccess() && isset($_REQUEST['action']) &&
-                strpos($_REQUEST['action'], 'load-'. $this->getAbbrLower()) === 0)) {
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Determines if the WP admin backend is accessed, no matter which page/plugin
-     * @return bool
-     */
-    public function isGeneralAdminAccess()
-    {
-        return is_admin(); // && !Ifw_Wp_Ajax_Manager::isAccess();
-    }
-    
     /**
      * 
      * @return Ifw_Wp_Plugin_Config

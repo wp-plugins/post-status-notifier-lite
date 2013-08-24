@@ -158,6 +158,15 @@ abstract class Ifw_Wp_Env_Abstract
     }
 
     /**
+     * @param $version
+     * @return bool
+     */
+    public function isVersionGreaterThan($version)
+    {
+        return version_compare($this->getVersion(), $version) > 0;
+    }
+
+    /**
      * @return the $_pluginHomepage
      */
     public function getHomepage()

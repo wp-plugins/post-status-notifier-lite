@@ -104,6 +104,14 @@ class Ifw_Wp_Pathinfo_Plugin extends Ifw_Wp_Pathinfo_Abstract
     }
 
     /**
+     * @return string $_rootAdmin
+     */
+    public function getRootApplication()
+    {
+        return $this->_rootAdmin;
+    }
+
+    /**
      * @return string $_rootAdminMenu 
      */
     public function getRootAdminMenu()

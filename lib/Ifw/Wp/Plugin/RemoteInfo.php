@@ -89,14 +89,14 @@ class Ifw_Wp_Plugin_RemoteInfo
     
     /**
      *
-     * @throws Ifw_Wp_Plugin_Admin_Menu_Metabox_Exception
+     * @throws Ifw_Wp_Plugin_Metabox_Exception
      * @return unknown
      */
     protected function _loadRemoteInfo()
     {
         $xml = simplexml_load_string($this->_getRemoteInfoXml());
         if ($xml === false) {
-            throw new Ifw_Wp_Plugin_Admin_Menu_Metabox_Exception('Remote plugin info is not valid XML.');
+            throw new Ifw_Wp_Plugin_Metabox_Exception('Remote plugin info is not valid XML.');
         }
     
         foreach ($xml->plugin as $plugin) {
@@ -106,7 +106,7 @@ class Ifw_Wp_Plugin_RemoteInfo
             }
         }
         
-        throw new Ifw_Wp_Plugin_Admin_Menu_Metabox_Exception('Remote plugin info was not found.');
+        throw new Ifw_Wp_Plugin_Metabox_Exception('Remote plugin info was not found.');
     }
     
     /**
@@ -124,7 +124,7 @@ class Ifw_Wp_Plugin_RemoteInfo
 
     /**
      *
-     * @throws Ifw_Wp_Plugin_Admin_Menu_Metabox_Exception
+     * @throws Ifw_Wp_Plugin_Metabox_Exception
      * @return unknown
      */
     protected function _getRemoteInfoXml()
@@ -136,7 +136,7 @@ class Ifw_Wp_Plugin_RemoteInfo
             return $response->getBody();
         }
     
-        throw new Ifw_Wp_Plugin_Admin_Menu_Metabox_Exception('Could not retrieve remote XML from ' . $this->_remoteInfoUrl);
+        throw new Ifw_Wp_Plugin_Metabox_Exception('Could not retrieve remote XML from ' . $this->_remoteInfoUrl);
     }
     
     /**

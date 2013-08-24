@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: ifeelweb.de WordPress Plugin Framework 1.0\n"
 "Report-Msgid-Bugs-To: http://www.ifeelweb.de\n"
 "POT-Creation-Date: 2012-07-29 10:43:22+00:00\n"
-"PO-Revision-Date: 2013-06-29 21:39+0100\n"
+"PO-Revision-Date: 2013-08-17 20:31+0100\n"
 "Last-Translator: Timo Reith <timo@hhesse.de>\n"
 "Language-Team: German <timo@ifeelweb.de>\n"
 "Language: de\n"
@@ -217,10 +217,57 @@ msgstr "FEHLER"
 msgid "Perform selftest again"
 msgstr "Selbsttests erneut durchführen"
 
-#~ msgid ""
-#~ "You are using the Premium version of this plugin.<br>Visit the <a href="
-#~ "\"%s\" target=\"_blank\">Premium homepage</a> for the latest news."
-#~ msgstr ""
-#~ "Du verwendest die Premium Version dieses Plugins.<br>Besuche die <a href="
-#~ "\"%s\" target=\"_blank\">Premium Homepage</a>, um die neuesten Infos zu "
-#~ "erhalten."
+msgid "An error occured in patch \"%s\""
+msgstr "Es ist ein Fehler aufgetreten in Patch \"%s\""
+
+msgid "An unexpected error occured in patch \"%s\""
+msgstr "Es ist ein unerwarteter Fehler aufgetreten in Patch \"%s\""
+
+msgid "Patches available"
+msgstr "Patches verfügbar"
+
+msgid ""
+"You have to execute the patches before you can continue work with this "
+"plugin."
+msgstr ""
+"Du musst die Patches ausführen, um mit dem Plugin weiterarbeiten zu können."
+
+msgid "Execute patches"
+msgstr "Patches ausführen"
+
+msgid "Patches executed"
+msgstr "Patches ausgeführt"
+
+msgid "Error(s) occured"
+msgstr "Fehler sind aufgetreten"
+
+msgid ""
+"You should report the error(s) to the <a href=\"%s\" target=\"_blank"
+"\">plugin support</a>. Proceeding could lead to errors during the working "
+"process."
+msgstr ""
+"Du solltest die Fehler an den <a href=\"%s\" target=\"_blank\">Plugin "
+"Support</a> melden. Fortfahren könnte zu Fehlern im weiteren Arbeitsprozess "
+"führen."
+
+msgid "Proceed anyway"
+msgstr "Trotzdem fortfahren"
+
+msgid "Patches have been executed successfully!"
+msgstr "Patches wurden erfolgreich ausgeführt!"
+
+msgid "Continue"
+msgstr "Fortfahren"
+
+msgid "Nothing to patch"
+msgstr "Nichts zum Patchen"
+
+msgid "Patches executed with errors"
+msgstr "Patches mit Fehlern ausgeführt"
+
+msgid ""
+"You may now proceed working. If you run into errors, please contact the <a "
+"href=\"%s\" target=\"_blank\">plugin support</a>."
+msgstr ""
+"Du kannst jetzt weiterarbeiten. Wenn Fehler auftreten, bitte kontaktiere den "
+"<a href=\"%s\" target=\"_blank\">Plugin Support</a>."
