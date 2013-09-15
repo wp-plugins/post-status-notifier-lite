@@ -1,0 +1,130 @@
+=== Post Status Notifier Lite ===
+Tags: post, status, notification, notify, change, custom post type, email, log, logging, notify, placeholders,  transition
+Contributors: worschtebrot
+Requires at least: 3.3
+Tested up to: 3.6.1
+Stable tag: 1.2
+
+
+Lets you create individual notification rules to be informed about all post status transitions of your blog. Features custom email texts with many placeholders and custom post types.
+
+== Description ==
+
+This plugin notifies about status changes of your WordPress content. It can send email notifications with custom text to any recipient you like.
+It is especially characterized by great flexibility.
+
+For the latest information visit the plugin homepage:
+http://www.ifeelweb.de/wp-plugins/post-status-notifier/
+
+Here you can find a detailed documentation:
+http://docs.ifeelweb.de/post-status-notifier/
+
+Features:
+
+* Define **custom notification rules**
+* Support for posts, pages and all **custom post types**
+* Support for **all post status** values
+* Create **custom email texts** with support for many placeholders
+* WordPress **multisite compatible**
+* Premium version: Supports **SMTP**. You find all necessary SMTP settings to connect your SMTP server in the options section.
+* Premium version: Supports **user roles** (custom roles too) as email recipients
+* Premium version: Optional **logging**: Logs status changes based on your rules
+* Premium version: **Dashboard widget** showing the latest log entries
+* Comprehensive **documentation**
+* Included **translations**: english, german
+* **Support** in english and german via Zendesk: ifeelwebde.zendesk.com
+* Tested on Windows, Mac OS and Linux
+* Built on our ifeelweb.de WordPress Plugin Framework
+* The Lite version features two notification rules and one CC email
+
+* Get the [Premium version](http://codecanyon.net/item/post-status-notifier/4809420?ref=ifeelweb) for unlimited access
+
+= What customers say =
+
+**nomadone**: “just got the pro version and it’s working great, awesome plugin man and thanks for your excellent support”
+
+**Rick**: “This plugin is very intuitive and woks great. Very helpful support. Top notch!”
+
+**Jon**: “Thank you for your great support – the plugin works great now and has accomplished what 5 other commercial and free plugins couldn’t – to provide simple and configurable email notifications for WP status changes.”
+
+**Urosino**: “Everything works properly!”
+
+[Comment-Source](http://codecanyon.net/item/post-status-notifier/discussion/4809420)
+
+
+== Installation ==
+
+Just unpack the `post-status-notifier-lite` folder into your plugins directory and activate it on your wordpress plugins page.
+Then you will have the option `Post Status Notifier Lite` on your wordpress options page.
+
+
+== Configuration ==
+
+Go to the new option page `Post Status Notifier Lite`. Here you can define custom notification rules.
+
+Here you can find a detailed documentation:
+
+http://docs.ifeelweb.de/post-status-notifier/
+
+== Change Log ==
+
+= 1.2 =
+
+* New feature: Notification rule recipient supports user roles (default and custom roles) and special all users
+* Improvement: PSN now is completely multisite compatible
+* Bugfix: Single quotes in blog name will be shown correctly now
+
+= 1.1 =
+
+* New feature: Bcc field. Set Bcc recipients for your notification rules.
+* New feature: SMTP mode. If you want to send many notifications and have a SMTP mail server, PSN now supports it. You find all necessary SMTP settings in the options section.
+* New feature: Plugin selftester. The plugin ships with some selftesting routines you can trigger manually in the plugin dashboard.
+* Minor bugfixing: Now fully compatible with Windows Server 2008 / PHP 5.2
+
+= 1.0.5 =
+
+* Bugfix in date/time calculation (PHP5.2)
+
+= 1.0.4 =
+
+* Minor bugfixes
+
+= 1.0.3 =
+
+* Further improvements: Removed dependency to PDO at all
+
+= 1.0.2 =
+
+* Bugfix: Recipient “Post author” did not work for notification rules
+* Bugfix: Plugin activation could produce error with PHP 5.2 (Parse error: syntax error, unexpected T_PAAMAYIM_NEKUDOTAYIM …)
+
+= 1.0.1 =
+
+* Removed dependency to PHP pdo_mysql (framework database models now work with native wpdb object)
+* Improved backwards compatibility up to WP 3.3 (tested on 3.3.x / 3.4.x / 3.5.x)
+* Adjusted log timestamp format to blog date/time settings
+
+
+== Info ==
+
+If you find any bugs please use the comments on the [plugin's homepage](http://www.ifeelweb.de/contact/). Please also contact me for feature requests and ideas how to improve this plugin. Any other reactions are welcome too of course.
+
+== Frequently Asked Questions ==
+
+
+
+== Screenshots ==
+
+1. Use case 1: You host a blog with several authors and you want to be informed when a new post is ready for review.
+2. Use case 2: This rule sends an email to the author of a post when it got published.
+3. Use case 3: This rule is for blog admins who want to be informed about every single post status change.
+4. Overview screen
+5. Form to create a new notification rule
+6. List of placeholders
+7. Buttons to create example rules
+8. Options (Logger is a Premium feature)
+9. Premium: List of log entries 
+10. Premium: Dashboard widget of log entries
+11. Example email generated by the plugin
+12. Extended recipients
+
