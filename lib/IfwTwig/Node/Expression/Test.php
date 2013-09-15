@@ -18,8 +18,7 @@ class IfwTwig_Node_Expression_Test extends IfwTwig_Node_Expression_Call
     public function compile(IfwTwig_Compiler $compiler)
     {
         $name = $this->getAttribute('name');
-        $testMap = $compiler->getEnvironment()->getTests();
-        $test = $testMap[$name];
+        $test = $compiler->getEnvironment()->getTest($name);
 
         $this->setAttribute('name', $name);
         $this->setAttribute('type', 'test');

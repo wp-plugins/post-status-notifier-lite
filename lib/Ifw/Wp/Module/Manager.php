@@ -12,10 +12,10 @@
 class Ifw_Wp_Module_Manager
 {
     /**
-     * Instance store
+     * Module instance store
      * @var array
      */
-//    public static $_instances = array();
+    public $_instances = array();
 
     /**
      * @var Ifw_Wp_Plugin_Manager
@@ -86,13 +86,17 @@ class Ifw_Wp_Module_Manager
 
                         array_push($this->_loaded, $module->getEnv()->getId());
 
+                        if (!isset($this->_instances[$module->getEnv()->getId()])) {
+                            $this->_instances[$module->getEnv()->getId()] = $module;
+                        }
+
                         unset($modules[$i]);
                         $modules = array_values($modules);
 
                     } catch (Ifw_Wp_Model_Exception $e) {
                         $this->_pm->getLogger()->err('Module error: '. $e->getMessage());
                     } catch (Exception $e) {
-                        $this->_pm->getLogger()->err('Unexpected exception in module "'. $module .'":'. $e->getMessage());
+                        $this->_pm->getLogger()->err('Unexpected exception in module "'. $module->getEnv()->getId() .'":'. $e->getMessage());
                     }
                 }
             }
@@ -215,5 +219,17 @@ class Ifw_Wp_Module_Manager
     public function hasModules()
     {
         return is_dir($this->_pm->getPathinfo()->getRootModules());
+    }
+
+    /**
+     * @param $id
+     * @return Ifw_Wp_Module_Bootstrap_Abstract|null
+     */
+    public function getModule($id)
+    {
+        if (isset($this->_instances[$id])) {
+            return $this->_instances[$id];
+        }
+        return null;
     }
 }

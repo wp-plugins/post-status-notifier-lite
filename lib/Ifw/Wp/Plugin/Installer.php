@@ -106,13 +106,13 @@ class Ifw_Wp_Plugin_Installer
     /**
      * Loop over all added activation objects
      */
-    public function activate()
+    public function activate($networkwide)
     {
         /**
-         * @var $activaion Ifw_Wp_Plugin_Installer_ActivationInterface
+         * @var $activation Ifw_Wp_Plugin_Installer_ActivationInterface
          */
-        foreach ($this->_activation as $activaion) {
-            $activaion->execute($this->_pm);
+        foreach ($this->_activation as $activation) {
+            $activation->execute($this->_pm, $networkwide);
         }
     }
 
@@ -136,13 +136,13 @@ class Ifw_Wp_Plugin_Installer
     /**
      * Loop over all added deactivation objects
      */
-    public function deactivate()
+    public function deactivate($networkwide)
     {
         /**
          * @var $activaion Ifw_Wp_Plugin_Installer_DeactivationInterface
          */
         foreach ($this->_deactivation as $deactivaion) {
-            $deactivaion->execute($this->_pm);
+            $deactivaion->execute($this->_pm, $networkwide);
         }
     }
 

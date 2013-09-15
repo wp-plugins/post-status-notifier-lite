@@ -156,8 +156,8 @@ class Psn_Admin_ListTable_Rules extends Ifw_Wp_Plugin_ListTable_Abstract
         if (!$this->isMetaboxEmbedded()) {
             //Build row actions
             $actions = array(
-                'edit'   => sprintf('<a href="?page=%s&controller=rules&action=edit&id=%s">'. __('Edit', 'psn') .'</a>', $_REQUEST['page'], $item['id']),
-                'delete' => sprintf('<a href="?page=%s&controller=rules&action=delete&id=%s" class="delConfirm">'. __('Delete', 'psn') .'</a>', $_REQUEST['page'], $item['id']),
+                'edit'   => sprintf('<a href="?page=%s&controller=rules&appaction=edit&id=%s">'. __('Edit', 'psn') .'</a>', $_REQUEST['page'], $item['id']),
+                'delete' => sprintf('<a href="?page=%s&controller=rules&appaction=delete&id=%s" class="delConfirm">'. __('Delete', 'psn') .'</a>', $_REQUEST['page'], $item['id']),
             );
 
             //Return the title contents

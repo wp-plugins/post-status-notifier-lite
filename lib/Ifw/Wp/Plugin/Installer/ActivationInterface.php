@@ -13,7 +13,8 @@ interface Ifw_Wp_Plugin_Installer_ActivationInterface
 {
     /**
      * @param Ifw_Wp_Plugin_Manager $pm
+     * @param bool $networkwide
      * @return mixed
      */
-    public function execute(Ifw_Wp_Plugin_Manager $pm);
+    public function execute(Ifw_Wp_Plugin_Manager $pm, $networkwide = false);
 }

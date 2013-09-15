@@ -58,7 +58,7 @@ class Ifw_Wp_Email
     protected function _getAdjustedHeaders()
     {
         if ($this->getFrom() == null) {
-            $this->setFrom(sprintf('%s <%s>', Ifw_Wp_Proxy_Blog::getName(), Ifw_Wp_Proxy_Blog::getAdminEmail()));
+            $this->setFrom(sprintf('%s <%s>', $this->_getFilteredBlogName(), Ifw_Wp_Proxy_Blog::getAdminEmail()));
         }
 
         $adjustedHeaders = array();
@@ -66,6 +66,16 @@ class Ifw_Wp_Email
             array_push($adjustedHeaders, $k . ':' . $v);
         }
         return $adjustedHeaders;
+    }
+
+    /**
+     * @return string
+     */
+    protected function _getFilteredBlogName()
+    {
+        return strtr(Ifw_Wp_Proxy_Blog::getName(), array(
+            '&#039;' => '\'',
+        ));
     }
 
     /**

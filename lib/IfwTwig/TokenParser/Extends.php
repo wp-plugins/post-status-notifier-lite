@@ -38,8 +38,6 @@ class IfwTwig_TokenParser_Extends extends IfwTwig_TokenParser
         $this->parser->setParent($this->parser->getExpressionParser()->parseExpression());
 
         $this->parser->getStream()->expect(IfwTwig_Token::BLOCK_END_TYPE);
-
-        return null;
     }
 
     /**

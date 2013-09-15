@@ -99,14 +99,17 @@ class Ifw_Wp_Plugin_Application_Adapter_ZendFw implements Ifw_Wp_Plugin_Applicat
         $front->setRequest($request);
     }
 
+    public function init()
+    {
+        // init the controller object to add actions before load-{page-id} action
+        $this->_application->initController();
+    }
+
     /**
      * @return mixed|void
      */
     public function render()
     {
-        // init the controller object to add actions before to load-page action (custom)
-        $this->_application->initController();
-
         $this->_output = $this->_application->run();
     }
 

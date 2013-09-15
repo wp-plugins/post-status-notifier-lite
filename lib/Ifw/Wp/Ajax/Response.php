@@ -21,6 +21,11 @@ class Ifw_Wp_Ajax_Response
      */
     protected $_html;
 
+    /**
+     * @var array
+     */
+    protected $_extra = array();
+
 
     /**
      *
@@ -66,5 +71,22 @@ class Ifw_Wp_Ajax_Response
     {
         $this->_html = $html;
     }
-    
+
+    /**
+     * @param $key
+     * @param $value
+     */
+    public function addExtra($key, $value)
+    {
+        $this->_extra[$key] = $value;
+    }
+
+    /**
+     * @return array
+     */
+    public function getExtra()
+    {
+        return $this->_extra;
+    }
+
 }

@@ -50,7 +50,7 @@ class Ifw_Wp_Proxy_Screen
      */
     public static function getCurrent()
     {
-        if (Ifw_Wp_Proxy_Blog::isMinimumVersion('3.1')) {
+        if (Ifw_Wp_Proxy_Blog::isMinimumVersion('3.1') && function_exists('get_current_screen')) {
             return get_current_screen();
         }
         return null;
@@ -62,7 +62,10 @@ class Ifw_Wp_Proxy_Screen
      */
     public static function getCurrentId()
     {
-        return self::getCurrent()->id;
+        if (self::getCurrent() != null) {
+            return self::getCurrent()->id;
+        }
+        return null;
     }
 
     /**
@@ -79,7 +82,9 @@ class Ifw_Wp_Proxy_Screen
      */
     public static function isLoadedCurrentScreen()
     {
-        return function_exists('get_current_screen') && Ifw_Wp_Proxy_Action::did('load-'. Ifw_Wp_Proxy_Screen::getCurrent()->id);
+        return function_exists('get_current_screen') &&
+            self::getCurrentId() != null &&
+            Ifw_Wp_Proxy_Action::did('load-'. self::getCurrentId());
     }
 
     /**

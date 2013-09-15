@@ -20,12 +20,17 @@ class Psn_Notification_Service_Email implements Psn_Notification_Service_Interfa
         $emailBody = Ifw_Wp_Proxy_Filter::apply('psn_service_email_body', $replacer->replace($rule->getNotificationBody()));
         $emailSubject = Ifw_Wp_Proxy_Filter::apply('psn_service_email_subject', $replacer->replace($rule->getNotificationSubject()));
 
-        switch ($rule->get('recipient')) {
+        $recipient = $rule->get('recipient');
+
+        switch ($recipient) {
             case 'admin':
                 $to = Ifw_Wp_Proxy_Blog::getAdminEmail();
                 break;
             case 'author':
                 $to = Ifw_Wp_Proxy_User::getEmail($post->post_author);
+                break;
+            default:
+                $to = Ifw_Wp_Proxy_Filter::apply('psn_service_email_recipient', $recipient);
                 break;
         }
 
@@ -57,6 +62,5 @@ class Psn_Notification_Service_Email implements Psn_Notification_Service_Interfa
 
             Ifw_Wp_Proxy_Action::doAction('psn_after_notification_email_send', $email);
         }
-
     }
 }

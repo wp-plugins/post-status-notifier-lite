@@ -68,8 +68,6 @@ class IfwTwig_TokenParser_Use extends IfwTwig_TokenParser
         $stream->expect(IfwTwig_Token::BLOCK_END_TYPE);
 
         $this->parser->addTrait(new IfwTwig_Node(array('template' => $template, 'targets' => new IfwTwig_Node($targets))));
-
-        return null;
     }
 
     /**

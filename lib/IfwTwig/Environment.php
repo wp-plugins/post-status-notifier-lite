@@ -12,12 +12,11 @@
 /**
  * Stores the Twig configuration.
  *
- * @package twig
- * @author  Fabien Potencier <fabien@symfony.com>
+ * @author Fabien Potencier <fabien@symfony.com>
  */
 class IfwTwig_Environment
 {
-    const VERSION = '1.12.0-DEV';
+    const VERSION = '1.14.0-DEV';
 
     protected $charset;
     protected $loader;
@@ -45,6 +44,7 @@ class IfwTwig_Environment
     protected $functionCallbacks;
     protected $filterCallbacks;
     protected $staging;
+    protected $templateClasses;
 
     /**
      * Constructor.
@@ -54,7 +54,7 @@ class IfwTwig_Environment
      *  * debug: When set to true, it automatically set "auto_reload" to true as
      *           well (default to false).
      *
-     *  * charset: The charset used by the templates (default to utf-8).
+     *  * charset: The charset used by the templates (default to UTF-8).
      *
      *  * base_template_class: The base template class to use for generated
      *                         templates (default to IfwTwig_Template).
@@ -100,7 +100,7 @@ class IfwTwig_Environment
         ), $options);
 
         $this->debug              = (bool) $options['debug'];
-        $this->charset            = $options['charset'];
+        $this->charset            = strtoupper($options['charset']);
         $this->baseTemplateClass  = $options['base_template_class'];
         $this->autoReload         = null === $options['auto_reload'] ? $this->debug : (bool) $options['auto_reload'];
         $this->strictVariables    = (bool) $options['strict_variables'];
@@ -108,6 +108,7 @@ class IfwTwig_Environment
         $this->setCache($options['cache']);
         $this->functionCallbacks = array();
         $this->filterCallbacks = array();
+        $this->templateClasses = array();
 
         $this->addExtension(new IfwTwig_Extension_Core());
         $this->addExtension(new IfwTwig_Extension_Escaper($options['autoescape']));
@@ -263,7 +264,13 @@ class IfwTwig_Environment
      */
     public function getTemplateClass($name, $index = null)
     {
-        return $this->templateClassPrefix.md5($this->loader->getCacheKey($name)).(null === $index ? '' : '_'.$index);
+        $suffix = null === $index ? '' : '_'.$index;
+        $cls = $name.$suffix;
+        if (isset($this->templateClasses[$cls])) {
+            return $this->templateClasses[$cls];
+        }
+
+        return $this->templateClasses[$cls] = $this->templateClassPrefix.hash('sha256', $this->getLoader()->getCacheKey($name)).$suffix;
     }
 
     /**
@@ -318,10 +325,10 @@ class IfwTwig_Environment
 
         if (!class_exists($cls, false)) {
             if (false === $cache = $this->getCacheFilename($name)) {
-                eval('?>'.$this->compileSource($this->loader->getSource($name), $name));
+                eval('?>'.$this->compileSource($this->getLoader()->getSource($name), $name));
             } else {
                 if (!is_file($cache) || ($this->isAutoReload() && !$this->isTemplateFresh($name, filemtime($cache)))) {
-                    $this->writeCacheFile($cache, $this->compileSource($this->loader->getSource($name), $name));
+                    $this->writeCacheFile($cache, $this->compileSource($this->getLoader()->getSource($name), $name));
                 }
 
                 require_once $cache;
@@ -356,7 +363,7 @@ class IfwTwig_Environment
             }
         }
 
-        return $this->loader->isFresh($name, $time);
+        return $this->getLoader()->isFresh($name, $time);
     }
 
     public function resolveTemplate($names)
@@ -553,6 +560,10 @@ class IfwTwig_Environment
      */
     public function getLoader()
     {
+        if (null === $this->loader) {
+            throw new LogicException('You must set a loader first.');
+        }
+
         return $this->loader;
     }
 
@@ -563,7 +574,7 @@ class IfwTwig_Environment
      */
     public function setCharset($charset)
     {
-        $this->charset = $charset;
+        $this->charset = strtoupper($charset);
     }
 
     /**
@@ -725,7 +736,7 @@ class IfwTwig_Environment
     public function addNodeVisitor(IfwTwig_NodeVisitorInterface $visitor)
     {
         if ($this->extensionInitialized) {
-            throw new LogicException('Unable to add a node visitor as extensions have already been initialized.', $extension->getName());
+            throw new LogicException('Unable to add a node visitor as extensions have already been initialized.');
         }
 
         $this->staging->addNodeVisitor($visitor);
@@ -753,10 +764,6 @@ class IfwTwig_Environment
      */
     public function addFilter($name, $filter = null)
     {
-        if ($this->extensionInitialized) {
-            throw new LogicException(sprintf('Unable to add filter "%s" as extensions have already been initialized.', $name));
-        }
-
         if (!$name instanceof IfwTwig_SimpleFilter && !($filter instanceof IfwTwig_SimpleFilter || $filter instanceof IfwTwig_FilterInterface)) {
             throw new LogicException('A filter must be an instance of IfwTwig_FilterInterface or IfwTwig_SimpleFilter');
         }
@@ -765,7 +772,11 @@ class IfwTwig_Environment
             $filter = $name;
             $name = $filter->getName();
         }
-
+        
+        if ($this->extensionInitialized) {
+            throw new LogicException(sprintf('Unable to add filter "%s" as extensions have already been initialized.', $name));
+        }
+        
         $this->staging->addFilter($name, $filter);
     }
 
@@ -842,10 +853,6 @@ class IfwTwig_Environment
      */
     public function addTest($name, $test = null)
     {
-        if ($this->extensionInitialized) {
-            throw new LogicException(sprintf('Unable to add test "%s" as extensions have already been initialized.', $name));
-        }
-
         if (!$name instanceof IfwTwig_SimpleTest && !($test instanceof IfwTwig_SimpleTest || $test instanceof IfwTwig_TestInterface)) {
             throw new LogicException('A test must be an instance of IfwTwig_TestInterface or IfwTwig_SimpleTest');
         }
@@ -853,6 +860,10 @@ class IfwTwig_Environment
         if ($name instanceof IfwTwig_SimpleTest) {
             $test = $name;
             $name = $test->getName();
+        }
+        
+        if ($this->extensionInitialized) {
+            throw new LogicException(sprintf('Unable to add test "%s" as extensions have already been initialized.', $name));
         }
 
         $this->staging->addTest($name, $test);
@@ -873,6 +884,26 @@ class IfwTwig_Environment
     }
 
     /**
+     * Gets a test by name.
+     *
+     * @param string $name The test name
+     *
+     * @return IfwTwig_Test|false A IfwTwig_Test instance or false if the test does not exist
+     */
+    public function getTest($name)
+    {
+        if (!$this->extensionInitialized) {
+            $this->initExtensions();
+        }
+
+        if (isset($this->tests[$name])) {
+            return $this->tests[$name];
+        }
+
+        return false;
+    }
+
+    /**
      * Registers a Function.
      *
      * @param string|IfwTwig_SimpleFunction                 $name     The function name or a IfwTwig_SimpleFunction instance
@@ -880,10 +911,6 @@ class IfwTwig_Environment
      */
     public function addFunction($name, $function = null)
     {
-        if ($this->extensionInitialized) {
-            throw new LogicException(sprintf('Unable to add function "%s" as extensions have already been initialized.', $name));
-        }
-
         if (!$name instanceof IfwTwig_SimpleFunction && !($function instanceof IfwTwig_SimpleFunction || $function instanceof IfwTwig_FunctionInterface)) {
             throw new LogicException('A function must be an instance of IfwTwig_FunctionInterface or IfwTwig_SimpleFunction');
         }
@@ -892,7 +919,11 @@ class IfwTwig_Environment
             $function = $name;
             $name = $function->getName();
         }
-
+        
+        if ($this->extensionInitialized) {
+            throw new LogicException(sprintf('Unable to add function "%s" as extensions have already been initialized.', $name));
+        }
+        
         $this->staging->addFunction($name, $function);
     }
 
@@ -964,16 +995,32 @@ class IfwTwig_Environment
     /**
      * Registers a Global.
      *
+     * New globals can be added before compiling or rendering a template;
+     * but after, you can only update existing globals.
+     *
      * @param string $name  The global name
      * @param mixed  $value The global value
      */
     public function addGlobal($name, $value)
     {
-        if ($this->extensionInitialized) {
-            throw new LogicException(sprintf('Unable to add global "%s" as extensions have already been initialized.', $name));
+        if ($this->extensionInitialized || $this->runtimeInitialized) {
+            if (null === $this->globals) {
+                $this->globals = $this->initGlobals();
+            }
+
+            /* This condition must be uncommented in Twig 2.0
+            if (!array_key_exists($name, $this->globals)) {
+                throw new LogicException(sprintf('Unable to add global "%s" as the runtime or the extensions have already been initialized.', $name));
+            }
+            */
         }
 
-        $this->staging->addGlobal($name, $value);
+        if ($this->extensionInitialized || $this->runtimeInitialized) {
+            // update the value
+            $this->globals[$name] = $value;
+        } else {
+            $this->staging->addGlobal($name, $value);
+        }
     }
 
     /**
@@ -983,8 +1030,12 @@ class IfwTwig_Environment
      */
     public function getGlobals()
     {
-        if (!$this->extensionInitialized) {
-            $this->initExtensions();
+        if (!$this->runtimeInitialized && !$this->extensionInitialized) {
+            return $this->initGlobals();
+        }
+
+        if (null === $this->globals) {
+            $this->globals = $this->initGlobals();
         }
 
         return $this->globals;
@@ -1052,6 +1103,23 @@ class IfwTwig_Environment
         return array_keys($alternatives);
     }
 
+    protected function initGlobals()
+    {
+        $globals = array();
+        foreach ($this->extensions as $extension) {
+            $extGlob = $extension->getGlobals();
+            if (!is_array($extGlob)) {
+                throw new UnexpectedValueException(sprintf('"%s::getGlobals()" must return an array of globals.', get_class($extension)));
+            }
+
+            $globals[] = $extGlob;
+        }
+
+        $globals[] = $this->staging->getGlobals();
+
+        return call_user_func_array('array_merge', $globals);
+    }
+
     protected function initExtensions()
     {
         if ($this->extensionInitialized) {
@@ -1063,7 +1131,6 @@ class IfwTwig_Environment
         $this->filters = array();
         $this->functions = array();
         $this->tests = array();
-        $this->globals = array();
         $this->visitors = array();
         $this->unaryOperators = array();
         $this->binaryOperators = array();
@@ -1111,9 +1178,6 @@ class IfwTwig_Environment
 
             $this->tests[$name] = $test;
         }
-
-        // globals
-        $this->globals = array_merge($this->globals, $extension->getGlobals());
 
         // token parsers
         foreach ($extension->getTokenParsers() as $parser) {

@@ -13,8 +13,7 @@
 /**
  * Represents a text node.
  *
- * @package    twig
- * @author     Fabien Potencier <fabien@symfony.com>
+ * @author Fabien Potencier <fabien@symfony.com>
  */
 class IfwTwig_Node_Text extends IfwTwig_Node implements IfwTwig_NodeOutputInterface
 {

@@ -21,9 +21,13 @@ class Ifw_Wp_Plugin_Logger_Model extends Ifw_Wp_ORM_Model
         'extra'
     );
 
-    public function createTable($tablename)
+    /**
+     * @param $tablename
+     * @param bool $networkwide
+     */
+    public function createTable($tablename, $networkwide = false)
     {
-        global $wpdb, $table_prefix;
+        global $wpdb;
 
         $query = '
         CREATE TABLE IF NOT EXISTS `%s` (
@@ -37,6 +41,17 @@ class Ifw_Wp_Plugin_Logger_Model extends Ifw_Wp_ORM_Model
         ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
         ';
 
-        return $wpdb->query(sprintf($query, $table_prefix . $tablename));
+        if (!$networkwide) {
+            // single blog installation
+            $wpdb->query(sprintf($query, $wpdb->prefix . $tablename));
+        } else {
+            // multisite installation
+            $currentBlogId = Ifw_Wp_Proxy_Blog::getBlogId();
+            foreach (Ifw_Wp_Proxy_Blog::getMultisiteBlogIds() as $blogId) {
+                Ifw_Wp_Proxy_Blog::switchToBlog($blogId);
+                $wpdb->query(sprintf($query, $wpdb->prefix . $tablename));
+            }
+            Ifw_Wp_Proxy_Blog::switchToBlog($currentBlogId);
+        }
     }
 }

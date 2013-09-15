@@ -39,11 +39,11 @@ class Ifw_Zend_Navigation_Page_WpMvc extends IfwZend_Navigation_Page_Mvc
         }
 
         if ($param = $this->getController()) {
-            $params['controller'] = $param;
+            $params[Ifw_Zend_Controller_Front::getInstance()->getRequest()->getControllerKey()] = $param;
         }
 
         if ($param = $this->getAction()) {
-            $params['action'] = $param;
+            $params[Ifw_Zend_Controller_Front::getInstance()->getRequest()->getActionKey()] = $param;
         }
         
         if ($this->_page != null) {

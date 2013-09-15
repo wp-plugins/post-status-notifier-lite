@@ -154,7 +154,13 @@ class PsnRulesController extends PsnApplicationController
             Ifw_Wp_Proxy_Filter::add('psn_rule_form_description_bcc', create_function('$var','return $var . " " .
                 __("(Premium feature)", "psn");'));
         }
+
         $this->_form = new Psn_Admin_Form_NotificationRule();
+
+        if (!$this->_pm->isPremium()) {
+            $this->_form->getElement('recipient')->setDescription(__('Get additional recipients like user roles (including custom roles) or all users with the Premium version.', 'psn'));
+        }
+
 
         $this->_helper->viewRenderer('form');
         $help = new Ifw_Wp_Plugin_Menu_Help($this->_pm);
@@ -170,7 +176,7 @@ class PsnRulesController extends PsnApplicationController
             $this->view->maxReached = __(sprintf('You reached the maximum number of rules (%s) for the free version. Get the <a href="%s" target="_blank">Premium Version</a> for unlimmited rules and more features.', Psn_Model_Rule::getMax(), $this->_pm->getConfig()->plugin->premiumUrl), 'psn');
         }
 
-        if ($this->_request->get('action') == 'create') {
+        if ($this->_request->getActionName() == 'create') {
             $this->view->langHeadline = __('Create new rule', 'psn');
 
             Ifw_Wp_Proxy_Script::loadAdmin('psn_rule_examples', $this->_pm->getEnv()->getUrlAdminJs() . 'rule_examples.js');

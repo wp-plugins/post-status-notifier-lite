@@ -235,8 +235,10 @@ class Ifw_Zend_Controller_Front extends IfwZend_Controller_Front
         } elseif ((null === $request) && (null === ($request = $this->getRequest()))) {
             //require_once 'IfwZend/Controller/Request/Http.php';
             $request = new IfwZend_Controller_Request_Http();
+
             $this->setRequest($request);
         }
+        $request->setActionKey($pm->getConfig()->getActionKey());
 
         /**
          * Set base URL of request object, if available

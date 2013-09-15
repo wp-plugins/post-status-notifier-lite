@@ -21,8 +21,7 @@
  * source code of the template). If you don't want to see your cache grows out of
  * control, you need to take care of clearing the old cache file by yourself.
  *
- * @package    twig
- * @author     Fabien Potencier <fabien@symfony.com>
+ * @author Fabien Potencier <fabien@symfony.com>
  */
 class IfwTwig_Loader_String implements IfwTwig_LoaderInterface, IfwTwig_ExistsLoaderInterface
 {

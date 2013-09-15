@@ -12,11 +12,13 @@
 /**
  * Loads template from the filesystem.
  *
- * @package    twig
- * @author     Fabien Potencier <fabien@symfony.com>
+ * @author Fabien Potencier <fabien@symfony.com>
  */
 class IfwTwig_Loader_Filesystem implements IfwTwig_LoaderInterface, IfwTwig_ExistsLoaderInterface
 {
+    /** Identifier of the main namespace. */
+    const MAIN_NAMESPACE = '__main__';
+
     protected $paths;
     protected $cache;
 
@@ -25,9 +27,11 @@ class IfwTwig_Loader_Filesystem implements IfwTwig_LoaderInterface, IfwTwig_Exis
      *
      * @param string|array $paths A path or an array of paths where to look for templates
      */
-    public function __construct($paths)
+    public function __construct($paths = array())
     {
-        $this->setPaths($paths);
+        if ($paths) {
+            $this->setPaths($paths);
+        }
     }
 
     /**
@@ -37,7 +41,7 @@ class IfwTwig_Loader_Filesystem implements IfwTwig_LoaderInterface, IfwTwig_Exis
      *
      * @return array The array of paths where to look for templates
      */
-    public function getPaths($namespace = '__main__')
+    public function getPaths($namespace = self::MAIN_NAMESPACE)
     {
         return isset($this->paths[$namespace]) ? $this->paths[$namespace] : array();
     }
@@ -45,7 +49,7 @@ class IfwTwig_Loader_Filesystem implements IfwTwig_LoaderInterface, IfwTwig_Exis
     /**
      * Returns the path namespaces.
      *
-     * The "__main__" namespace is always defined.
+     * The main namespace is always defined.
      *
      * @return array The array of defined namespaces
      */
@@ -60,7 +64,7 @@ class IfwTwig_Loader_Filesystem implements IfwTwig_LoaderInterface, IfwTwig_Exis
      * @param string|array $paths     A path or an array of paths where to look for templates
      * @param string       $namespace A path namespace
      */
-    public function setPaths($paths, $namespace = '__main__')
+    public function setPaths($paths, $namespace = self::MAIN_NAMESPACE)
     {
         if (!is_array($paths)) {
             $paths = array($paths);
@@ -80,7 +84,7 @@ class IfwTwig_Loader_Filesystem implements IfwTwig_LoaderInterface, IfwTwig_Exis
      *
      * @throws IfwTwig_Error_Loader
      */
-    public function addPath($path, $namespace = '__main__')
+    public function addPath($path, $namespace = self::MAIN_NAMESPACE)
     {
         // invalidate the cache
         $this->cache = array();
@@ -100,7 +104,7 @@ class IfwTwig_Loader_Filesystem implements IfwTwig_LoaderInterface, IfwTwig_Exis
      *
      * @throws IfwTwig_Error_Loader
      */
-    public function prependPath($path, $namespace = '__main__')
+    public function prependPath($path, $namespace = self::MAIN_NAMESPACE)
     {
         // invalidate the cache
         $this->cache = array();
@@ -174,15 +178,15 @@ class IfwTwig_Loader_Filesystem implements IfwTwig_LoaderInterface, IfwTwig_Exis
 
         $this->validateName($name);
 
-        $namespace = '__main__';
+        $namespace = self::MAIN_NAMESPACE;
+        $shortname = $name;
         if (isset($name[0]) && '@' == $name[0]) {
             if (false === $pos = strpos($name, '/')) {
                 throw new IfwTwig_Error_Loader(sprintf('Malformed namespaced template name "%s" (expecting "@namespace/template_name").', $name));
             }
 
             $namespace = substr($name, 1, $pos - 1);
-
-            $name = substr($name, $pos + 1);
+            $shortname = substr($name, $pos + 1);
         }
 
         if (!isset($this->paths[$namespace])) {
@@ -190,8 +194,8 @@ class IfwTwig_Loader_Filesystem implements IfwTwig_LoaderInterface, IfwTwig_Exis
         }
 
         foreach ($this->paths[$namespace] as $path) {
-            if (is_file($path.'/'.$name)) {
-                return $this->cache[$name] = $path.'/'.$name;
+            if (is_file($path.'/'.$shortname)) {
+                return $this->cache[$name] = $path.'/'.$shortname;
             }
         }
 
@@ -204,6 +208,7 @@ class IfwTwig_Loader_Filesystem implements IfwTwig_LoaderInterface, IfwTwig_Exis
             throw new IfwTwig_Error_Loader('A template name cannot contain NUL bytes.');
         }
 
+        $name = ltrim($name, '/');
         $parts = explode('/', $name);
         $level = 0;
         foreach ($parts as $part) {

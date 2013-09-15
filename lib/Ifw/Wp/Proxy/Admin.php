@@ -38,9 +38,29 @@ class Ifw_Wp_Proxy_Admin
         }
 
         $urlOptions = array_merge(array(
-            'controller' => $controller,
-            'action' => $action,
+            $pm->getConfig()->getControllerKey() => $controller,
+            $pm->getConfig()->getActionKey() => $action,
             'page' => $page
+        ), $extra);
+
+        $router = Ifw_Zend_Controller_Front::getInstance()->initRouter($pm)->getRouter();
+        return $router->assemble($urlOptions, 'requestVars');
+    }
+
+    /**
+     * @param Ifw_Wp_Plugin_Manager $pm
+     * @param $controller
+     * @param string $action
+     * @param null $page
+     * @param array $extra
+     * @return string
+     */
+    public static function getAdminPageUrl(Ifw_Wp_Plugin_Manager $pm, $page, $controller, $action='index', $extra = array())
+    {
+        $urlOptions = array_merge(array(
+            $pm->getConfig()->getControllerKey() => $controller,
+            $pm->getConfig()->getActionKey() => $action,
+            'adminpage' => $page
         ), $extra);
 
         $router = Ifw_Zend_Controller_Front::getInstance()->initRouter($pm)->getRouter();
@@ -55,6 +75,6 @@ class Ifw_Wp_Proxy_Admin
 
     public static function getAdminPageBaseUrl()
     {
-        return 'admin.php';
+        return Ifw_Wp_Proxy_Blog::getSiteUrl() . '/wp-admin/admin.php';
     }
 }

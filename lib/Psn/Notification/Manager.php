@@ -44,6 +44,7 @@ class Psn_Notification_Manager
     {
         Ifw_Wp_Proxy_Filter::add('transition_post_status', array($this, 'handlePostStatusTransition'), 10, 3);
         Ifw_Wp_Proxy_Filter::add('psn_service_email_body', array($this, 'filterEmailBody'), 10, 3);
+        Ifw_Wp_Proxy_Filter::add('psn_service_email_subject', array($this, 'filterEmailSubject'), 10, 3);
         $this->_loadServices();
     }
 
@@ -109,11 +110,24 @@ class Psn_Notification_Manager
     }
 
     /**
+     * @param $subject
+     * @return string
+     */
+    public function filterEmailSubject($subject)
+    {
+        $subject = $this->_handleSpecialChars($subject);
+
+        return $subject;
+    }
+
+    /**
      * @param $body
      * @return string
      */
     public function filterEmailBody($body)
     {
+        $body = $this->_handleSpecialChars($body);
+
         if (!$this->_pm->isPremium()) {
             $body .= PHP_EOL . PHP_EOL .
                 sprintf(__('This email was sent by WordPress plugin "%s". Visit the plugin homepage: %s'),
@@ -122,6 +136,17 @@ class Psn_Notification_Manager
                 );
         }
         return $body;
+    }
+
+    /**
+     * @param $string
+     * @return string
+     */
+    protected function _handleSpecialChars($string)
+    {
+        return strtr($string, array(
+            '&#039;' => '\'',
+        ));
     }
 
     /**

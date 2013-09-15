@@ -23,6 +23,12 @@ class Ifw_Wp_Proxy_Style
     private static $_stylesAdmin = array();
 
     /**
+     * Container for inline styles to enqueue
+     * @var array
+     */
+    private static $_inline = array();
+
+    /**
      * If enqueue function is set
      * @var bool
      */
@@ -66,6 +72,19 @@ class Ifw_Wp_Proxy_Style
     public static function denqueue($handle)
     {
         wp_dequeue_style($handle);
+    }
+
+    /**
+     * @param $handle
+     * @param $data
+     */
+    public static function addInline($handle, $data)
+    {
+        if (!isset(self::$_inline[$handle])) {
+            self::$_inline[$handle] = array(
+                'data' => $data
+            );
+        }
     }
 
     /**
@@ -134,6 +153,9 @@ class Ifw_Wp_Proxy_Style
     {
         foreach (self::$_styles as $handle => $data) {
             self::enqueue($handle, $data['src'], $data['deps'], $data['ver'], $data['media']);
+            if (isset(self::$_inline[$handle])) {
+                wp_add_inline_style($handle, self::$_inline[$handle]['data']);
+            }
         }
     }
 

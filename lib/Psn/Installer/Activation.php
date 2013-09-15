@@ -13,12 +13,34 @@ class Psn_Installer_Activation implements Ifw_Wp_Plugin_Installer_ActivationInte
      * (non-PHPdoc)
      * @see Ifw_Wp_Plugin_Installer_ActivationInterface::execute()
      */
-    public function execute(Ifw_Wp_Plugin_Manager $pm)
+    public function execute(Ifw_Wp_Plugin_Manager $pm, $networkwide = false)
     {
-        global $wpdb, $table_prefix;
+
+        if (Ifw_Wp_Proxy_Blog::isMultisite() && $networkwide == true) {
+
+            // multisite installation
+            $currentBlogId = Ifw_Wp_Proxy_Blog::getBlogId();
+
+            foreach (Ifw_Wp_Proxy_Blog::getMultisiteBlogIds() as $blogId) {
+
+                Ifw_Wp_Proxy_Blog::switchToBlog($blogId);
+                $this->_createTable();
+            }
+            Ifw_Wp_Proxy_Blog::switchToBlog($currentBlogId);
+
+        } else {
+            // single blog installation
+            $this->_createTable();
+        }
+
+    }
+
+    protected function _createTable()
+    {
+        global $wpdb;
 
         $wpdb->query('
-            CREATE TABLE IF NOT EXISTS `'. $table_prefix .'psn_rules` (
+            CREATE TABLE IF NOT EXISTS `'. $wpdb->prefix .'psn_rules` (
               `id` int(11) NOT NULL AUTO_INCREMENT,
               `name` varchar(80) COLLATE utf8_unicode_ci NOT NULL,
               `posttype` varchar(100) COLLATE utf8_unicode_ci NOT NULL,

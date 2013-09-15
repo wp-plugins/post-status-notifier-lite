@@ -22,10 +22,14 @@ class Psn_Bootstrap_Observer_MenuPage extends Ifw_Wp_Plugin_Bootstrap_Observer_A
 
     protected function _preBootstrap()
     {
-        $this->_resource = new Psn_Menu_Options($this->_pm);
-        $this->_resource
+        $optionsPage = new Psn_Menu_Options($this->_pm);
+
+        $optionsPage
             ->setMenuTitle($this->_pm->getEnv()->getName())
             ->setSlug($this->_pm->getPathinfo()->getDirname())
+            ->init()
         ;
+
+        $this->_resource = $optionsPage;
     }
 }

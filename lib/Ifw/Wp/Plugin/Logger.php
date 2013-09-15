@@ -225,7 +225,7 @@ class Ifw_Wp_Plugin_Logger extends IfwZend_Log
     /**
      * Installs log writers
      */
-    public function install()
+    public function install($networkwide = false)
     {
         foreach($this->_writers as $writer) {
             if (get_class($writer) == 'Ifw_Zend_Log_Writer_WpDb') {
@@ -237,7 +237,7 @@ class Ifw_Wp_Plugin_Logger extends IfwZend_Log
                 $r = new ReflectionProperty($classname, '_table');
                 $tableName = $r->getValue();
 
-                $logModel->createTable($tableName);
+                $logModel->createTable($tableName, $networkwide);
             }
         }
     }

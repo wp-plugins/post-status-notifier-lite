@@ -132,8 +132,8 @@ class Ifw_Zend_Application_DefaultController extends IfwZend_Controller_Action
         }
 
         $urlOptions = array_merge(array(
-            'controller' => $controller,
-            'action' => $action,
+            $this->_pm->getConfig()->getControllerKey() => $controller,
+            $this->_pm->getConfig()->getActionKey() => $action,
             'page' => $page
         ), $extra);
 
@@ -142,10 +142,21 @@ class Ifw_Zend_Application_DefaultController extends IfwZend_Controller_Action
 
     /**
      * @param $page
+     * @param null $action
+     * @param null $extra
      */
-    protected function _gotoPage($page)
+    protected function _gotoPage($page, $action = null, $extra = null)
     {
-        header('Location: admin.php?page='. $page);
+        $location = 'admin.php?page='. $page;
+
+        if (!empty($action)) {
+            $location .= '&'. $this->_pm->getConfig()->getActionKey() . '=' . $action;
+        }
+        if (!empty($extra)) {
+            $location .= $extra;
+        }
+
+        header('Location: '. $location);
     }
 
     /**

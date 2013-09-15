@@ -12,8 +12,7 @@
 /**
  * Loads templates from other loaders.
  *
- * @package twig
- * @author  Fabien Potencier <fabien@symfony.com>
+ * @author Fabien Potencier <fabien@symfony.com>
  */
 class IfwTwig_Loader_Chain implements IfwTwig_LoaderInterface, IfwTwig_ExistsLoaderInterface
 {
@@ -77,8 +76,12 @@ class IfwTwig_Loader_Chain implements IfwTwig_LoaderInterface, IfwTwig_ExistsLoa
         }
 
         foreach ($this->loaders as $loader) {
-            if ($loader instanceof IfwTwig_ExistsLoaderInterface && $loader->exists($name)) {
-                return $this->hasSourceCache[$name] = true;
+            if ($loader instanceof IfwTwig_ExistsLoaderInterface) {
+                if ($loader->exists($name)) {
+                    return $this->hasSourceCache[$name] = true;
+                }
+
+                continue;
             }
 
             try {

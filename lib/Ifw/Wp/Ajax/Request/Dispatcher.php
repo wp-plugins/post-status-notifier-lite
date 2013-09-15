@@ -70,10 +70,16 @@ class Ifw_Wp_Ajax_Request_Dispatcher
     /**
      * @param Ifw_Wp_Ajax_Response $response
      */
-    public function output($response)
+    public function output(Ifw_Wp_Ajax_Response $response)
     {
+        $result = array('success' => $response->getSuccess(), 'html' => $response->getHtml());
+
+        foreach ($response->getExtra() as $key => $value) {
+            $result[$key] = $value;
+        }
+
         header('Content-Type: application/json');
-        echo json_encode(array('success' => $response->getSuccess(), 'html' => $response->getHtml()));
+        echo json_encode($result);
         exit;
     }
     

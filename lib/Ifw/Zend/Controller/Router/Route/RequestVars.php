@@ -41,10 +41,10 @@ class Ifw_Zend_Controller_Router_Route_RequestVars implements IfwZend_Controller
      */
     public function match($path)
     {
-        $frontController = IfwZend_Controller_Front::getInstance();
+        $frontController = Ifw_Zend_Controller_Front::getInstance();
         $request = $frontController->getRequest();
         /* @var $request IfwZend_Controller_Request_Http */
-         
+
         $baseUrl = $request->getBaseUrl();
         if (strpos($baseUrl, 'index.php') !== false) {
             $url = str_replace('index.php', '', $baseUrl);
@@ -52,11 +52,13 @@ class Ifw_Zend_Controller_Router_Route_RequestVars implements IfwZend_Controller
         }
          
         $params = $request->getParams();
-         
-        if (array_key_exists('mod', $params)
-                || array_key_exists('controller', $params)
-                || array_key_exists('action', $params)) {
-             
+
+        if (array_key_exists('mod', $params) ||
+            array_key_exists('controller', $params) ||
+            array_key_exists('action', $params) ||
+            array_key_exists('page', $params)
+        ) {
+
             $module = $request->getParam('mod', $frontController->getDefaultModule());
             $controller = $request->getParam('controller', $frontController->getDefaultControllerName());
             $action = $request->getParam('action', $frontController->getDefaultAction());
@@ -66,6 +68,7 @@ class Ifw_Zend_Controller_Router_Route_RequestVars implements IfwZend_Controller
                 'action' => $action,
                 );
             $this->_current = $result;
+
             return $result;
         }
         return false;
@@ -113,6 +116,10 @@ class Ifw_Zend_Controller_Router_Route_RequestVars implements IfwZend_Controller
             if (isset($data['module'])) {
                 $querydata['mod'] = $data['module'];
                 unset($data['module']);
+            }
+            if (isset($data['action'])) {
+                $querydata[$this->_pm->getConfig()->getActionKey()] = $data['action'];
+                unset($data['action']);
             }
             $querydata = array_merge($querydata, $data);
 

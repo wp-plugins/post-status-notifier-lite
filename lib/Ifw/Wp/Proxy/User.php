@@ -8,7 +8,7 @@
  * @author   Timo Reith <timo@ifeelweb.de>
  * @version  $Id$
  */ 
-class Ifw_Wp_Proxy_User extends Ifw_Wp_Proxy_Abstract
+class Ifw_Wp_Proxy_User
 {
     /**
      * Proxy method for get_current_user_id
@@ -145,6 +145,23 @@ class Ifw_Wp_Proxy_User extends Ifw_Wp_Proxy_Abstract
         }
 
         return $adminDisplayName;
+    }
+
+    /**
+     * @param string $roleName
+     * @return array
+     */
+    public static function getUsersByRoleName($roleName)
+    {
+        return get_users(array('role' => $roleName));
+    }
+
+    /**
+     * @return array
+     */
+    public static function getAllUsers()
+    {
+        return get_users();
     }
 
 }

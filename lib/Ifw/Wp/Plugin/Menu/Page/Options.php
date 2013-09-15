@@ -45,13 +45,15 @@ abstract class Ifw_Wp_Plugin_Menu_Page_Options implements Ifw_Wp_Plugin_Menu_Pag
     public function __construct(Ifw_Wp_Plugin_Manager $pm)
     {
         $this->_pm = $pm;
-
-        $this->init();
     }
 
     public function init()
     {
         Ifw_Wp_Proxy_Action::addAdminMenu(array($this, '_load'));
+
+        if ($this->_pm->getAccess()->getPage() == $this->getSlug()) {
+            Ifw_Wp_Proxy_Action::addInit(array($this, 'onInit'));
+        }
     }
 
     /**
@@ -74,6 +76,12 @@ abstract class Ifw_Wp_Plugin_Menu_Page_Options implements Ifw_Wp_Plugin_Menu_Pag
             $this->onLoad();
         }
     }
+
+    public function onInit()
+    {}
+
+    public function onLoad()
+    {}
 
     /**
      * @param string $callback

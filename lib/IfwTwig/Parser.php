@@ -13,8 +13,7 @@
 /**
  * Default parser implementation.
  *
- * @package twig
- * @author  Fabien Potencier <fabien@symfony.com>
+ * @author Fabien Potencier <fabien@symfony.com>
  */
 class IfwTwig_Parser implements IfwTwig_ParserInterface
 {
@@ -50,7 +49,7 @@ class IfwTwig_Parser implements IfwTwig_ParserInterface
 
     public function getVarName()
     {
-        return sprintf('__internal_%s', hash('sha1', uniqid(mt_rand(), true), false));
+        return sprintf('__internal_%s', hash('sha256', uniqid(mt_rand(), true), false));
     }
 
     public function getFilename()

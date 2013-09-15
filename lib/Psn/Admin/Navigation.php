@@ -44,7 +44,7 @@ class Psn_Admin_Navigation
         ));
         $this->_navigation->addPage($page);
 
-        Ifw_Wp_Proxy::doAction($this->_pm->getAbbrLower() . '_after_admin_navigation_overview', $this->_navigation);
+        Ifw_Wp_Proxy_Action::doPlugin($this->_pm, 'after_admin_navigation_overview', $this->_navigation);
 
         $page = new Ifw_Zend_Navigation_Page_WpMvc(array(
             'label' => __('Rules', 'psn'),
@@ -55,7 +55,7 @@ class Psn_Admin_Navigation
         ));
         $this->_navigation->addPage($page);
 
-        Ifw_Wp_Proxy::doAction($this->_pm->getAbbrLower() . '_after_admin_navigation_rules', $this->_navigation);
+        Ifw_Wp_Proxy_Action::doPlugin($this->_pm, 'after_admin_navigation_rules', $this->_navigation);
 
         $page = new Ifw_Zend_Navigation_Page_WpMvc(array(
             'label' => __('Options', 'psn'),
@@ -66,7 +66,7 @@ class Psn_Admin_Navigation
         ));
         $this->_navigation->addPage($page);
 
-        Ifw_Wp_Proxy::doAction($this->_pm->getAbbrLower() . '_after_admin_navigation_options', $this->_navigation);
+        Ifw_Wp_Proxy_Action::doPlugin($this->_pm, 'after_admin_navigation_options', $this->_navigation);
     }
 
     /**
@@ -79,5 +79,30 @@ class Psn_Admin_Navigation
         }
 
         return $this->_navigation;
+    }
+
+    /**
+     * @return array
+     */
+    public function getPagesWithHrefAndLabel()
+    {
+        $result = array();
+        $nav = $this->getNavigation();
+
+        /**
+         * @var Ifw_Zend_Navigation_Page_WpMvc $page
+         */
+        foreach ($nav->getPages() as $page) {
+            $result[] = array(
+                'href' => Ifw_Wp_Proxy_Admin::getMenuUrl(
+                    $this->_pm, $page->getController(),
+                    $page->getAction(),
+                    null,
+                    array('module' => $page->getModule())),
+                'label' => $page->getLabel()
+            );
+        }
+
+        return $result;
     }
 }

@@ -333,3 +333,9 @@ msgstr ""
 
 msgid "SMTP server support"
 msgstr ""
+
+msgid "Get additional recipients like user roles (including custom roles) or all users with the Premium version."
+msgstr ""
+
+msgid "Extended recipients"
+msgstr ""

@@ -49,7 +49,7 @@ class IfwTwig_TokenParser_Set extends IfwTwig_TokenParser
             $stream->expect(IfwTwig_Token::BLOCK_END_TYPE);
 
             if (count($names) !== count($values)) {
-                throw new IfwTwig_Error_Syntax("When using set, you must have the same number of variables and assignements.", $stream->getCurrent()->getLine(), $stream->getFilename());
+                throw new IfwTwig_Error_Syntax("When using set, you must have the same number of variables and assignments.", $stream->getCurrent()->getLine(), $stream->getFilename());
             }
         } else {
             $capture = true;

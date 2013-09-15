@@ -56,7 +56,7 @@ class IfwTwig_TokenParser_From extends IfwTwig_TokenParser
         $node = new IfwTwig_Node_Import($macro, new IfwTwig_Node_Expression_AssignName($this->parser->getVarName(), $token->getLine()), $token->getLine(), $this->getTag());
 
         foreach ($targets as $name => $alias) {
-            $this->parser->addImportedSymbol('function', $alias, 'get'.$name, $node->getNode('var'));
+            $this->parser->addImportedSymbol('macro', $alias, $name, $node->getNode('var'));
         }
 
         return $node;

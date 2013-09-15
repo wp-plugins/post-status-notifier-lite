@@ -12,8 +12,7 @@
 /**
  * Represents an import node.
  *
- * @package    twig
- * @author     Fabien Potencier <fabien@symfony.com>
+ * @author Fabien Potencier <fabien@symfony.com>
  */
 class IfwTwig_Node_Import extends IfwTwig_Node
 {

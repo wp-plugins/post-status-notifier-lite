@@ -20,8 +20,7 @@
  *
  * This strategy makes IfwTwig_Environment::resolveTemplate() much faster.
  *
- * @package    twig
- * @author     Fabien Potencier <fabien@symfony.com>
+ * @author Fabien Potencier <fabien@symfony.com>
  */
 class IfwTwig_Error_Loader extends IfwTwig_Error
 {

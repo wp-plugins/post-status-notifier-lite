@@ -13,8 +13,7 @@
 /**
  * Abstract class for all nodes that represents an expression.
  *
- * @package    twig
- * @author     Fabien Potencier <fabien@symfony.com>
+ * @author Fabien Potencier <fabien@symfony.com>
  */
 abstract class IfwTwig_Node_Expression extends IfwTwig_Node
 {

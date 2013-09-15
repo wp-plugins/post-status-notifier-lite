@@ -33,7 +33,7 @@ class IfwTwig_Extension_StringLoader extends IfwTwig_Extension
  * Loads a template from a string.
  *
  * <pre>
- * {% include template_from_string("Hello {{ name }}") }}
+ * {{ include(template_from_string("Hello {{ name }}")) }}
  * </pre>
  *
  * @param IfwTwig_Environment $env      A IfwTwig_Environment instance
@@ -43,16 +43,16 @@ class IfwTwig_Extension_StringLoader extends IfwTwig_Extension
  */
 function ifw_twig_template_from_string(IfwTwig_Environment $env, $template)
 {
-    static $loader;
+    $name = sprintf('__string_template__%s', hash('sha256', uniqid(mt_rand(), true), false));
 
-    if (null === $loader) {
-        $loader = new IfwTwig_Loader_String();
-    }
+    $loader = new IfwTwig_Loader_Chain(array(
+        new IfwTwig_Loader_Array(array($name => $template)),
+        $current = $env->getLoader(),
+    ));
 
-    $current = $env->getLoader();
     $env->setLoader($loader);
     try {
-        $template = $env->loadTemplate($template);
+        $template = $env->loadTemplate($name);
     } catch (Exception $e) {
         $env->setLoader($current);
 

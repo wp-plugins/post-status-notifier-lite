@@ -13,8 +13,7 @@
 /**
  * Default base class for compiled templates.
  *
- * @package twig
- * @author  Fabien Potencier <fabien@symfony.com>
+ * @author Fabien Potencier <fabien@symfony.com>
  */
 abstract class IfwTwig_Template implements IfwTwig_TemplateInterface
 {
@@ -25,6 +24,7 @@ abstract class IfwTwig_Template implements IfwTwig_TemplateInterface
     protected $env;
     protected $blocks;
     protected $traits;
+    protected $macros;
 
     /**
      * Constructor.
@@ -36,6 +36,7 @@ abstract class IfwTwig_Template implements IfwTwig_TemplateInterface
         $this->env = $env;
         $this->blocks = array();
         $this->traits = array();
+        $this->macros = array();
     }
 
     /**
@@ -327,7 +328,7 @@ abstract class IfwTwig_Template implements IfwTwig_TemplateInterface
      * @param mixed   $object            The object or array from where to get the item
      * @param mixed   $item              The item to get from the array or object
      * @param array   $arguments         An array of arguments to pass if the item is an object method
-     * @param string  $type              The type of attribute (@see IfwTwig_TemplateInterface)
+     * @param string  $type              The type of attribute (@see IfwTwig_Template constants)
      * @param Boolean $isDefinedTest     Whether this is only a defined check
      * @param Boolean $ignoreStrictCheck Whether to ignore the strict attribute check or not
      *
@@ -335,23 +336,23 @@ abstract class IfwTwig_Template implements IfwTwig_TemplateInterface
      *
      * @throws IfwTwig_Error_Runtime if the attribute does not exist and Twig is running in strict mode and $isDefinedTest is false
      */
-    protected function getAttribute($object, $item, array $arguments = array(), $type = IfwTwig_TemplateInterface::ANY_CALL, $isDefinedTest = false, $ignoreStrictCheck = false)
+    protected function getAttribute($object, $item, array $arguments = array(), $type = IfwTwig_Template::ANY_CALL, $isDefinedTest = false, $ignoreStrictCheck = false)
     {
-        $item = ctype_digit((string) $item) ? (int) $item : (string) $item;
-
         // array
-        if (IfwTwig_TemplateInterface::METHOD_CALL !== $type) {
-            if ((is_array($object) && array_key_exists($item, $object))
-                || ($object instanceof ArrayAccess && isset($object[$item]))
+        if (IfwTwig_Template::METHOD_CALL !== $type) {
+            $arrayItem = is_bool($item) || is_float($item) ? (int) $item : $item;
+
+            if ((is_array($object) && array_key_exists($arrayItem, $object))
+                || ($object instanceof ArrayAccess && isset($object[$arrayItem]))
             ) {
                 if ($isDefinedTest) {
                     return true;
                 }
 
-                return $object[$item];
+                return $object[$arrayItem];
             }
 
-            if (IfwTwig_TemplateInterface::ARRAY_CALL === $type) {
+            if (IfwTwig_Template::ARRAY_CALL === $type || !is_object($object)) {
                 if ($isDefinedTest) {
                     return false;
                 }
@@ -361,11 +362,13 @@ abstract class IfwTwig_Template implements IfwTwig_TemplateInterface
                 }
 
                 if (is_object($object)) {
-                    throw new IfwTwig_Error_Runtime(sprintf('Key "%s" in object (with ArrayAccess) of type "%s" does not exist', $item, get_class($object)), -1, $this->getTemplateName());
+                    throw new IfwTwig_Error_Runtime(sprintf('Key "%s" in object (with ArrayAccess) of type "%s" does not exist', $arrayItem, get_class($object)), -1, $this->getTemplateName());
                 } elseif (is_array($object)) {
-                    throw new IfwTwig_Error_Runtime(sprintf('Key "%s" for array with keys "%s" does not exist', $item, implode(', ', array_keys($object))), -1, $this->getTemplateName());
+                    throw new IfwTwig_Error_Runtime(sprintf('Key "%s" for array with keys "%s" does not exist', $arrayItem, implode(', ', array_keys($object))), -1, $this->getTemplateName());
+                } elseif (IfwTwig_Template::ARRAY_CALL === $type) {
+                    throw new IfwTwig_Error_Runtime(sprintf('Impossible to access a key ("%s") on a %s variable ("%s")', $item, gettype($object), $object), -1, $this->getTemplateName());
                 } else {
-                    throw new IfwTwig_Error_Runtime(sprintf('Impossible to access a key ("%s") on a "%s" variable', $item, gettype($object)), -1, $this->getTemplateName());
+                    throw new IfwTwig_Error_Runtime(sprintf('Impossible to access an attribute ("%s") on a %s variable ("%s")', $item, gettype($object), $object), -1, $this->getTemplateName());
                 }
             }
         }
@@ -379,14 +382,14 @@ abstract class IfwTwig_Template implements IfwTwig_TemplateInterface
                 return null;
             }
 
-            throw new IfwTwig_Error_Runtime(sprintf('Item "%s" for "%s" does not exist', $item, is_array($object) ? 'Array' : $object), -1, $this->getTemplateName());
+            throw new IfwTwig_Error_Runtime(sprintf('Impossible to invoke a method ("%s") on a %s variable ("%s")', $item, gettype($object), $object), -1, $this->getTemplateName());
         }
 
         $class = get_class($object);
 
         // object property
-        if (IfwTwig_TemplateInterface::METHOD_CALL !== $type) {
-            if (isset($object->$item) || array_key_exists($item, $object)) {
+        if (IfwTwig_Template::METHOD_CALL !== $type) {
+            if (isset($object->$item) || array_key_exists((string) $item, $object)) {
                 if ($isDefinedTest) {
                     return true;
                 }
@@ -406,13 +409,13 @@ abstract class IfwTwig_Template implements IfwTwig_TemplateInterface
 
         $lcItem = strtolower($item);
         if (isset(self::$cache[$class]['methods'][$lcItem])) {
-            $method = $item;
+            $method = (string) $item;
         } elseif (isset(self::$cache[$class]['methods']['get'.$lcItem])) {
             $method = 'get'.$item;
         } elseif (isset(self::$cache[$class]['methods']['is'.$lcItem])) {
             $method = 'is'.$item;
         } elseif (isset(self::$cache[$class]['methods']['__call'])) {
-            $method = $item;
+            $method = (string) $item;
         } else {
             if ($isDefinedTest) {
                 return false;
@@ -442,6 +445,66 @@ abstract class IfwTwig_Template implements IfwTwig_TemplateInterface
         }
 
         return $ret;
+    }
+
+    /**
+     * Calls macro in a template.
+     *
+     * @param IfwTwig_Template $template        The template
+     * @param string        $macro           The name of macro
+     * @param array         $arguments       The arguments of macro
+     * @param array         $namedNames      An array of names of arguments as keys
+     * @param integer       $namedCount      The count of named arguments
+     * @param integer       $positionalCount The count of positional arguments
+     *
+     * @return string The content of a macro
+     *
+     * @throws IfwTwig_Error_Runtime if the macro is not defined
+     * @throws IfwTwig_Error_Runtime if the argument is defined twice
+     * @throws IfwTwig_Error_Runtime if the argument is unknown
+     */
+    protected function callMacro(IfwTwig_Template $template, $macro, array $arguments, array $namedNames = array(), $namedCount = 0, $positionalCount = -1)
+    {
+        if (!isset($template->macros[$macro]['reflection'])) {
+            if (!isset($template->macros[$macro])) {
+                throw new IfwTwig_Error_Runtime(sprintf('Macro "%s" is not defined in the template "%s".', $macro, $template->getTemplateName()));
+            }
+
+            $template->macros[$macro]['reflection'] = new ReflectionMethod($template, $template->macros[$macro]['method']);
+        }
+
+        if ($namedCount < 1) {
+            return $template->macros[$macro]['reflection']->invokeArgs($template, $arguments);
+        }
+
+        $i = 0;
+        $args = array();
+        foreach ($template->macros[$macro]['arguments'] as $name => $value) {
+            if (isset($namedNames[$name])) {
+                if ($i < $positionalCount) {
+                    throw new IfwTwig_Error_Runtime(sprintf('Argument "%s" is defined twice for macro "%s" defined in the template "%s".', $name, $macro, $template->getTemplateName()));
+                }
+
+                $args[] = $arguments[$name];
+                if (--$namedCount < 1) {
+                    break;
+                }
+            } elseif ($i < $positionalCount) {
+                $args[] = $arguments[$i];
+            } else {
+                $args[] = $value;
+            }
+
+            $i++;
+        }
+
+        if ($namedCount > 0) {
+            $parameters = array_keys(array_diff_key($namedNames, $template->macros[$macro]['arguments']));
+
+            throw new IfwTwig_Error_Runtime(sprintf('Unknown argument%s "%s" for macro "%s" defined in the template "%s".', count($parameters) > 1 ? 's' : '' , implode('", "', $parameters), $macro, $template->getTemplateName()));
+        }
+
+        return $template->macros[$macro]['reflection']->invokeArgs($template, $args);
     }
 
     /**

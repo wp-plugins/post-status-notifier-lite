@@ -49,8 +49,6 @@ class IfwTwig_TokenParser_Macro extends IfwTwig_TokenParser
         $stream->expect(IfwTwig_Token::BLOCK_END_TYPE);
 
         $this->parser->setMacro($name, new IfwTwig_Node_Macro($name, new IfwTwig_Node_Body(array($body)), $arguments, $lineno, $this->getTag()));
-
-        return null;
     }
 
     public function decideBlockEnd(IfwTwig_Token $token)

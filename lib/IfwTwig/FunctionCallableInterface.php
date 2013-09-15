@@ -14,8 +14,7 @@
  *
  * Use IfwTwig_SimpleFunction instead.
  *
- * @package    twig
- * @author     Fabien Potencier <fabien@symfony.com>
+ * @author Fabien Potencier <fabien@symfony.com>
  * @deprecated since 1.12 (to be removed in 2.0)
  */
 interface IfwTwig_FunctionCallableInterface

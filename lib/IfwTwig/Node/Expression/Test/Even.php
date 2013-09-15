@@ -16,8 +16,7 @@
  *  {{ var is even }}
  * </pre>
  *
- * @package twig
- * @author  Fabien Potencier <fabien@symfony.com>
+ * @author Fabien Potencier <fabien@symfony.com>
  */
 class IfwTwig_Node_Expression_Test_Even extends IfwTwig_Node_Expression_Test
 {

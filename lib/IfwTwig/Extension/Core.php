@@ -152,11 +152,14 @@ class IfwTwig_Extension_Core extends IfwTwig_Extension
             new IfwTwig_SimpleFilter('split', 'ifw_twig_split_filter'),
             new IfwTwig_SimpleFilter('sort', 'ifw_twig_sort_filter'),
             new IfwTwig_SimpleFilter('merge', 'ifw_twig_array_merge'),
+            new IfwTwig_SimpleFilter('batch', 'ifw_twig_array_batch'),
 
             // string/array filters
             new IfwTwig_SimpleFilter('reverse', 'ifw_twig_reverse_filter', array('needs_environment' => true)),
             new IfwTwig_SimpleFilter('length', 'ifw_twig_length_filter', array('needs_environment' => true)),
             new IfwTwig_SimpleFilter('slice', 'ifw_twig_slice', array('needs_environment' => true)),
+            new IfwTwig_SimpleFilter('first', 'ifw_twig_first', array('needs_environment' => true)),
+            new IfwTwig_SimpleFilter('last', 'ifw_twig_last', array('needs_environment' => true)),
 
             // iteration and runtime
             new IfwTwig_SimpleFilter('default', '_ifw_twig_default_filter', array('node_class' => 'IfwTwig_Node_Expression_Filter_Default')),
@@ -168,8 +171,8 @@ class IfwTwig_Extension_Core extends IfwTwig_Extension
         );
 
         if (function_exists('mb_get_info')) {
-            $filters['upper'] = new IfwTwig_Filter_Function('ifw_twig_upper_filter', array('needs_environment' => true));
-            $filters['lower'] = new IfwTwig_Filter_Function('ifw_twig_lower_filter', array('needs_environment' => true));
+            $filters[] = new IfwTwig_SimpleFilter('upper', 'ifw_twig_upper_filter', array('needs_environment' => true));
+            $filters[] = new IfwTwig_SimpleFilter('lower', 'ifw_twig_lower_filter', array('needs_environment' => true));
         }
 
         return $filters;
@@ -184,10 +187,11 @@ class IfwTwig_Extension_Core extends IfwTwig_Extension
     {
         return array(
             new IfwTwig_SimpleFunction('range', 'range'),
-            new IfwTwig_SimpleFunction('constant', 'constant'),
+            new IfwTwig_SimpleFunction('constant', 'ifw_twig_constant'),
             new IfwTwig_SimpleFunction('cycle', 'ifw_twig_cycle'),
             new IfwTwig_SimpleFunction('random', 'ifw_twig_random', array('needs_environment' => true)),
             new IfwTwig_SimpleFunction('date', 'ifw_twig_date_converter', array('needs_environment' => true)),
+            new IfwTwig_SimpleFunction('include', 'ifw_twig_include', array('needs_environment' => true, 'needs_context' => true, 'is_safe' => array('all'))),
         );
     }
 
@@ -466,13 +470,15 @@ function ifw_twig_date_converter(IfwTwig_Environment $env, $date = null, $timezo
 
     $asString = (string) $date;
     if (ctype_digit($asString) || (!empty($asString) && '-' === $asString[0] && ctype_digit(substr($asString, 1)))) {
-        $date = new DateTime('@'.$date);
-        $date->setTimezone($defaultTimezone);
-
-        return $date;
+        $date = '@'.$date;
     }
 
-    return new DateTime($date, $defaultTimezone);
+    $date = new DateTime($date, $defaultTimezone);
+    if (false !== $timezone) {
+        $date->setTimezone($defaultTimezone);
+    }
+
+    return $date;
 }
 
 /**
@@ -509,15 +515,19 @@ function ifw_twig_number_format_filter(IfwTwig_Environment $env, $number, $decim
 }
 
 /**
- * URL encodes a string.
+ * URL encodes a string as a path segment or an array as a query string.
  *
- * @param string $url A URL
- * @param bool   $raw true to use rawurlencode() instead of urlencode
+ * @param string|array $url A URL or an array of query parameters
+ * @param bool         $raw true to use rawurlencode() instead of urlencode
  *
  * @return string The URL encoded value
  */
 function ifw_twig_urlencode_filter($url, $raw = false)
 {
+    if (is_array($url)) {
+        return http_build_query($url, '', '&');
+    }
+
     if ($raw) {
         return rawurlencode($url);
     }
@@ -625,6 +635,36 @@ function ifw_twig_slice(IfwTwig_Environment $env, $item, $start, $length = null,
     }
 
     return null === $length ? substr($item, $start) : substr($item, $start, $length);
+}
+
+/**
+ * Returns the first element of the item.
+ *
+ * @param IfwTwig_Environment $env  A IfwTwig_Environment instance
+ * @param mixed            $item A variable
+ *
+ * @return mixed The first element of the item
+ */
+function ifw_twig_first(IfwTwig_Environment $env, $item)
+{
+    $elements = ifw_twig_slice($env, $item, 0, 1, false);
+
+    return is_string($elements) ? $elements[0] : current($elements);
+}
+
+/**
+ * Returns the last element of the item.
+ *
+ * @param IfwTwig_Environment $env  A IfwTwig_Environment instance
+ * @param mixed            $item A variable
+ *
+ * @return mixed The last element of the item
+ */
+function ifw_twig_last(IfwTwig_Environment $env, $item)
+{
+    $elements = ifw_twig_slice($env, $item, -1, 1, false);
+
+    return is_string($elements) ? $elements[0] : current($elements);
 }
 
 /**
@@ -807,21 +847,62 @@ function ifw_twig_in_filter($value, $compare)
  */
 function ifw_twig_escape_filter(IfwTwig_Environment $env, $string, $strategy = 'html', $charset = null, $autoescape = false)
 {
-    if ($autoescape && is_object($string) && $string instanceof IfwTwig_Markup) {
+    if ($autoescape && $string instanceof IfwTwig_Markup) {
         return $string;
     }
 
-    if (!is_string($string) && !(is_object($string) && method_exists($string, '__toString'))) {
-        return $string;
+    if (!is_string($string)) {
+        if (is_object($string) && method_exists($string, '__toString')) {
+            $string = (string) $string;
+        } else {
+            return $string;
+        }
     }
 
     if (null === $charset) {
         $charset = $env->getCharset();
     }
 
-    $string = (string) $string;
-
     switch ($strategy) {
+        case 'html':
+            // see http://php.net/htmlspecialchars
+
+            // Using a static variable to avoid initializing the array
+            // each time the function is called. Moving the declaration on the
+            // top of the function slow downs other escaping strategies.
+            static $htmlspecialcharsCharsets = array(
+                'ISO-8859-1' => true, 'ISO8859-1' => true,
+                'ISO-8859-15' => true, 'ISO8859-15' => true,
+                'utf-8' => true, 'UTF-8' => true,
+                'CP866' => true, 'IBM866' => true, '866' => true,
+                'CP1251' => true, 'WINDOWS-1251' => true, 'WIN-1251' => true,
+                '1251' => true,
+                'CP1252' => true, 'WINDOWS-1252' => true, '1252' => true,
+                'KOI8-R' => true, 'KOI8-RU' => true, 'KOI8R' => true,
+                'BIG5' => true, '950' => true,
+                'GB2312' => true, '936' => true,
+                'BIG5-HKSCS' => true,
+                'SHIFT_JIS' => true, 'SJIS' => true, '932' => true,
+                'EUC-JP' => true, 'EUCJP' => true,
+                'ISO8859-5' => true, 'ISO-8859-5' => true, 'MACROMAN' => true,
+            );
+
+            if (isset($htmlspecialcharsCharsets[$charset])) {
+                return htmlspecialchars($string, ENT_QUOTES | ENT_SUBSTITUTE, $charset);
+            }
+
+            if (isset($htmlspecialcharsCharsets[strtoupper($charset)])) {
+                // cache the lowercase variant for future iterations
+                $htmlspecialcharsCharsets[$charset] = true;
+
+                return htmlspecialchars($string, ENT_QUOTES | ENT_SUBSTITUTE, $charset);
+            }
+
+            $string = ifw_twig_convert_encoding($string, 'UTF-8', $charset);
+            $string = htmlspecialchars($string, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+
+            return ifw_twig_convert_encoding($string, $charset, 'UTF-8');
+
         case 'js':
             // escape all non-alphanumeric characters
             // into their \xHH or \uHHHH representations
@@ -875,40 +956,10 @@ function ifw_twig_escape_filter(IfwTwig_Environment $env, $string, $strategy = '
 
             return $string;
 
-        case 'html':
-            // see http://php.net/htmlspecialchars
-
-            // Using a static variable to avoid initializing the array
-            // each time the function is called. Moving the declaration on the
-            // top of the function slow downs other escaping strategies.
-            static $htmlspecialcharsCharsets = array(
-                'iso-8859-1' => true, 'iso8859-1' => true,
-                'iso-8859-15' => true, 'iso8859-15' => true,
-                'utf-8' => true,
-                'cp866' => true, 'ibm866' => true, '866' => true,
-                'cp1251' => true, 'windows-1251' => true, 'win-1251' => true,
-                '1251' => true,
-                'cp1252' => true, 'windows-1252' => true, '1252' => true,
-                'koi8-r' => true, 'koi8-ru' => true, 'koi8r' => true,
-                'big5' => true, '950' => true,
-                'gb2312' => true, '936' => true,
-                'big5-hkscs' => true,
-                'shift_jis' => true, 'sjis' => true, '932' => true,
-                'euc-jp' => true, 'eucjp' => true,
-                'iso8859-5' => true, 'iso-8859-5' => true, 'macroman' => true,
-            );
-
-            if (isset($htmlspecialcharsCharsets[strtolower($charset)])) {
-                return htmlspecialchars($string, ENT_QUOTES | ENT_SUBSTITUTE, $charset);
-            }
-
-            $string = ifw_twig_convert_encoding($string, 'UTF-8', $charset);
-            $string = htmlspecialchars($string, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-
-            return ifw_twig_convert_encoding($string, $charset, 'UTF-8');
-
         case 'url':
-            if (version_compare(PHP_VERSION, '5.3.0', '<')) {
+            // hackish test to avoid version_compare that is much slower, this works unless PHP releases a 5.10.*
+            // at that point however PHP 5.2.* support can be removed
+            if (PHP_VERSION < '5.3.0') {
                 return str_replace('%7E', '~', rawurlencode($string));
             }
 
@@ -1217,4 +1268,90 @@ function ifw_twig_test_empty($value)
 function ifw_twig_test_iterable($value)
 {
     return $value instanceof Traversable || is_array($value);
+}
+
+/**
+ * Renders a template.
+ *
+ * @param string  $template       The template to render
+ * @param array   $variables      The variables to pass to the template
+ * @param Boolean $with_context   Whether to pass the current context variables or not
+ * @param Boolean $ignore_missing Whether to ignore missing templates or not
+ * @param Boolean $sandboxed      Whether to sandbox the template or not
+ *
+ * @return string The rendered template
+ */
+function ifw_twig_include(IfwTwig_Environment $env, $context, $template, $variables = array(), $withContext = true, $ignoreMissing = false, $sandboxed = false)
+{
+    if ($withContext) {
+        $variables = array_merge($context, $variables);
+    }
+
+    if ($isSandboxed = $sandboxed && $env->hasExtension('sandbox')) {
+        $sandbox = $env->getExtension('sandbox');
+        if (!$alreadySandboxed = $sandbox->isSandboxed()) {
+            $sandbox->enableSandbox();
+        }
+    }
+
+    try {
+        return $env->resolveTemplate($template)->render($variables);
+    } catch (IfwTwig_Error_Loader $e) {
+        if (!$ignoreMissing) {
+            throw $e;
+        }
+    }
+
+    if ($isSandboxed && !$alreadySandboxed) {
+        $sandbox->disableSandbox();
+    }
+}
+
+/**
+ * Provides the ability to get constants from instances as well as class/global constants.
+ *
+ * @param string      $constant The name of the constant
+ * @param null|object $object   The object to get the constant from
+ *
+ * @return string
+ */
+function ifw_twig_constant($constant, $object = null)
+{
+    if (null !== $object) {
+        $constant = get_class($object).'::'.$constant;
+    }
+
+    return constant($constant);
+}
+
+/**
+ * Batches item.
+ *
+ * @param array   $items An array of items
+ * @param integer $size  The size of the batch
+ * @param mixed   $fill  A value used to fill missing items
+ *
+ * @return array
+ */
+function ifw_twig_array_batch($items, $size, $fill = null)
+{
+    if ($items instanceof Traversable) {
+        $items = iterator_to_array($items, false);
+    }
+
+    $size = ceil($size);
+
+    $result = array_chunk($items, $size, true);
+
+    if (null !== $fill) {
+        $last = count($result) - 1;
+        if ($fillCount = $size - count($result[$last])) {
+            $result[$last] = array_merge(
+                $result[$last],
+                array_fill(0, $fillCount, $fill)
+            );
+        }
+    }
+
+    return $result;
 }

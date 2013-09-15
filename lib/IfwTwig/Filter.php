@@ -14,8 +14,7 @@
  *
  * Use IfwTwig_SimpleFilter instead.
  *
- * @package    twig
- * @author     Fabien Potencier <fabien@symfony.com>
+ * @author Fabien Potencier <fabien@symfony.com>
  * @deprecated since 1.12 (to be removed in 2.0)
  */
 abstract class IfwTwig_Filter implements IfwTwig_FilterInterface, IfwTwig_FilterCallableInterface
@@ -63,8 +62,6 @@ abstract class IfwTwig_Filter implements IfwTwig_FilterInterface, IfwTwig_Filter
         if (isset($this->options['is_safe_callback'])) {
             return call_user_func($this->options['is_safe_callback'], $filterArgs);
         }
-
-        return null;
     }
 
     public function getPreservesSafety()

@@ -13,8 +13,7 @@
 /**
  * Compiles a node to PHP code.
  *
- * @package    twig
- * @author     Fabien Potencier <fabien@symfony.com>
+ * @author Fabien Potencier <fabien@symfony.com>
  */
 class IfwTwig_Compiler implements IfwTwig_CompilerInterface
 {

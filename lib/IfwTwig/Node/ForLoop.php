@@ -12,8 +12,7 @@
 /**
  * Internal node used by the for node.
  *
- * @package    twig
- * @author     Fabien Potencier <fabien@symfony.com>
+ * @author Fabien Potencier <fabien@symfony.com>
  */
 class IfwTwig_Node_ForLoop extends IfwTwig_Node
 {

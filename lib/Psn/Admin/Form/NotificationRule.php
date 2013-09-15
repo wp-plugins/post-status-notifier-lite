@@ -36,7 +36,7 @@ class Psn_Admin_Form_NotificationRule extends Ifw_Zend_Form
             'required'       => true,
             'filters'        => array('StringTrim', 'StripTags'),
             'maxlength'      => 80,
-            'validators'     => $_GET['action'] == 'create' ? array(new Psn_Admin_Form_Validate_Max()) : array(),
+            'validators'     => $_GET['appaction'] == 'create' ? array(new Psn_Admin_Form_Validate_Max()) : array(),
             'decorators'     => $fieldDecorators
         ));
 
@@ -96,10 +96,10 @@ class Psn_Admin_Form_NotificationRule extends Ifw_Zend_Form
             ->setLabel(__('Recipient', 'psn'))
             ->setDecorators($fieldDecorators)
             ->setFilters(array('StringTrim', 'StripTags'))
-            ->addMultiOptions(array(
+            ->addMultiOptions(Ifw_Wp_Proxy_Filter::apply('psn_rule_form_recipients_options', array(
                 'admin'  => __('Blog admin', 'psn'),
                 'author' => __('Post author', 'psn'),
-            ));
+            )));
         $this->addElement($recipient);
 
         $this->addElement('textarea', 'cc', array(

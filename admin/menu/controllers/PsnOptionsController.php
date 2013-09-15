@@ -11,8 +11,6 @@ class PsnOptionsController extends PsnApplicationController
      */
     public function indexAction()
     {
-//        var_dump($this->_pm->getBootstrap()->getUpdateManager()->getPatcher()->isPatchesAvailable());
-
         Ifw_Wp_Proxy_Script::loadAdmin('psn_options', $this->_pm->getEnv()->getUrlAdminJs() . 'options.js');
 
         // set up contextual help

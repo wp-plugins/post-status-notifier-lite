@@ -12,8 +12,7 @@
 /**
  * Represents a template filter.
  *
- * @package    twig
- * @author     Fabien Potencier <fabien@symfony.com>
+ * @author Fabien Potencier <fabien@symfony.com>
  */
 class IfwTwig_SimpleFilter
 {
@@ -81,8 +80,6 @@ class IfwTwig_SimpleFilter
         if (null !== $this->options['is_safe_callback']) {
             return call_user_func($this->options['is_safe_callback'], $filterArgs);
         }
-
-        return null;
     }
 
     public function getPreservesSafety()

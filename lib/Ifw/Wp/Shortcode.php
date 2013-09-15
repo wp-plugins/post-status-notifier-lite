@@ -27,7 +27,7 @@ abstract class Ifw_Wp_Shortcode implements Ifw_Wp_Interface_Loggable
      * @param string $shortcode
      * @param array $options
      */
-    public function __construct($shortcode, array $options)
+    public function __construct($shortcode, array $options = array())
     {
         $this->_shortcode = $shortcode;
         
@@ -42,17 +42,17 @@ abstract class Ifw_Wp_Shortcode implements Ifw_Wp_Interface_Loggable
         add_shortcode($this->_shortcode, array($this, 'handle'));
         
         // add default filters
-        add_filter('widget_text', 'do_shortcode');
-        add_filter('the_excerpt', 'do_shortcode');
-        add_filter('the_excerpt_feed', 'do_shortcode');
-        add_filter('the_excerpt_rss', 'do_shortcode');
-        add_filter('the_content_feed', 'do_shortcode');
-        add_filter('the_content_rss', 'do_shortcode');
+        Ifw_Wp_Proxy_Filter::addWidgetText('do_shortcode');
+        Ifw_Wp_Proxy_Filter::addTheExcerpt('do_shortcode');
+        Ifw_Wp_Proxy_Filter::addTheExcerptFeed('do_shortcode');
+        Ifw_Wp_Proxy_Filter::addTheExcerptRss('do_shortcode');
+        Ifw_Wp_Proxy_Filter::addTheContentFeed('do_shortcode');
+        Ifw_Wp_Proxy_Filter::addTheContentRss('do_shortcode');
         
         // add additional custom filters
         if (isset($options['filters']) && is_array($options['filters'])) {
             foreach ($options['filters'] as $filter) {
-                add_filter($filter, 'do_shortcode');
+                Ifw_Wp_Proxy_Filter::add($filter, 'do_shortcode');
             }
         }
     }

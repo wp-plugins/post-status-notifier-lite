@@ -20,6 +20,22 @@ class Ifw_Wp_Plugin_Installer_Command_UninstallResetOptions implements Ifw_Wp_Pl
             return;
         }
 
-        $pm->getOptions()->reset();
+        if (Ifw_Wp_Proxy_Blog::isMultisite()) {
+
+            // multisite installation
+            $currentBlogId = Ifw_Wp_Proxy_Blog::getBlogId();
+
+            foreach (Ifw_Wp_Proxy_Blog::getMultisiteBlogIds() as $blogId) {
+
+                Ifw_Wp_Proxy_Blog::switchToBlog($blogId);
+                $pm->getOptions()->reset();
+            }
+            Ifw_Wp_Proxy_Blog::switchToBlog($currentBlogId);
+
+        } else {
+            // single blog installation
+            $pm->getOptions()->reset();
+        }
+
     }
 }

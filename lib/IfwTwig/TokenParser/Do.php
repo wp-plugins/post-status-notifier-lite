@@ -10,7 +10,7 @@
  */
 
 /**
- * Evaluates an expression, disgarding the returned value.
+ * Evaluates an expression, discarding the returned value.
  */
 class IfwTwig_TokenParser_Do extends IfwTwig_TokenParser
 {

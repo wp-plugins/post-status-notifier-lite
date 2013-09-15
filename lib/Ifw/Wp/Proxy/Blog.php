@@ -213,4 +213,40 @@ class Ifw_Wp_Proxy_Blog
     {
         return site_url($path, $scheme);
     }
+
+    /**
+     * Checks if multisite / network is active
+     * @return bool
+     */
+    public static function isMultisite()
+    {
+        return is_multisite();
+    }
+
+    /**
+     * @return int
+     */
+    public static function getBlogId()
+    {
+        global $wpdb;
+        return (int)$wpdb->blogid;
+    }
+
+    /**
+     * @return array
+     */
+    public static function getMultisiteBlogIds()
+    {
+        global $wpdb;
+        return $wpdb->get_col('SELECT blog_id FROM '. $wpdb->blogs);
+    }
+
+    /**
+     * @param $blogId
+     * @return bool
+     */
+    public static function switchToBlog($blogId)
+    {
+        return switch_to_blog($blogId);
+    }
 }

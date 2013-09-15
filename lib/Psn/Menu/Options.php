@@ -12,6 +12,15 @@
  */ 
 class Psn_Menu_Options extends Ifw_Wp_Plugin_Menu_Page_Options
 {
+    public function onInit()
+    {
+        $application = $this->_pm->getBootstrap()->getApplication();
+
+        if ($application->getAdapter() instanceof Ifw_Wp_Plugin_Application_Adapter_ZendFw) {
+            $application->getAdapter()->init();
+        }
+    }
+
     public function onLoad()
     {
         $application = $this->_pm->getBootstrap()->getApplication();

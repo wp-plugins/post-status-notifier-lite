@@ -19,8 +19,7 @@
  * {% endif %}
  * </pre>
  *
- * @package twig
- * @author  Fabien Potencier <fabien@symfony.com>
+ * @author Fabien Potencier <fabien@symfony.com>
  */
 class IfwTwig_Node_Expression_Test_Defined extends IfwTwig_Node_Expression_Test
 {
@@ -35,7 +34,7 @@ class IfwTwig_Node_Expression_Test_Defined extends IfwTwig_Node_Expression_Test
 
             $this->changeIgnoreStrictCheck($node);
         } else {
-            throw new IfwTwig_Error_Syntax('The "defined" test only works with simple variables', $this->getLine(), $compiler->getFilename());
+            throw new IfwTwig_Error_Syntax('The "defined" test only works with simple variables', $this->getLine());
         }
     }
 

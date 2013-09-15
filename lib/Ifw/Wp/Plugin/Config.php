@@ -36,4 +36,19 @@ class Ifw_Wp_Plugin_Config extends IfwZend_Config_Ini
         }
         return self::$_instances[$instanceToken];
     }
+
+    /**
+     * @return string
+     */
+    public function getActionKey()
+    {
+        return $this->application->action->key;
+    }
+    /**
+     * @return string
+     */
+    public function getControllerKey()
+    {
+        return $this->application->controller->key;
+    }
 }
