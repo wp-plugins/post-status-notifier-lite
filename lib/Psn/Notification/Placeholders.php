@@ -112,16 +112,18 @@ class Psn_Notification_Placeholders extends Ifw_Util_Replacements
 
         $userdata = Ifw_Wp_Proxy_User::getCurrentUserData();
 
-        foreach($whitelist as $prop) {
-            if (!$userdata->has_prop($prop)) {
-                continue;
+        if ($userdata instanceof WP_User) {
+            foreach($whitelist as $prop) {
+                if (!$userdata->has_prop($prop)) {
+                    continue;
+                }
+                if (strpos($prop, 'user_') === 0) {
+                    $placeholder = str_replace('user_', 'current_user_', $prop);
+                } else {
+                    $placeholder = 'current_user_' . $prop;
+                }
+                $result[$placeholder] = $userdata->get($prop);
             }
-            if (strpos($prop, 'user_') === 0) {
-                $placeholder = str_replace('user_', 'current_user_', $prop);
-            } else {
-                $placeholder = 'current_user_' . $prop;
-            }
-            $result[$placeholder] = $userdata->get($prop);
         }
 
         return $result;

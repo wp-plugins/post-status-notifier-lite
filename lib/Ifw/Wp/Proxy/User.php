@@ -36,7 +36,7 @@ class Ifw_Wp_Proxy_User
     }
 
     /**
-     *
+     * @return null|WP_User
      */
     public static function getCurrentUserData()
     {
