@@ -6,7 +6,7 @@
  * 
  *
  * @author    Timo Reith <timo@ifeelweb.de>
- * @copyright Copyright (c) 2012-2013 ifeelweb.de
+ * @copyright Copyright (c) ifeelweb.de
  * @version   $Id$
  * @package   
  */ 
@@ -22,7 +22,7 @@ class Ifw_Wp_Plugin_Bootstrap_Observer_Ajax extends Ifw_Wp_Plugin_Bootstrap_Obse
 
     protected function _preBootstrap()
     {
-        if ($this->_pm->getAccess()->isAjax()) {
+        if ($this->_pm->getAccess()->isAjax() && !$this->_pm->getAccess()->isHeartbeat()) {
             $this->_resource = Ifw_Wp_Ajax_Manager::getInstance($this->_pm->getPathinfo()->getRootAdmin());
             $this->_resource->load($this->_pm);
         }

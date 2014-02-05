@@ -162,4 +162,29 @@ class Ifw_Wp_Tpl
         
         return $string;
     }
+
+    /**
+     * Applies twig filters to string
+     *
+     * @param string $string
+     * @param null|Ifw_Wp_Plugin_Logger $logger
+     * @internal param string $filters
+     * @return string
+     */
+    public static function renderString($string, $logger=null)
+    {
+        if (!empty($string)) {
+            try {
+                $tpl = self::getStringLoaderInstance();
+                $string = $tpl->render($string);
+            } catch (Exception $e) {
+                // invalid filter handling
+                if ($logger instanceof Ifw_Wp_Plugin_Logger) {
+                    $logger->err($e->getMessage());
+                }
+            }
+        }
+
+        return $string;
+    }
 }

@@ -22,7 +22,7 @@ class Ifw_Wp_Options_Field_Password extends Ifw_Wp_Options_Field
 
         $html = '<input type="password" autocomplete="off" id="'. $id .'" name="'. $name .'" value="'. $options->getOption($this->_id) .'" />';
         if (!empty($this->_description)) {
-            $html .= '<br><label for="'. $id .'"> '  . $this->_description . '</label>';
+            $html .= '<br><p class="description"> '  . $this->_description . '</p>';
         }
         echo $html;
     }

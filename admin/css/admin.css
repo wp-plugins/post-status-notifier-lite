@@ -12,7 +12,7 @@
 }
 form#psn_form_rule #submit {
     display: block;
-    margin: 20px 0 0 140px;
+    margin: 20px 0 0 200px;
 }
 
 form#psn_form_rule input[type="text"] {
@@ -20,4 +20,41 @@ form#psn_form_rule input[type="text"] {
 }
 form#psn_form_rule textarea {
     width: 500px;
+}
+form#psn_form_rule .premium_notice {
+    font-weight: normal;
+    font-size: 11px;
+}
+form#psn_form_rule .cat_inc_ex_header {
+    font-weight: bold;
+    font-size: 14px;
+}
+#psn_option_placeholders_filters {
+    width: 95%;
+    height: 200px;
+}
+#placeholders_filters_editor {
+    width: 90%;
+    height: 200px;
+    border: 1px solid #ddd;
+}
+#psn_option_psn_default_from {
+    width: 400px;
+}
+#import_rules {
+    margin-left: 15px;
+}
+#import_rules_container {
+    border: 1px solid #ddd;
+    padding: 10px;
+    background-color: white;
+}
+#import_rules_container h3 {
+    margin-top: 0;
+}
+#import_rules_form label {
+    font-weight: bold;
+}
+#import_rules_form input[type="file"] {
+    width: 400px;
 }

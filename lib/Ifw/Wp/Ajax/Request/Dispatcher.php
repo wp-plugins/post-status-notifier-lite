@@ -58,7 +58,6 @@ class Ifw_Wp_Ajax_Request_Dispatcher
     }
 
     /**
-     *
      * @param Ifw_Wp_Ajax_Request_Abstract $request
      */
     public function addRequest(Ifw_Wp_Ajax_Request_Abstract $request)

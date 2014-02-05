@@ -12,226 +12,157 @@ msgstr ""
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 
-#: admin/menu/controllers/PsnApplicationController.php:19
 msgid "Overview"
 msgstr ""
 
-#: admin/menu/controllers/PsnApplicationController.php:30
-#: admin/menu/controllers/PsnRulesController.php:48
 msgid "Rules"
 msgstr ""
 
-#: admin/menu/controllers/PsnIndexController.php:40
-#: admin/menu/controllers/PsnOptionsController.php:20
-#: modules/Logger/controllers/PsnLogController.php:55
 msgid "Setup"
 msgstr ""
 
-#: admin/menu/controllers/PsnIndexController.php:68
-#: admin/menu/controllers/PsnOptionsController.php:31
-#: modules/Logger/controllers/PsnLogController.php:84
 msgid "This is an overview of your plugin settings"
 msgstr ""
 
-#: admin/menu/controllers/PsnRulesController.php:51
-#: admin/menu/controllers/PsnRulesController.php:128
-#: lib/Psn/Admin/Metabox/Rules.php:51
 msgid "Create new rule"
 msgstr ""
 
-#: admin/menu/controllers/PsnRulesController.php:69
 msgid "Rule <b>%s</b> has been saved successfully."
 msgstr ""
 
-#: admin/menu/controllers/PsnRulesController.php:101
 msgid "Rule <b>%s</b> has been updated successfully."
 msgstr ""
 
-#: admin/menu/controllers/PsnRulesController.php:118
 msgid "Placeholders"
 msgstr ""
 
-#: admin/menu/controllers/PsnRulesController.php:120
 msgid "Show list of placeholders available for subject and text"
 msgstr ""
 
-#: admin/menu/controllers/PsnRulesController.php:121
 msgid "List of placeholders"
 msgstr ""
 
-#: admin/menu/controllers/PsnRulesController.php:130
 msgid "Edit notification rule"
 msgstr ""
 
-#: admin/menu/controllers/PsnRulesController.php:131
 msgid "Update"
 msgstr ""
 
-#: admin/menu/controllers/PsnRulesController.php:186
 msgid "Here you can manage your post status notification rules."
 msgstr ""
 
-#: admin/menu/controllers/PsnRulesController.php:215
 msgid "List of placeholders available for notification subject and text"
 msgstr ""
 
-#: bootstrap.php:44
 msgid "Ignore post status \"inherit\""
 msgstr ""
 
-#: bootstrap.php:45
 msgid ""
 "Status \"inherit\" is used when post revisions get created by WordPress "
 "automatically"
 msgstr ""
 
-#: bootstrap.php:55
 msgid "Settings"
 msgstr ""
 
-#: lib/Ifw/Wp/Options.php:80
 msgid "General Options"
 msgstr ""
 
-#: lib/Ifw/Wp/Plugin/Admin/Menu/Metabox/PluginInfo.php:91
 msgid "Download"
 msgstr ""
 
-#: lib/Psn/Admin/Form/NotificationRule.php:35
-#: lib/Psn/Admin/ListTable/Rules.php:45
-#: modules/Logger/lib/Service/Logger.php:72
 msgid "Rule name"
 msgstr ""
 
-#: lib/Psn/Admin/Form/NotificationRule.php:46
 msgid "all types"
 msgstr ""
 
-#: lib/Psn/Admin/Form/NotificationRule.php:48
-#: lib/Psn/Admin/ListTable/Rules.php:46
-#: modules/Logger/lib/Service/Logger.php:73
 msgid "Post type"
 msgstr ""
 
-#: lib/Psn/Admin/Form/NotificationRule.php:55
 msgid "anything"
 msgstr ""
 
-#: lib/Psn/Admin/Form/NotificationRule.php:60
-#: lib/Psn/Admin/ListTable/Rules.php:47
-#: modules/Logger/lib/Service/Logger.php:74
 msgid "Status before"
 msgstr ""
 
-#: lib/Psn/Admin/Form/NotificationRule.php:68
-#: lib/Psn/Admin/ListTable/Rules.php:48
-#: modules/Logger/lib/Service/Logger.php:75
 msgid "Status after"
 msgstr ""
 
-#: lib/Psn/Admin/Form/NotificationRule.php:76
 msgid "Subject"
 msgstr ""
 
-#: lib/Psn/Admin/Form/NotificationRule.php:77
-#: lib/Psn/Admin/Form/NotificationRule.php:87
 msgid ""
 "Open the help menu in the upper right corner to see a list of all supported "
 "placeholders."
 msgstr ""
 
-#: lib/Psn/Admin/Form/NotificationRule.php:86
 msgid "Text"
 msgstr ""
 
-#: lib/Psn/Admin/Form/NotificationRule.php:98
 msgid "Recipient"
 msgstr ""
 
-#: lib/Psn/Admin/Form/NotificationRule.php:102
 msgid "Blog admin"
 msgstr ""
 
-#: lib/Psn/Admin/Form/NotificationRule.php:103
 msgid "Post author"
 msgstr ""
 
-#: lib/Psn/Admin/Form/NotificationRule.php:108
-#: lib/Psn/Admin/ListTable/Rules.php:49
 msgid "Active"
 msgstr ""
 
-#: lib/Psn/Admin/Form/NotificationRule.php:110
 msgid "Only active rules take affect on post transition changes"
 msgstr ""
 
-#: lib/Psn/Admin/Form/NotificationRule.php:117
-#: modules/Logger/lib/ListTable/Log.php:99
 msgid "Email"
 msgstr ""
 
-#: lib/Psn/Admin/Form/NotificationRule.php:119
 msgid "When the rule matches, an email will be send to the recipient with subject and text"
 msgstr ""
 
-#: lib/Psn/Admin/Form/NotificationRule.php:129
 msgid "Add rule"
 msgstr ""
 
-#: lib/Psn/Admin/Form/Validate/Max.php:22
 msgid "You reached the maximum number of rules for the free version"
 msgstr ""
 
-#: lib/Psn/Admin/Form/Validate/StatusTransition.php:24
 msgid "Invalid status combination: before and after set to \"anything\" is not allowed"
 msgstr ""
 
-#: lib/Psn/Admin/ListTable/Rules.php:102
 msgid "Edit"
 msgstr ""
 
-#: lib/Psn/Admin/ListTable/Rules.php:103 lib/Psn/Admin/ListTable/Rules.php:142
-#: modules/Logger/lib/ListTable/Log.php:176
 msgid "Delete"
 msgstr ""
 
-#: lib/Psn/Admin/ListTable/Rules.php:118
-#: modules/Logger/lib/ListTable/Log.php:152
 msgid "Search"
 msgstr ""
 
 msgid "Name of the rule"
 msgstr ""
 
-#: lib/Psn/Admin/ListTable/Rules.php:143
 msgid "Activate"
 msgstr ""
 
-#: lib/Psn/Admin/ListTable/Rules.php:144
 msgid "Deactivate"
 msgstr ""
 
-#: lib/Psn/Admin/Metabox/Rules.php:28
 msgid "Your notification rules"
 msgstr ""
 
-#: lib/Psn/Admin/Metabox/Status.php:25
 msgid "Status"
 msgstr ""
 
-#: lib/Psn/Admin/Metabox/Status.php:34
 msgid "The required database table does not exist."
 msgstr ""
 
-#. Plugin Name of the plugin/theme
 msgid "Post Status Notifier"
 msgstr ""
 
-#. Plugin URI of the plugin/theme
 msgid "http://www.ifeelweb.de/wp-plugins/post-status-notifier/"
 msgstr ""
 
-#. Description of the plugin/theme
 msgid "Lets you create individual notification rules to be informed about all post status transitions of your blog. Features custom email texts with many placeholders and custom post types."
 msgstr ""
 
@@ -274,19 +205,19 @@ msgstr ""
 msgid "[blog_name]: New post is waiting for review"
 msgstr ""
 
-msgid "Howdy admin,\nthere is a new post by [author_display_name] waiting for review:\n\"[post_title]\".\n\nHere is the permalink: [post_guid]\n\nThe author\'s email address is [author_email]\n\n[blog_wpurl]"
+msgid "Howdy admin,\nthere is a new post by [author_display_name] waiting for review:\n\"[post_title]\".\n\nHere is the permalink: [post_permalink]\n\nThe author\'s email address is [author_email]\n\n[blog_wpurl]"
 msgstr ""
 
 msgid "Your post on [blog_name] got published!"
 msgstr ""
 
-msgid "Howdy [author_display_name],\nwe are happy to tell you that your post \"[post_title]\" got published.\n\nHere is the permalink: [post_guid]\n\nThanks for your good work,\nyour [blog_name]-Team\n\n[blog_wpurl]"
+msgid "Howdy [author_display_name],\nwe are happy to tell you that your post \"[post_title]\" got published.\n\nHere is the permalink: [post_permalink]\n\nThanks for your good work,\nyour [blog_name]-Team\n\n[blog_wpurl]"
 msgstr ""
 
 msgid "[blog_name]: Post status transition from [post_status_before] to [post_status_after]"
 msgstr ""
 
-msgid "Howdy admin,\na post status transition was a detected on \"[post_title]\".\n\nStatus before: [post_status_before]\nStatus after: [post_status_after]\n\nPost permalink: [post_guid]"
+msgid "Howdy admin,\na post status transition was a detected on \"[post_title]\".\n\nStatus before: [post_status_before]\nStatus after: [post_status_after]\n\nPost permalink: [post_permalink]"
 msgstr ""
 
 msgid "Unlimited notification rules"
@@ -338,4 +269,157 @@ msgid "Get additional recipients like user roles (including custom roles) or all
 msgstr ""
 
 msgid "Extended recipients"
+msgstr ""
+
+msgid "To select multiple categories hold down the control button (ctrl) on Windows or command button (cmd) on Mac.<br>If nothing is selected, all categories get included.<br>Exclude is dominant. See the <a href=\"%s\" target=\"_blank\">docs</a> for more details."
+msgstr ""
+
+msgid "Include categories"
+msgstr ""
+
+msgid "Exclude categories"
+msgstr ""
+
+msgid "select all"
+msgstr ""
+
+msgid "remove all"
+msgstr ""
+
+msgid "This is a <a href=\"%s\" target=\"_blank\">Premium</a> feature."
+msgstr ""
+
+msgid "Post type \"%s\" has no categories."
+msgstr ""
+
+msgid "Categories"
+msgstr ""
+
+msgid "Category filter"
+msgstr ""
+
+msgid "Placeholders filters"
+msgstr ""
+
+msgid "Not published"
+msgstr ""
+
+msgid "Here you can define filters which will apply to the placeholders contents (One filter per line). You can use the <a href=\"%s\" target=\"_blank\">Twig filters</a>. Refer to the <a href=\"%s\" target=\"_blank\">documentation</a> for details.<br>Example: [post_date]|date(\"m/d/Y\")"
+msgstr ""
+
+msgid "Static placeholders"
+msgstr ""
+
+msgid "Dynamic placeholders"
+msgstr ""
+
+msgid "Custom Fields"
+msgstr ""
+
+msgid "To retrieve the contents of custom post fields use this placeholder"
+msgstr ""
+
+msgid "Copy"
+msgstr ""
+
+msgid "These placeholders are unique to this WordPress installation. They use the names of custom categories and tags."
+msgstr ""
+
+msgid "The * stands for the name of the custom field.<br>Example: If you have a custom post field "actors" you should call your placeholder <b>[post_custom_field-actors]</b>"
+msgstr ""
+
+msgid "Duplicate"
+msgstr ""
+
+msgid "Do you want to copy this rule?"
+msgstr ""
+
+msgid "Deactivate rule on copy"
+msgstr ""
+
+msgid "Always deactivate copied rules"
+msgstr ""
+
+msgid "Trying to create the field..."
+msgstr ""
+
+msgid "The database field could not be found"
+msgstr ""
+
+msgid "Checks if the field exists in the database"
+msgstr ""
+
+msgid "Bcc field"
+msgstr ""
+
+msgid "Categories field"
+msgstr ""
+
+msgid "Hide non-public post types"
+msgstr ""
+
+msgid "When selected, non-public post types will be excluded from rule settings form"
+msgstr ""
+
+msgid "Post status"
+msgstr ""
+
+msgid "There seems to be a <b>database mismatch</b>. This could result in problems when saving rules. Please run the selftests on the overview page. If this warning persists, <a href=\"%s\" target=\"_blank\">please contact the support.</a>"
+msgstr ""
+
+msgid "Import rules"
+msgstr ""
+
+msgid "Import file"
+msgstr ""
+
+msgid "Please select a .xml export file created by PSN."
+msgstr ""
+
+msgid "Please select a valid import file."
+msgstr ""
+
+msgid "No rules found in import file."
+msgstr ""
+
+msgid "Import prefix"
+msgstr ""
+
+msgid "Prepend this text to imported rule names to identify them."
+msgstr ""
+
+msgid "Deactivate imported rules."
+msgstr ""
+
+msgid "Need help? <a href=\"%s\" target=\"_blank\">Check the docs</a>."
+msgstr ""
+
+msgid "Unlimited placeholders filters"
+msgstr ""
+
+msgid "Copy notification rules"
+msgstr ""
+
+msgid "Import / export notifaciton rules"
+msgstr ""
+
+msgid "Custom sender e-mail"
+msgstr ""
+
+msgid "Unlimited placeholders filters"
+msgstr ""
+
+msgid "Copy notification rules"
+msgstr ""
+
+msgid "Import / export notifaciton rules"
+msgstr ""
+
+msgid "Custom sender e-mail"
+msgstr ""
+
+msgid "Dupliacte"
+msgstr ""
+
+msgid "Show details"
 msgstr ""

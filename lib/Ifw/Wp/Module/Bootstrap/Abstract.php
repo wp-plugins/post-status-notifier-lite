@@ -46,7 +46,7 @@ abstract class Ifw_Wp_Module_Bootstrap_Abstract implements Ifw_Wp_Module_Bootstr
     {
         $this->_init();
 
-        if (Ifw_Wp_Ajax_Manager::isAccess()) {
+        if ($this->_pm->getAccess()->isAjax() && !$this->_pm->getAccess()->isHeartbeat()) {
             $this->_initAjax();
         }
     }

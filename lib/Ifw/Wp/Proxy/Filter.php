@@ -25,6 +25,22 @@ class Ifw_Wp_Proxy_Filter
     }
 
     /**
+     * Alias for add_filter
+     *
+     * @param Ifw_Wp_Plugin_Manager $pm
+     * @param $tag
+     * @param $function_to_add
+     * @param int $priority
+     * @param int $accepted_args
+     * @return bool|void
+     */
+    public static function addPlugin(Ifw_Wp_Plugin_Manager $pm, $tag, $function_to_add, $priority = 10, $accepted_args = 1)
+    {
+        $tag = $pm->getAbbrLower() . '_' . $tag;
+        return self::add($tag, $function_to_add, $priority, $accepted_args);
+    }
+
+    /**
      * Shortcut for add_filter( 'set-screen-option', 'function_name' )
      *
      * @param $function_to_add
@@ -114,8 +130,6 @@ class Ifw_Wp_Proxy_Filter
     {
         return self::add('plugin_action_links_'. $pm->getPathinfo()->getFilenamePath(), $function_to_add, $priority, 2);
     }
-
-
 
     /**
      * Alias for has_filter

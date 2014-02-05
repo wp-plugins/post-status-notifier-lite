@@ -81,7 +81,11 @@ class Ifw_Wp_Ajax_Manager
      */
     protected function _initAction()
     {
-        $this->_action = strip_tags(trim($_REQUEST['action']));
+        if (isset($_GET['action'])) {
+            $this->_action = esc_attr($_GET['action']);
+        } else {
+            $this->_action = esc_attr($_REQUEST['action']);
+        }
     }
     
     /**
@@ -130,6 +134,7 @@ class Ifw_Wp_Ajax_Manager
     public function load(Ifw_Wp_Plugin_Manager $pm)
     {
         if ($this->isValid()) {
+
             $requests = include_once $this->getRequestFile();
 
             if (!is_array($requests)) {
@@ -138,7 +143,6 @@ class Ifw_Wp_Ajax_Manager
             foreach ($requests as $request) {
 
                 if ($request instanceof Ifw_Wp_Ajax_Request_Abstract) {
-
                     $dispatcher = new Ifw_Wp_Ajax_Request_Dispatcher($request);
                     $dispatcher->setNonce($this->getNonce());
                     $dispatcher->dispatch();

@@ -54,7 +54,8 @@ class Ifw_Wp_Plugin_Metabox_PluginStatus extends Ifw_Wp_Plugin_Metabox_Ajax
 
         $context = array(
             'ajax' => $this->getAjaxRequest(),
-            'iframe_src' => Ifw_Wp_Proxy_Admin::getUrl() . Ifw_Wp_Proxy_Admin::getMenuUrl($this->_pm, 'selftest')
+            'iframe_src' => Ifw_Wp_Proxy_Admin::getUrl() . Ifw_Wp_Proxy_Admin::getMenuUrl($this->_pm, 'selftest'),
+            'img_path' => $this->_pm->getEnv()->getUrlAdminImg()
         );
 
         $timestamp = $this->_pm->getBootstrap()->getSelftester()->getTimestamp();

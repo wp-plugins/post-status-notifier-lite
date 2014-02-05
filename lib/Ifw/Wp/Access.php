@@ -6,7 +6,7 @@
  * 
  *
  * @author    Timo Reith <timo@ifeelweb.de>
- * @copyright Copyright (c) 2012-2013 ifeelweb.de
+ * @copyright Copyright (c) ifeelweb.de
  * @version   $Id$
  * @package   
  */ 
@@ -29,11 +29,12 @@ class Ifw_Wp_Access
 
     /**
      * Checks if it is an general WP admin access
+     *
      * @return bool
      */
     public function isAdmin()
     {
-        if (function_exists('is_admin')) {
+        if (!$this->isHeartbeat() && function_exists('is_admin')) {
             return is_admin();
         }
         return false;
@@ -54,6 +55,11 @@ class Ifw_Wp_Access
         return false;
     }
 
+    /**
+     * Checks if it is an ajax request
+     *
+     * @return bool
+     */
     public function isAjax()
     {
         return Ifw_Wp_Ajax_Manager::isAccess();
@@ -79,5 +85,24 @@ class Ifw_Wp_Access
     public function getPage()
     {
         return isset($_GET['page']) ? $_GET['page'] : null;
+    }
+
+    /**
+     * Checks if request comes from internal heartbeat action
+     *
+     * @return bool
+     */
+    public function isHeartbeat()
+    {
+        return isset($_POST['action']) && $_POST['action'] == 'heartbeat';
+    }
+
+    /**
+     * @param $action
+     * @return bool
+     */
+    public function hasAction($action)
+    {
+        return isset($_REQUEST['action']) && $_REQUEST['action'] == $action;
     }
 }

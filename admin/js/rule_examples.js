@@ -12,13 +12,14 @@ jQuery(document).ready( function($) {
 
         $('#recipient').val('admin');
         $('#cc').val('reviewer@yourdomain.com');
+        $('#posttype').trigger('change');
         return false;
     });
     $('#example_happy_author').click(function(link) {
         $('#name').val(PsnExampleRule.TheHappyAuthor);
 
         $('#posttype').val('post');
-        $('#status_before').val('pending');
+        $('#status_before').val('not_published');
         $('#status_after').val('publish');
 
         $('#notification_subject').val(PsnExampleRule.TheHappyAuthorSubject);
@@ -26,6 +27,7 @@ jQuery(document).ready( function($) {
 
         $('#recipient').val('author');
         $('#cc').val('');
+        $('#posttype').trigger('change');
         return false;
     });
 
@@ -41,6 +43,7 @@ jQuery(document).ready( function($) {
 
         $('#recipient').val('admin');
         $('#cc').val('');
+        $('#posttype').trigger('change');
         return false;
     });
 

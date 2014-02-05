@@ -4,7 +4,7 @@
  *
  * @author      Timo Reith <timo@ifeelweb.de>
  * @version     $Id$
- * @copyright   Copyright (c) 2012-2013 ifeelweb.de
+ * @copyright   Copyright (c) ifeelweb.de
  * @package     Psn_Admin
  */
 class Psn_Admin_ListTable_Rules extends Ifw_Wp_Plugin_ListTable_Abstract
@@ -137,6 +137,8 @@ class Psn_Admin_ListTable_Rules extends Ifw_Wp_Plugin_ListTable_Abstract
             $result = __('New', 'ifw');
         } elseif ($status == 'anything') {
             $result = __('anything', 'psn');
+        } elseif ($status == 'not_published') {
+            $result = __('Not published', 'psn');
         } else {
             $result = Ifw_Wp_Proxy_Post::getStatusLabel($status);
         }
@@ -155,10 +157,13 @@ class Psn_Admin_ListTable_Rules extends Ifw_Wp_Plugin_ListTable_Abstract
 
         if (!$this->isMetaboxEmbedded()) {
             //Build row actions
-            $actions = array(
-                'edit'   => sprintf('<a href="?page=%s&controller=rules&appaction=edit&id=%s">'. __('Edit', 'psn') .'</a>', $_REQUEST['page'], $item['id']),
-                'delete' => sprintf('<a href="?page=%s&controller=rules&appaction=delete&id=%s" class="delConfirm">'. __('Delete', 'psn') .'</a>', $_REQUEST['page'], $item['id']),
-            );
+            $actions = array();
+            $actions['edit'] = sprintf('<a href="?page=%s&controller=rules&appaction=edit&id=%s">'. __('Edit', 'psn') .'</a>', $_REQUEST['page'], $item['id']);
+            $actions['delete'] = sprintf('<a href="?page=%s&controller=rules&appaction=delete&id=%s" class="delConfirm">'. __('Delete', 'psn') .'</a>', $_REQUEST['page'], $item['id']);
+
+            $actionsFilter = Ifw_Wp_Proxy_Filter::apply('psn_rules_col_name_actions', array('actions' => $actions, 'item' => $item));
+
+            $actions = $actionsFilter['actions'];
 
             //Return the title contents
             $result = sprintf('%1$s%2$s',
@@ -200,6 +205,7 @@ class Psn_Admin_ListTable_Rules extends Ifw_Wp_Plugin_ListTable_Abstract
                 'activate' => __('Activate', 'psn'),
                 'deactivate' => __('Deactivate', 'psn'),
             );
+            $actions = Ifw_Wp_Proxy_Filter::apply('psn_rules_bulk_actions', $actions);
         }
 
         return $actions;
@@ -223,6 +229,14 @@ class Psn_Admin_ListTable_Rules extends Ifw_Wp_Plugin_ListTable_Abstract
                 var targetUrl = jQuery(this).attr("href");
 
                 if (confirm('<?php _e('Are you sure you want to do this?'); ?>')) {
+                    document.location.href = targetUrl;
+                }
+            });
+            jQuery(".copyConfirm").click(function(e) {
+                e.preventDefault();
+                var targetUrl = jQuery(this).attr("href");
+
+                if (confirm('<?php _e('Do you want to copy this rule?', 'psn'); ?>')) {
                     document.location.href = targetUrl;
                 }
             });

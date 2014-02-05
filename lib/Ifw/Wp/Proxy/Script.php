@@ -109,7 +109,7 @@ class Ifw_Wp_Proxy_Script
      * @param $handle
      * @param bool $src
      * @param array $deps
-     * @param bool $ver
+     * @param bool|string $ver
      * @param bool $in_footer
      * @param bool $localize
      * @return void

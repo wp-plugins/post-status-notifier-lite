@@ -6,7 +6,7 @@
  * 
  *
  * @author    Timo Reith <timo@ifeelweb.de>
- * @copyright Copyright (c) 2012-2013 ifeelweb.de
+ * @copyright Copyright (c) ifeelweb.de
  * @version   $Id$
  * @package   
  */ 
@@ -22,7 +22,8 @@ class Ifw_Wp_Plugin_Bootstrap_Observer_UpdateManager extends Ifw_Wp_Plugin_Boots
 
     protected function _preBootstrap()
     {
-        if ($this->_pm->getAccess()->isAdmin()) {
+        if (!$this->_pm->getAccess()->isHeartbeat() && $this->_pm->getAccess()->isAdmin()) {
+
             $this->_resource = new Ifw_Wp_Plugin_Update_Manager($this->_pm);
             $this->_resource->init();
         }

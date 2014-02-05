@@ -2,7 +2,7 @@
 /**
  *
  * @author    Timo Reith <timo@ifeelweb.de>
- * @copyright Copyright (c) 2012-2013 ifeelweb.de
+ * @copyright Copyright (c) ifeelweb.de
  * @version   $Id$
  * @package
  */

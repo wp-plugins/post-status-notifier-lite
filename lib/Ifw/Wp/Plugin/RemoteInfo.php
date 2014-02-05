@@ -6,7 +6,7 @@
  * Reads remote info about the plugin like current version and URL to changelog / update
  *
  * @author    Timo Reith <timo@ifeelweb.de>
- * @copyright Copyright (c) 2012-2013 ifeelweb.de
+ * @copyright Copyright (c) ifeelweb.de
  * @version   $Id$
  * @package   Ifw_Wp_Plugin
  */

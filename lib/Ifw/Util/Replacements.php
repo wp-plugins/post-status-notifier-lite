@@ -42,7 +42,7 @@ class Ifw_Util_Replacements
             $this->setOptions($options);
         }
         if (is_array($replacements)) {
-            $this->_replacements = $replacements;
+            $this->_replacements['default'] = $replacements;
         }
     }
 
@@ -65,43 +65,55 @@ class Ifw_Util_Replacements
     /**
      * @param $placeholder
      * @param null $value
+     * @param string $group
      * @return $this
      */
-    public function addPlaceholder($placeholder, $value = null)
+    public function addPlaceholder($placeholder, $value = null, $group = 'default')
     {
-        $this->_replacements[$placeholder] = $value;
+        $this->_replacements[$group][$placeholder] = $value;
         return $this;
     }
 
     /**
      * @param $placeholder
      * @param $value
+     * @param string $group
      * @return $this
      */
-    public function setValue($placeholder, $value)
+    public function setValue($placeholder, $value, $group = 'default')
     {
-        $this->_replacements[$placeholder] = $value;
+        $this->_replacements[$group][$placeholder] = $value;
         return $this;
     }
 
     /**
      * @param $placeholder
+     * @param string $group
      * @return null
      */
-    public function getValue($placeholder)
+    public function getValue($placeholder, $group = 'default')
     {
-        if (isset($this->_replacements[$placeholder])) {
-            return $this->_replacements[$placeholder];
+        if (isset($this->_replacements[$group][$placeholder])) {
+            return $this->_replacements[$group][$placeholder];
         }
         return null;
     }
 
     /**
+     * @param null $group
      * @return array
      */
-    public function getPlaceholders()
+    public function getPlaceholders($group = null)
     {
-        return array_keys($this->getReplacements());
+        return array_keys($this->getReplacements($group));
+    }
+
+    /**
+     * @return array
+     */
+    public function getDefaultPlaceholders()
+    {
+        return array_keys($this->getReplacements('default'));
     }
 
     /**
@@ -124,19 +136,40 @@ class Ifw_Util_Replacements
     /**
      * @return array
      */
-    public function getReplacements()
+    protected function _getFlattenedReplacements()
     {
-        $replacements = array();
+        $iterator = new RecursiveIteratorIterator(new RecursiveArrayIterator($this->_replacements));
+        return iterator_to_array($iterator,true);
+    }
+
+    /**
+     * @param null $group
+     * @return array
+     */
+    public function getReplacements($group = null)
+    {
+        if ($group !== null && isset($this->_replacements[$group])) {
+            $replacements = $this->_replacements[$group];
+        } else {
+            $replacements = $this->_getFlattenedReplacements();
+        }
 
         if ($this->isAutoDelimiters()) {
-            foreach($this->_replacements as $k => $v) {
+            foreach($replacements as $k => $v) {
                 $replacements[$this->_addDelimiters($k)] = $v;
+                unset($replacements[$k]);
             }
-        } else {
-            $replacements = $this->_replacements;
         }
 
         return $replacements;
+    }
+
+    /**
+     * @return array
+     */
+    public function getDefaultReplacements()
+    {
+        return $this->getReplacements('default');
     }
 
     /**

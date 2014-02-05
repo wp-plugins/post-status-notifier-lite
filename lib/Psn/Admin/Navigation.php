@@ -4,7 +4,7 @@
  *
  * @author      Timo Reith <timo@ifeelweb.de>
  * @version     $Id$
- * @copyright   Copyright (c) 2012-2013 ifeelweb.de
+ * @copyright   Copyright (c) ifeelweb.de
  * @package     Psn_Admin
  */
 class Psn_Admin_Navigation

@@ -11,7 +11,8 @@ class PsnOptionsController extends PsnApplicationController
      */
     public function indexAction()
     {
-        Ifw_Wp_Proxy_Script::loadAdmin('psn_options', $this->_pm->getEnv()->getUrlAdminJs() . 'options.js');
+        Ifw_Wp_Proxy_Script::loadAdmin('ace', $this->_pm->getEnv()->getUrlAdminJs() . 'lib/ace/ace.js', array(), $this->_pm->getEnv()->getVersion());
+        Ifw_Wp_Proxy_Script::loadAdmin('psn_options', $this->_pm->getEnv()->getUrlAdminJs() . 'options.js', array(), $this->_pm->getEnv()->getVersion());
 
         // set up contextual help
         $help = new Ifw_Wp_Plugin_Menu_Help($this->_pm);

@@ -77,6 +77,9 @@
     background: url(icons/ajax-loader.gif) 50% 50% no-repeat;
     height: 50px;
 }
+.ifw_wp_loading_background_center {
+    background: url(icons/ajax-loader.gif) 50% 50% no-repeat !important;
+}
 
 
 .ifw-wp-zend-form-ul ul, .ifw-wp-zend-form-ul li {
@@ -93,9 +96,12 @@
 }
 
 .ifw-wp-zend-form-ul label {
-    width: 140px;
+    width: 200px;
     float: left;
     padding: 4px 0 0;
+    font-weight: bold;
+    font-size: 14px;
+    color: #222;
 }
 .ifw-wp-zend-form-ul .errors li {
     color: #ff0000;
@@ -114,12 +120,15 @@
     padding: 0;
 }
 .ifw-wp-zend-form-ul .hint {
-    margin: 0 0 0 140px;
+    margin: 0 0 0 200px;
     font-style: italic;
     color: #aaa;
 }
 .ifw-wp-zend-form-ul ul.errors li {
     margin: 0;
+}
+.ifw-wp-zend-form-ul .form-table th, .ifw-wp-zend-form-ul .form-table td {
+    padding: 0;
 }
 
 .ifw-made-with-heart {
@@ -132,39 +141,44 @@
 }
 .ifw-wp-icon-reload {
     background: url(icons/reload.png) left top no-repeat;
-    padding: 3px 0 0 20px;
+    padding: 0 0 0 20px;
 }
 .ifw-wp-icon-true {
     background: url(icons/true.png) left top no-repeat;
-    padding: 3px 0 0 20px;
+    padding: 0 0 0 20px;
 }
 .ifw-wp-icon-false {
     background: url(icons/false.png) left top no-repeat;
-    padding: 3px 0 0 20px;
+    padding: 0 0 0 20px;
 }
 .ifw-wp-icon-plus {
     background: url(icons/plus.png) left top no-repeat;
-    padding: 3px 0 0 20px;
+    padding: 0 0 0 20px;
 }
 .ifw-wp-icon-help {
     background: url(icons/help.png) left top no-repeat;
-    padding: 3px 0 0 20px;
+    padding: 0 0 0 20px;
 }
 .ifw-wp-icon-mail {
     background: url(icons/mail.png) left top no-repeat;
-    padding: 3px 0 0 20px;
+    padding: 0 0 0 20px;
 }
 .ifw-wp-icon-pencil {
     background: url(icons/pencil.png) left top no-repeat;
-    padding: 3px 0 0 20px;
+    padding: 0 0 0 20px;
 }
 .ifw-wp-icon-info {
     background: url(icons/info.png) left top no-repeat;
-    padding: 3px 0 0 20px;
+    padding: 0 0 0 20px;
 }
 .ifw-external-link {
-    background: url(icons/external-link.png) left top no-repeat;
-    padding: 0 0 0 16px;
+    background: url(icons/external-link.png) left 5px no-repeat;
+    padding: 0 0 0 14px;
+    margin-left: 3px;
+}
+.ifw-wp-icon-tool {
+    background: url(icons/tool.png) left top no-repeat;
+    padding: 0 0 0 20px;
 }
 
 /* metabox tables */
@@ -190,7 +204,7 @@
     background-position: center center;
 }
 .ifw-listtable .reload {
-    margin: 6px 0 0 0;
+    margin: 6px 0 0 10px;
     float: right;
 }
 
@@ -212,6 +226,13 @@
 #ifw-dialog-perform-plugin-tests iframe {
     width: 100%;
     height: 100%;
+}
+#ifw-plugin-test-icon {
+    width: 150px;
+    float: left;
+}
+#ifw-plugin-test-result {
+    float: left;
 }
 
 /* help tab */

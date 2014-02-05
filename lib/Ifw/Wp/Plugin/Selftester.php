@@ -6,7 +6,7 @@
  * Performs registered plugin tests
  *
  * @author    Timo Reith <timo@ifeelweb.de>
- * @copyright Copyright (c) 2012-2013 ifeelweb.de
+ * @copyright Copyright (c) ifeelweb.de
  * @version   $Id$
  * @package   Ifw_Wp_Plugin
  */ 
@@ -58,12 +58,7 @@ class Ifw_Wp_Plugin_Selftester
      */
     protected function _registerBuiltinTests()
     {
-        $dir = new Ifw_Util_Directory_Scanner($this->_pm->getPathinfo()->getRootLib() . 'Ifw/Wp/Plugin/Selftest/Case');
-        $result = $dir->getClassesImplementingInterface('Ifw_Wp_Plugin_Selftest_Interface');
-
-        foreach($result->getObjects() as $obj) {
-            $this->addTestCase($obj);
-        }
+        $this->addTestCase(new Ifw_Wp_Plugin_Selftest_Case_WpVersion());
     }
 
     public function activate()

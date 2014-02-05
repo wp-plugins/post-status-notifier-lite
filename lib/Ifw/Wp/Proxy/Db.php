@@ -6,12 +6,19 @@
  * 
  *
  * @author    Timo Reith <timo@ifeelweb.de>
- * @copyright Copyright (c) 2012-2013 ifeelweb.de
+ * @copyright Copyright (c) ifeelweb.de
  * @version   $Id$
  * @package   
  */ 
 class Ifw_Wp_Proxy_Db 
 {
+    /**
+     * @var array
+     */
+    protected static $_tableStore = array();
+
+
+
     /**
      * Convenience method to get code completion in IDE
      * @return wpdb
@@ -55,23 +62,48 @@ class Ifw_Wp_Proxy_Db
     }
 
     /**
+     * @param $table
+     * @return array
+     */
+    public static function getTableFieldNames($table)
+    {
+        $result = array();
+
+        $describeResult = self::describe($table);
+
+        if (is_array($describeResult)) {
+            foreach ($describeResult as $field) {
+                array_push($result, $field->Field);
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Get the result of DESCRIBE $table
+     *
+     * @param $table
+     * @return mixed
+     */
+    public static function describe($table)
+    {
+        if (!array_key_exists($table, self::$_tableStore)) {
+            $sql = sprintf('DESCRIBE `%s`', self::getPrefix() . $table);
+            self::$_tableStore[$table] = self::getObject()->get_results($sql);
+        }
+        return self::$_tableStore[$table];
+    }
+
+    /**
      * Checks if a column in a table exists
+     *
      * @param $table
      * @param $column
      * @return bool
      */
     public static function columnExists($table, $column)
     {
-        $sql = 'SELECT count(*)
-            FROM information_schema.COLUMNS
-            WHERE
-                TABLE_SCHEMA = "%s"
-            AND TABLE_NAME = "%s"
-            AND COLUMN_NAME = "%s"
-        ';
-
-        $sql = sprintf($sql, self::getName(), self::getPrefix() . $table, $column);
-
-        return (int)self::getObject()->get_var($sql) === 1;
+        return in_array($column, self::getTableFieldNames($table));
     }
 }

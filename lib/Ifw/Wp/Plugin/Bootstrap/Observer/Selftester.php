@@ -6,7 +6,7 @@
  * 
  *
  * @author    Timo Reith <timo@ifeelweb.de>
- * @copyright Copyright (c) 2012-2013 ifeelweb.de
+ * @copyright Copyright (c) ifeelweb.de
  * @version   $Id$
  * @package   
  */ 
@@ -22,14 +22,18 @@ class Ifw_Wp_Plugin_Bootstrap_Observer_Selftester extends Ifw_Wp_Plugin_Bootstra
 
     protected function _preBootstrap()
     {
-        if ($this->_pm->getAccess()->isPlugin()) {
+        if ( ($this->_pm->getAccess()->isPlugin() && !$this->_pm->getAccess()->isAjax()) ||
+            ($this->_pm->getAccess()->isAjax() && $this->_pm->getAccess()->hasAction('load-psn-plugin_status')) ) {
+
             $this->_resource = new Ifw_Wp_Plugin_Selftester($this->_pm);
         }
     }
 
     protected function _shutdownBootstrap()
     {
-        if ($this->_pm->getAccess()->isPlugin() && !$this->_pm->getAccess()->isAjax()) {
+        if ( ($this->_pm->getAccess()->isPlugin() && !$this->_pm->getAccess()->isAjax()) ||
+            ($this->_pm->getAccess()->isAjax() && $this->_pm->getAccess()->hasAction('load-psn-plugin_status')) ) {
+
             $this->_resource->activate();
         }
     }

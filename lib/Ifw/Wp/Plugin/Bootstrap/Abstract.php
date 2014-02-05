@@ -163,12 +163,15 @@ abstract class Ifw_Wp_Plugin_Bootstrap_Abstract implements Ifw_Wp_Plugin_Bootstr
         $this->_moduleManager->load();
 
         // register module controller path before controller init
-        Ifw_Wp_Proxy_Action::add($this->_pm->getAbbrLower() . '_before_controller_init', array($this->_moduleManager, 'registerModules'));
+        Ifw_Wp_Proxy_Action::addPlugin($this->_pm, 'before_controller_init', array($this->_moduleManager, 'registerModules'));
     }
 
     private function _applicationBootstrap()
     {
-        if ($this->_pm->getAccess()->isPlugin() && Ifw_Wp_Plugin_Application::isAvailable($this->_pm)) {
+        if ($this->_pm->getAccess()->isPlugin() &&
+            Ifw_Wp_Plugin_Application::isAvailable($this->_pm) &&
+            !$this->_pm->getAccess()->isAjax()) {
+
             // start application
             $this->_application = Ifw_Wp_Plugin_Application::factory($this->_pm);
             $this->_application->load();

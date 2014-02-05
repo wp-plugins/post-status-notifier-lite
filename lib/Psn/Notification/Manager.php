@@ -3,7 +3,7 @@
  * Notification manager
  *
  * @author      Timo Reith <timo@ifeelweb.de>
- * @copyright   Copyright (c) 2012-2013 ifeelweb.de
+ * @copyright   Copyright (c) ifeelweb.de
  * @version     $Id$
  * @package     Psn_Notification
  */ 
@@ -54,7 +54,7 @@ class Psn_Notification_Manager
     protected function _loadServices()
     {
         $this->addService(new Psn_Notification_Service_Email());
-        Ifw_Wp_Proxy::doAction('psn_after_load_services', $this);
+        Ifw_Wp_Proxy_Action::doPlugin($this->_pm, 'after_load_services', $this);
     }
 
     /**
@@ -82,10 +82,15 @@ class Psn_Notification_Manager
                 $rule->setIgnoreInherit(true);
             }
 
-            if ($rule->matchesPostType($post->post_type) && $rule->matchesStatus($statusBefore, $statusAfter)) {
+            if ($rule->matchesPostType($post->post_type) &&
+                $rule->matchesStatus($statusBefore, $statusAfter) &&
+                $rule->matchesCategories($post)
+                ) {
 
                 // rule matches
-                Ifw_Wp_Proxy_Action::add('psn_notification_placeholders', array($this, 'addPlaceholders'));
+                Ifw_Wp_Proxy_Action::addPlugin($this->_pm, 'notification_placeholders', array($this, 'addPlaceholders'));
+                Ifw_Wp_Proxy_Action::addPlugin($this->_pm, 'notification_placeholders', array($this, 'filterPlaceholders'));
+                Ifw_Wp_Proxy_Action::addPlugin($this->_pm, 'notification_dynamic_placeholders', array($this, 'filterPlaceholders'));
 
                 /**
                  * @var $service Psn_Notification_Service_Interface
@@ -107,6 +112,47 @@ class Psn_Notification_Manager
             'post_status_before' => $this->_statusBefore,
             'post_status_after' => $this->_statusAfter,
         ));
+    }
+
+    /**
+     * @param $placeholders
+     * @return array
+     */
+    public function filterPlaceholders(array $placeholders)
+    {
+        $filters = $this->_pm->getBootstrap()->getOptionsManager()->getOption('placeholders_filters');
+
+        if (!empty($filters)) {
+
+            $counter = 0;
+            foreach (preg_split("/((\r?\n)|(\r\n?))/", $filters) as $filter) {
+                if (!$this->_pm->isPremium() && $counter >= 1) {
+                    break;
+                }
+
+                preg_match_all('/\[([A-Za-z0-9_-]+?)\]/', $filter, $match);
+
+                if (isset($match[0][0]) && isset($match[1][0])) {
+                    $placeholder_tag = $match[0][0];
+                    $placeholder_name = $match[1][0];
+
+                    if (isset($placeholders[$placeholder_name])) {
+                        $filter_string = str_replace($placeholder_tag, '"'. $placeholders[$placeholder_name] . '"', $filter);
+                        if (!empty($filter_string)) {
+                            if ($filter_string[0] != '{') {
+                                $filter_string = '{{ '. $filter_string . ' }}';
+                            }
+
+                            $placeholders[$placeholder_name] = Ifw_Wp_Tpl::renderString($filter_string);
+                        }
+                    }
+                }
+                $counter++;
+            }
+
+        }
+        
+        return $placeholders;
     }
 
     /**

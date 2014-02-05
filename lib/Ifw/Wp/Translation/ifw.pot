@@ -17,42 +17,33 @@ msgstr ""
 msgid "Plugin homepage"
 msgstr ""
 
-#: lib/Ifw/Wp/Plugin/Admin/Menu/Metabox/PluginInfo.php:85
 msgid "The plugin is up to date."
 msgstr ""
 
-#: lib/Ifw/Wp/Plugin/Admin/Menu/Metabox/PluginInfo.php:88
 msgid "There is a new version available."
 msgstr ""
 
-#: lib/Ifw/Wp/Plugin/Admin/Menu/Metabox/PluginInfo.php:119
 msgid "Error while loading: %s"
 msgstr ""
 
-#: lib/Ifw/Wp/Plugin/Admin/Menu/Metabox/RssFeed.php:96
 msgid "Error while loading newsfeed: %s"
 msgstr ""
 
-#: lib/Ydp/Admin/Metabox/Status.php:31
 msgid "Plugin is ready."
 msgstr ""
 
-#: lib/Ydp/Admin/Metabox/Status.php:34
 msgid "Plugin is not ready."
 msgstr ""
 
 msgid "Plugin info"
 msgstr ""
 
-#. Plugin URI of the plugin/theme
 msgid "http://www.ifeelweb.de/"
 msgstr ""
 
-#. Author of the plugin/theme
 msgid "Timo Reith"
 msgstr ""
 
-#. Author URI of the plugin/theme
 msgid "http://www.ifeelweb.de"
 msgstr ""
 
@@ -77,15 +68,12 @@ msgstr ""
 msgid "New"
 msgstr ""
 
-#: lib/Ifw/Wp/Plugin/Admin/Menu/Metabox/PremiumAd.php:29
 msgid "Go Premium!"
 msgstr ""
 
-#: lib/Ifw/Wp/Plugin/Admin/Menu/Metabox/PluginInfo.php:77
 msgid "Version"
 msgstr ""
 
-#: lib/Ifw/Wp/Plugin/Admin/Menu/Metabox/PluginInfo.php:91
 msgid "Download"
 msgstr ""
 
@@ -95,15 +83,12 @@ msgstr ""
 msgid "Help"
 msgstr "Hilfe"
 
-#: lib/Ifw/Wp/Options.php:146
 msgid "No options available."
 msgstr ""
 
-#: lib/Ifw/Wp/Ajax/Request/Dispatcher.php:56
 msgid "Invalid access"
 msgstr ""
 
-#: lib/Ifw/Wp/Plugin/Admin/Menu/Metabox/RssFeed.php:121
 msgid "Untitled"
 msgstr ""
 

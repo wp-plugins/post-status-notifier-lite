@@ -3,7 +3,7 @@
  * Plugin bootstrap
  *
  * @author    Timo Reith <timo@ifeelweb.de>
- * @copyright Copyright (c) 2012-2013 ifeelweb.des
+ * @copyright Copyright (c) ifeelweb.de
  * @version   $Id$
  */
 class Psn_Bootstrap extends Ifw_Wp_Plugin_Bootstrap_Abstract
@@ -36,14 +36,18 @@ class Psn_Bootstrap extends Ifw_Wp_Plugin_Bootstrap_Abstract
             // set installer / uninstaller
             $this->getInstaller()->addActivation(new Psn_Installer_Activation());
             $this->getInstaller()->addUninstall(new Psn_Installer_Uninstall());
+        }
+
+        if ($this->_pm->getAccess()->isPlugin()) {
+
+            // on PSN admin access
+            $this->addOptions();
 
             // register patches
             $this->getUpdateManager()->getPatcher()->addPatch(new Psn_Patch_Database());
-
-            Ifw_Wp_Proxy_Action::add('psn_selftester_activate', array($this, 'addSelftests'));
+            // register selftests
+            Ifw_Wp_Proxy_Action::addPlugin($this->_pm, 'selftester_activate', array($this, 'addSelftests'));
         }
-
-        $this->addOptions();
 
         $this->_notificationManager = new Psn_Notification_Manager($this->_pm);
     }
@@ -54,6 +58,8 @@ class Psn_Bootstrap extends Ifw_Wp_Plugin_Bootstrap_Abstract
     public function addSelftests(Ifw_Wp_Plugin_Selftester $selftester)
     {
         $selftester->addTestCase(new Psn_Test_RuleModel());
+        $selftester->addTestCase(new Psn_Test_BccField());
+        $selftester->addTestCase(new Psn_Test_CategoriesField());
     }
 
     /**
@@ -66,6 +72,11 @@ class Psn_Bootstrap extends Ifw_Wp_Plugin_Bootstrap_Abstract
             __('Ignore post status "inherit"', 'psn'),
             __('Status "inherit" is used when post revisions get created by WordPress automatically', 'psn')
         ));
+        $this->getOptionsManager()->addGeneralOption(new Ifw_Wp_Options_Field_Checkbox(
+            'psn_hide_nonpublic_posttypes',
+            __('Hide non-public post types', 'psn'),
+            __('When selected, non-public post types will be excluded from rule settings form', 'psn')
+        ));
 
         if (!$this->_pm->isPremium()) {
             $smtpOptions = new Ifw_Wp_Options_Section('smtp', __('SMTP', 'psn_smtp'));
@@ -76,6 +87,18 @@ class Psn_Bootstrap extends Ifw_Wp_Plugin_Bootstrap_Abstract
             ));
             $this->_pm->getBootstrap()->getOptions()->addSection($smtpOptions, 12);
         }
+
+        $placeholderFilterOptions = new Ifw_Wp_Options_Section('placeholders', __('Placeholders', 'psn'));
+
+        $placeholderFilterOptions->addField(new Ifw_Wp_Options_Field_Textarea(
+            'placeholders_filters',
+            __('Placeholders filters', 'psn'),
+            sprintf( __('Here you can define filters which will apply to the placeholders contents (One filter per line). You can use the <a href="%s" target="_blank">Twig filters</a>. Refer to the <a href="%s" target="_blank">documentation</a> for details.<br>Example: [post_date]|date("m/d/Y")', 'psn_smtp'),
+                'http://twig.sensiolabs.org/doc/filters/index.html',
+                'http://docs.ifeelweb.de/post-status-notifier/options.html#placeholders')
+        ));
+
+        $this->_pm->getBootstrap()->getOptions()->addSection($placeholderFilterOptions, 11);
     }
 
     /**

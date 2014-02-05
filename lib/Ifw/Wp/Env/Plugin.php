@@ -23,6 +23,11 @@ class Ifw_Wp_Env_Plugin extends Ifw_Wp_Env_Abstract
     /**
      * @var string
      */
+    protected $_urlAdminImg;
+
+    /**
+     * @var string
+     */
     protected $_environment;
 
     /**
@@ -71,7 +76,7 @@ class Ifw_Wp_Env_Plugin extends Ifw_Wp_Env_Abstract
     }
 
     /**
-     * @return string the $_name
+     * @return string
      */
     public function getName()
     {
@@ -94,6 +99,7 @@ class Ifw_Wp_Env_Plugin extends Ifw_Wp_Env_Abstract
             $this->_urlImg = $this->_urlFiles . 'img/';
             $this->_urlAdminCss = $this->_url . 'admin/css/';
             $this->_urlAdminJs = $this->_url . 'admin/js/';
+            $this->_urlAdminImg = $this->_url . 'admin/img/';
         }
 
         $this->_environment = getenv('IFW_WP_ENV') ? getenv('IFW_WP_ENV') : 'production';
@@ -150,19 +156,27 @@ class Ifw_Wp_Env_Plugin extends Ifw_Wp_Env_Abstract
     }
 
     /**
-     * @return the $_urlAdminCss
+     * @return string
      */
-    public function getUrlAdminCss ()
+    public function getUrlAdminCss()
     {
         return $this->_urlAdminCss;
     }
 
     /**
-     * @return the $_urlAdminJs
+     * @return string
      */
-    public function getUrlAdminJs ()
+    public function getUrlAdminJs()
     {
         return $this->_urlAdminJs;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUrlAdminImg()
+    {
+        return $this->_urlAdminImg;
     }
 
     /**

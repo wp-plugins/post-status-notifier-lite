@@ -107,6 +107,10 @@ class Ifw_Wp_Plugin_Metabox_PluginInfo extends Ifw_Wp_Plugin_Metabox_Ajax
             $iconClass = 'error';
             $content .= sprintf(__('Error while loading: %s'), $e->getMessage());
         }
+
+        $content = strtr($content, array(
+            'target="_blank"' => 'target="_blank" class="ifw-external-link"',
+        ));
         
         $this->addBlock('version', $label, $content, $iconClass);
     }
@@ -118,6 +122,10 @@ class Ifw_Wp_Plugin_Metabox_PluginInfo extends Ifw_Wp_Plugin_Metabox_Ajax
         if (!empty($this->_pm->getConfig()->plugin->premiumUrl)) {
             $content .= '<br>' . sprintf(__('Visit the <a href="%s" target="_blank">Premium homepage</a> for the latest news.', 'ifw'), $this->_pm->getConfig()->plugin->premiumUrl);
         }
+
+        $content = strtr($content, array(
+            'target="_blank"' => 'target="_blank" class="ifw-external-link"',
+        ));
 
         $this->addBlock('premium',
             __('Premium', 'ifw'),
@@ -133,6 +141,10 @@ class Ifw_Wp_Plugin_Metabox_PluginInfo extends Ifw_Wp_Plugin_Metabox_Ajax
             $content .= sprintf(__('Read the <a href="%s" target="_blank">plugin documentation</a>', 'ifw'), $this->_pm->getConfig()->plugin->docUrl) . '<br>';
         }
         $content .= sprintf(__('Visit the <a href="%s" target="_blank">plugin homepage</a>', 'ifw'), $this->_pm->getEnv()->getHomepage());
+
+        $content = strtr($content, array(
+            'target="_blank"' => 'target="_blank" class="ifw-external-link"',
+        ));
 
         $this->addBlock('help',
             __('Need help?', 'ifw'),

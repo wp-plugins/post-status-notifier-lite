@@ -3,7 +3,7 @@
  * Rule model
  *
  * @author      Timo Reith <timo@ifeelweb.de>
- * @copyright   Copyright (c) 2012-2013 ifeelweb.de
+ * @copyright   Copyright (c) ifeelweb.de
  * @version     $Id$
  * @package     Psn_Model
  */
@@ -61,50 +61,109 @@ class Psn_Model_Rule extends Ifw_Wp_ORM_Model
         return html_entity_decode($this->get('notification_body'), ENT_COMPAT, Ifw_Wp_Proxy_Blog::getCharset());
     }
 
+    /**
+     * @return string
+     */
     public function getPostType()
     {
         return $this->get('posttype');
     }
 
+    /**
+     * @return string
+     */
     public function getStatusBefore()
     {
         return $this->get('status_before');
     }
 
+    /**
+     * @return string
+     */
     public function getStatusAfter()
     {
         return $this->get('status_after');
     }
 
+    /**
+     * @return array
+     */
+    public function getCategories()
+    {
+        $categories = $this->get('categories');
+
+        if (!empty($categories)) {
+            return unserialize($this->get('categories'));
+        }
+
+        return null;
+    }
+
+    /**
+     * Checks if the rule matches the post's type
+     * @param string $postType
+     * @return bool
+     */
     public function matchesPostType($postType)
     {
         return $this->getPostType() == 'all' or $this->getPostType() == $postType;
     }
 
+    /**
+     * Checks if the rule matches the post's status transitions
+     * @param string $before
+     * @param string $after
+     * @return bool
+     */
     public function matchesStatus($before, $after)
     {
         return
-            ($this->getStatusBefore() == $before or $this->getStatusBefore() == 'anything') &&
-            ($this->getStatusAfter() == $after or $this->getStatusAfter() == 'anything') &&
+            ($this->getStatusBefore() == $before or $this->getStatusBefore() == 'anything' or ($this->getStatusBefore() == 'not_published' && $before != 'publish')) &&
+            ($this->getStatusAfter() == $after or $this->getStatusAfter() == 'anything' or ($this->getStatusAfter() == 'not_published' && $after != 'publish')) &&
             (!$this->isIgnoreInherit() or ($this->isIgnoreInherit() && $before != 'inherit' && $after != 'inherit'));
     }
 
-    public static function getMax()
+    /**
+     * @param $post
+     * @return bool
+     */
+    public function matchesCategories($post)
     {
-        // please respect my work for this plugin and buy the premium version
-        return Ifw_Wp_Proxy_Filter::apply('psn_max_rules', 2);
+        $categories = $this->getCategories();
+
+        if ($categories === null) {
+            // no categories filter set
+            return true;
+        }
+
+        $postCategories = Ifw_Wp_Proxy_Post::getAllTermIds($post);
+
+        if (isset($categories['include'])) {
+            $include = $categories['include'];
+        } else {
+            // no include set, get all
+            $include = Ifw_Wp_Proxy_Post::getAllCategoryIds(Ifw_Wp_Proxy_Post::getType($post));
+        }
+
+        $exclude = array();
+        if (isset($categories['exclude'])) {
+            $exclude = $categories['exclude'];
+        }
+
+        // the includes which are not dominated by excludes
+        $includeDiff = array_diff($include, $exclude);
+
+        if (count(array_intersect($postCategories, $includeDiff)) > 0) {
+            // post has cats that should be included
+            return true;
+        }
+
+        return false;
     }
 
-    public static function hasMax()
-    {
-        return self::getMax() > 0;
-    }
-
-    public static function reachedMax()
-    {
-        return Ifw_Wp_ORM_Model::factory('Psn_Model_Rule')->count() >= self::getMax();
-    }
-
+    /**
+     * @param bool $ignore
+     */
     public function setIgnoreInherit($ignore = true)
     {
         if (is_bool($ignore)) {
@@ -120,4 +179,21 @@ class Psn_Model_Rule extends Ifw_Wp_ORM_Model
         return $this->_ignoreInherit;
     }
 
+    public static function getMax()
+    {
+        // please respect my work for this plugin and buy the premium version
+        // at http://codecanyon.net/item/post-status-notifier/4809420?ref=ifeelweb
+        // otherwise I can not continue updating this plugin with new features
+        return Ifw_Wp_Proxy_Filter::apply('psn_max_rules', 2);
+    }
+
+    public static function hasMax()
+    {
+        return self::getMax() > 0;
+    }
+
+    public static function reachedMax()
+    {
+        return Ifw_Wp_ORM_Model::factory('Psn_Model_Rule')->count() >= self::getMax();
+    }
 }

@@ -547,7 +547,9 @@ abstract class Ifw_Wp_Plugin_ListTable_Abstract extends WP_List_Table
         jQuery(document).ready( function($) {
             if ($('form#<?php echo $this->getId(); ?> .search-box').length > 0) {
                 var searchbox = $('form#<?php echo $this->getId(); ?> .tablenav.top > .search-box').clone();
-                $('form#<?php echo $this->getId(); ?> .tablenav.top .actions').append(searchbox);
+                var searchboxHTML = searchbox.html();
+                searchboxHTML = searchboxHTML.replace(/<p>/g, '<div>').replace(/<\/p>/g, '</div>');
+                $('form#<?php echo $this->getId(); ?> .tablenav.top .actions').append(searchboxHTML);
                 $('form#<?php echo $this->getId(); ?> .tablenav.top > .search-box').remove();
             }
 
