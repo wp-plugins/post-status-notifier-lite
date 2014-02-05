@@ -1,0 +1,44 @@
+<h3>{{ langHeader }}</h3>
+{% set counter = 1 %}
+<h4>{{ langStatic }}</h4>
+<div>
+    <div style="float: left; width: 33%;">
+        <ul>
+            {% for ph in placeholders %}
+            <li>{{ ph }}</li>
+                {% if counter >= placeholders|length / 3 %}
+                    {% set counter = 1 %}
+                    </ul></div><div style="float: left; width: 33%;"><ul>
+                {% else %}
+                    {% set counter = counter+1 %}
+                {% endif %}
+            {% endfor %}
+        </ul>
+    </div>
+    <div style="clear: both;"></div>
+</div>
+
+{% set counter = 1 %}
+<h4>{{ langDynamic }}</h4>
+<p>{{ placeholdersDynamicHelp }}</p>
+<div>
+    <div style="float: left; width: 33%;">
+        <ul>
+            {% for ph in placeholdersDynamic %}
+            <li>{{ ph }}</li>
+                {% if counter >= placeholdersDynamic|length / 3 %}
+                    {% set counter = 1 %}
+                    </ul></div><div style="float: left; width: 33%;"><ul>
+                {% else %}
+                    {% set counter = counter+1 %}
+                {% endif %}
+            {% endfor %}
+        </ul>
+    </div>
+    <div style="clear: both;"></div>
+</div>
+
+<h4>{{ langCustomFields }}</h4>
+<p>{{ langCustomFields1 }}:</p>
+<ul><li>[post_custom_field-*]</li></ul>
+<p>{{ langCustomFields2|raw }}</p>
