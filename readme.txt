@@ -2,21 +2,25 @@
 Tags: post, status, notification, notify, change, custom post type, email, log, logging, notify, placeholders,  transition
 Contributors: worschtebrot
 Requires at least: 3.3
-Tested up to: 3.6.1
-Stable tag: 1.2.1
+Tested up to: 3.8.1
+Stable tag: 1.4
 
 
 Lets you create individual notification rules to be informed about all post status transitions of your blog. Features custom email texts with many placeholders and custom post types.
 
 == Description ==
 
-This plugin notifies about status changes of your WordPress content. It can send email notifications with custom text to any recipient you like.
-It is especially characterized by great flexibility.
+You want to be informed when one of your contributors has submitted a new post for revision or an editor published one? Vice versa you want to let your contributors know when their posts got published?
+This is just the beginning of what you can achieve with Post Status Notifier (PSN)!
 
-For the latest information visit the plugin homepage:
+It works with all kind of **custom post types**, supports all **custom taxonomies** like categories and tags other plugins are using. You can grab all these taxonomy values and custom fields attached to a post and use them as **placeholders** in your custom notification texts. Define as many notification rules as you need with all kind of settings, like custom Cc, Bcc and From emails addresses.
+
+PSN works great with plugins like **WP Job Manager**, **Crowdfunding by Astoundify** or **Advanced Custom Fields**, just to name a few. The possibilities are endless. Want to **automate your publishing workflow** with [Buffer](http://bufferapp.com/)? No problem!
+
+Plugin homepage:
 http://www.ifeelweb.de/wp-plugins/post-status-notifier/
 
-Here you can find a detailed documentation:
+Always up-to-date online documentation:
 http://docs.ifeelweb.de/post-status-notifier/
 
 Features:
@@ -25,11 +29,16 @@ Features:
 * Support for posts, pages and all **custom post types**
 * Support for **all post status** values
 * Create **custom email texts** with support for many placeholders
+* Manipulate placeholders content with **filters** to completely adjust the output to your needs (uses the filters of the famous PHP template engine Twig / limited to one filter in the Lite version)
 * WordPress **multisite compatible**
+* Premium version: Categories filter: Include or exclude categories (even from custom post types) from notifications
 * Premium version: Supports **SMTP**. You find all necessary SMTP settings to connect your SMTP server in the options section.
 * Premium version: Supports **user roles** (custom roles too) as email recipients
 * Premium version: Optional **logging**: Logs status changes based on your rules
-* Premium version: **Dashboard widget** showing the latest log entries
+* Premium version: **Dashboard widget** showing the latest log entries (can be disabled)
+* Premium version: **Import / Export** of your notification rules
+* Premium version: **Copy** rules
+* Premium version: Custom sender e-mail. Define the notification sender (**FROM**) per rule or as a default in the options.
 * Comprehensive **documentation**
 * Included **translations**: english, german
 * **Support** in english and german via Zendesk: ifeelwebde.zendesk.com
@@ -41,13 +50,20 @@ Features:
 
 = What customers say =
 
-**nomadone**: “just got the pro version and it’s working great, awesome plugin man and thanks for your excellent support”
+**"Great plugin, look through maybe 7 plugins until found this one and it is the best."**
+- misolek
 
-**Rick**: “This plugin is very intuitive and woks great. Very helpful support. Top notch!”
+**"just got the pro version and it’s working great, awesome plugin man and thanks for your excellent support"**
+- nomadone
 
-**Jon**: “Thank you for your great support – the plugin works great now and has accomplished what 5 other commercial and free plugins couldn’t – to provide simple and configurable email notifications for WP status changes.”
+"This plugin is very intuitive and works great. Very helpful support. Top notch!"
+- Rick
 
-**Urosino**: “Everything works properly!”
+**"Thank you for your great support – the plugin works great now and has accomplished what 5 other commercial and free plugins couldn’t – to provide simple and configurable email notifications for WP status changes."**
+- Jon
+
+**"just got the pro version and it’s working great, awesome plugin man and thanks for your excellent support"**
+- nomadone
 
 [Comment-Source](http://codecanyon.net/item/post-status-notifier/discussion/4809420)
 
@@ -67,6 +83,26 @@ Here you can find a detailed documentation:
 http://docs.ifeelweb.de/post-status-notifier/
 
 == Change Log ==
+
+= 1.4 = 
+
+- New custom placeholders which will specifically match custom categories and tags registered with your blog.
+- New dynamic placeholders: You will be able to fetch every custom field attached with your posts.
+- New feature: Placeholder filters. This is a very powerful feature. You can use all filters of the famous PHP template engine Twig to manipulate the output of all placeholders PSN offers you, including the new dynamic placeholders. (Limited to 1 filter in Lite version)
+- New feature: Import / Export notification rules (Premium)
+- New feature: Copy notification rules (Premium)
+- New feature: New recipient type "Individual e-mail". Enter a custom e-mail address as main recipient (TO).
+- New feature: Custom sender e-mail. Define the notification sender per rule or as a default in the options. (Premium)
+- New notification rule status "Not published". This will match every post status but "publish".
+- New placeholder: [post_format]
+
+= 1.3 =
+
+- New feature: Notification rules have a categories filter now
+- New placeholder: [post_permalink] can be used for notification texts. Contains the post's permalink (uses WP internal get_permalink function)
+- Bugfix: Fixed a bug which occured when not logged in users changed post status in the frontend
+- Bugfix: German language fix
+- Improvement: Backend adjusted to new WordPress 3.8 layout
 
 = 1.2.1 =
 
@@ -131,4 +167,7 @@ If you find any bugs please use the comments on the [plugin's homepage](http://w
 10. Premium: Dashboard widget of log entries
 11. Example email generated by the plugin
 12. Extended recipients
+13. Selftest routines
+14. Category filter settings
+15. German translation
 
