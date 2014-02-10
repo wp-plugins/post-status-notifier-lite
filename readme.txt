@@ -10,7 +10,9 @@ Lets you create individual notification rules to be informed about all post stat
 
 == Description ==
 
-You want to be informed when one of your contributors has submitted a new post for revision or an editor published one? Vice versa you want to let your contributors know when their posts got published?
+=Notify everything!=
+
+You want to **be notified** when one of your contributors have submitted a new post for revision or an editor published one? Vice versa you want to **notify your contributors** when their posts got published?
 This is just the beginning of what you can achieve with Post Status Notifier (PSN)!
 
 It works with all kind of **custom post types**, supports all **custom taxonomies** like categories and tags other plugins are using. You can grab all these taxonomy values and custom fields attached to a post and use them as **placeholders** in your custom notification texts. Define as many notification rules as you need with all kind of settings, like custom Cc, Bcc and From emails addresses.
