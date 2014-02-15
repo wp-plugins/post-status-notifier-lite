@@ -6,26 +6,23 @@ Tested up to: 3.8.1
 Stable tag: 1.4.1
 
 
-Lets you create individual notification rules to be informed about all post status transitions of your blog. Features custom email texts with many placeholders and custom post types.
+Notify everything! Create individual notification rules to be informed about all post status transitions of your blog. Features custom email texts with many placeholders. Supports custom post types and taxonomies.
 
 == Description ==
 
-=Notify everything!=
+= Notify everything! =
+
+For more information check out the [plugin homepage](http://www.ifeelweb.de/wp-plugins/post-status-notifier/ "Post Status Notifier for WordPress Homepage") or the always up-to-date [online documentation](http://docs.ifeelweb.de/post-status-notifier/ "Post Status Notifier Documentation")
 
 You want to **be notified** when one of your contributors have submitted a new post for revision or an editor published one? Vice versa you want to **notify your contributors** when their posts got published?
 This is just the beginning of what you can achieve with Post Status Notifier (PSN)!
 
 It works with all kind of **custom post types**, supports all **custom taxonomies** like categories and tags other plugins are using. You can grab all these taxonomy values and custom fields attached to a post and use them as **placeholders** in your custom notification texts. Define as many notification rules as you need with all kind of settings, like custom Cc, Bcc and From emails addresses.
 
-PSN works great with plugins like **WP Job Manager**, **Crowdfunding by Astoundify** or **Advanced Custom Fields**, just to name a few. The possibilities are endless. Want to **automate your publishing workflow** with [Buffer](http://bufferapp.com/)? No problem!
+PSN works great with plugins like **WP Job Manager**, **Crowdfunding by Astoundify** or **Advanced Custom Fields**, just to name a few. The possibilities are endless. Want to **automate your publishing workflow** with [Buffer](http://bufferapp.com/)? No problem! [Read the blog post](http://www.ifeelweb.de/2014/569/using-post-status-notifier-buffer-share-wordpress-posts-social-profiles/ "Using Post Status Notifier and Buffer to share WordPress posts with your social profiles")
 
-Plugin homepage:
-http://www.ifeelweb.de/wp-plugins/post-status-notifier/
 
-Always up-to-date online documentation:
-http://docs.ifeelweb.de/post-status-notifier/
-
-Features:
+= Features =
 
 * Define **custom notification rules**
 * Support for posts, pages and all **custom post types**
