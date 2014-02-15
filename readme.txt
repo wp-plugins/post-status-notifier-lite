@@ -158,9 +158,7 @@ If you find any bugs please use the comments on the [plugin's homepage](http://w
 
 == Screenshots ==
 
-1. Use case 1: You host a blog with several authors and you want to be informed when a new post is ready for review.
-2. Use case 2: This rule sends an email to the author of a post when it got published.
-3. Use case 3: This rule is for blog admins who want to be informed about every single post status change.
+1. Use cases
 4. Overview screen
 5. Form to create a new notification rule
 6. List of placeholders
