@@ -7,11 +7,11 @@
  * @copyright   Copyright (c) ifeelweb.de
  * @package     Psn_Admin
  */
-class Psn_Admin_ListTable_Data_Rules implements Ifw_Wp_Plugin_ListTable_Data_Interface
+class Psn_Admin_ListTable_Data_Rules implements IfwPsn_Wp_Plugin_ListTable_Data_Interface
 {
 
     /** (non-PHPdoc)
-     * @see Ifw_Wp_Plugin_Admin_Menu_ListTable_Data_Interface::getItems()
+     * @see IfwPsn_Wp_Plugin_Admin_Menu_ListTable_Data_Interface::getItems()
      */
     public function getItems($limit, $page, $order = null, $where = null)
     {
@@ -20,7 +20,7 @@ class Psn_Admin_ListTable_Data_Rules implements Ifw_Wp_Plugin_ListTable_Data_Int
             $order = array('name' => 'asc');
         }
 
-        $data = Ifw_Wp_ORM_Model::factory('Psn_Model_Rule')->limit($limit)->offset($offset);
+        $data = IfwPsn_Wp_ORM_Model::factory('Psn_Model_Rule')->limit($limit)->offset($offset);
 
         if (!empty($order)) {
             $orderBy = key($order);
@@ -46,11 +46,11 @@ class Psn_Admin_ListTable_Data_Rules implements Ifw_Wp_Plugin_ListTable_Data_Int
     }
 
     /** (non-PHPdoc)
-     * @see Ifw_Wp_Plugin_Admin_Menu_ListTable_Data_Interface::getTotalItems()
+     * @see IfwPsn_Wp_Plugin_Admin_Menu_ListTable_Data_Interface::getTotalItems()
      */
     public function getTotalItems()
     {
-        $result = Ifw_Wp_ORM_Model::factory('Psn_Model_Rule')->count();
+        $result = IfwPsn_Wp_ORM_Model::factory('Psn_Model_Rule')->count();
 
         if (Psn_Model_Rule::hasMax()) {
             $result = Psn_Model_Rule::getMax();

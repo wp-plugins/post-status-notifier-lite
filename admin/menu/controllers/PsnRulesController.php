@@ -4,17 +4,36 @@
  *
  * @author   Timo Reith <timo@ifeelweb.de>
  * @version  $$Id$$
- * @package  Ifw_Wp
+ * @package  IfwPsn_Wp
  */
 class PsnRulesController extends PsnApplicationController
 {
     /**
-     * @var IfwZend_Form
+     * DB model class name
+     */
+    const MODEL = 'Psn_Model_Rule';
+
+    /**
+     * @var string
+     */
+    protected $_itemPostId = 'rule';
+
+    /**
+     * @var IfwPsn_Vendor_Zend_Form
      */
     protected $_form;
 
     /**
-     * @var Ifw_Wp_Plugin_Screen_Option_PerPage
+     * @var array
+     */
+    protected $_exportOptions = array(
+        'item_name_plural' => 'rules',
+        'item_name_singular' => 'rule',
+        'filename' => 'PSN_rules_export_%s'
+    );
+
+    /**
+     * @var IfwPsn_Wp_Plugin_Screen_Option_PerPage
      */
     protected $_perPage;
 
@@ -22,7 +41,7 @@ class PsnRulesController extends PsnApplicationController
 
     /**
      * (non-PHPdoc)
-     * @see IfwZend_Controller_Action::preDispatch()
+     * @see IfwPsn_Vendor_Zend_Controller_Action::preDispatch()
      */
     public function preDispatch()
     {
@@ -36,18 +55,18 @@ class PsnRulesController extends PsnApplicationController
                 $action = false;
             }
 
-            if ( $action == 'delete' && is_array($this->_request->getPost('rule')) ) {
+            if ( $action == 'delete' && is_array($this->_request->getPost($this->_itemPostId)) ) {
                 // bulk action delete
-                $this->_bulkDelete($this->_request->getPost('rule'));
-            } else if ( $action == 'deactivate' && is_array($this->_request->getPost('rule')) ) {
+                $this->_bulkDelete($this->_request->getPost($this->_itemPostId));
+            } else if ( $action == 'deactivate' && is_array($this->_request->getPost($this->_itemPostId)) ) {
                 // bulk action deactivate
-                $this->_bulkDeactivate($this->_request->getPost('rule'));
-            } else if ( $action == 'activate' && is_array($this->_request->getPost('rule')) ) {
+                $this->_bulkDeactivate($this->_request->getPost($this->_itemPostId));
+            } else if ( $action == 'activate' && is_array($this->_request->getPost($this->_itemPostId)) ) {
                 // bulk action activate
-                $this->_bulkActivate($this->_request->getPost('rule'));
-            } else if ( $action == 'export' && is_array($this->_request->getPost('rule')) ) {
-                // bulk action activate
-                $this->_bulkExport($this->_request->getPost('rule'));
+                $this->_bulkActivate($this->_request->getPost($this->_itemPostId));
+            } else if ( $action == 'export' && is_array($this->_request->getPost($this->_itemPostId)) ) {
+                // bulk action export
+                $this->_bulkExport($this->_request->getPost($this->_itemPostId));
             }
         }
     }
@@ -55,20 +74,9 @@ class PsnRulesController extends PsnApplicationController
     public function onBootstrap()
     {
         if ($this->_request->getActionName() == 'index') {
-            $this->_perPage = new Ifw_Wp_Plugin_Screen_Option_PerPage($this->_pm, __('Items per page', 'ifw'), 'psn_rules_per_page');
+            require_once $this->_pm->getPathinfo()->getRootLib() . 'IfwPsn/Wp/Plugin/Screen/Option/PerPage.php';
+            $this->_perPage = new IfwPsn_Wp_Plugin_Screen_Option_PerPage($this->_pm, __('Items per page', 'ifw'), 'psn_rules_per_page');
         }
-    }
-
-    public function onAdminInit()
-    {
-    }
-
-    public function onCurrentScreen()
-    {
-    }
-
-    public function onLoad()
-    {
     }
 
     /**
@@ -76,14 +84,21 @@ class PsnRulesController extends PsnApplicationController
      */
     public function indexAction()
     {
-        Ifw_Wp_Proxy_Script::loadAdmin('psn_rules', $this->_pm->getEnv()->getUrlAdminJs() . 'rules.js', array(), $this->_pm->getEnv()->getVersion());
+        $this->_pm->getLogger()->logPrefixed('Executing '. get_class($this) . ':indexAction()');
+
+        IfwPsn_Wp_Proxy_Script::loadAdmin('psn_rules', $this->_pm->getEnv()->getUrlAdminJs() . 'rules.js', array(), $this->_pm->getEnv()->getVersion());
 
         // set up contextual help
-        $help = new Ifw_Wp_Plugin_Menu_Help($this->_pm);
+        require_once $this->_pm->getPathinfo()->getRootLib() . 'IfwPsn/Wp/Plugin/Menu/Help.php';
+
+        $help = new IfwPsn_Wp_Plugin_Menu_Help($this->_pm);
         $help->setTitle(__('Rules', 'psn'))
             ->setHelp($this->_getDefaultHelpText())
             ->setSidebar($this->_getHelpSidebar())
             ->load();
+
+        // init list table
+        require_once $this->_pm->getPathinfo()->getRootLib() . 'Psn/Admin/ListTable/Rules.php';
 
         $listTable = new Psn_Admin_ListTable_Rules($this->_pm);
         $listTable->setItemsPerPage($this->_perPage->getOption());
@@ -92,6 +107,7 @@ class PsnRulesController extends PsnApplicationController
         $this->view->langCreateNewRule = __('Create new rule', 'psn');
         $this->view->isPremium = $this->_pm->isPremium();
 
+        require_once $this->_pm->getPathinfo()->getRootLib() . 'Psn/Patch/Database.php';
         $dbPatcher = new Psn_Patch_Database();
         $this->view->dbPatcher = $dbPatcher;
     }
@@ -107,7 +123,7 @@ class PsnRulesController extends PsnApplicationController
             if ($this->_form->isValid($this->_request->getPost())) {
 
                 // request is valid, save the rule
-                $rule = Ifw_Wp_ORM_Model::factory('Psn_Model_Rule')->create($this->_getFormValues());
+                $rule = IfwPsn_Wp_ORM_Model::factory(self::MODEL)->create($this->_getFormValues());
                 $rule->save();
 
                 $this->getMessenger()->addMessage(
@@ -129,7 +145,7 @@ class PsnRulesController extends PsnApplicationController
 
         $id = (int)$this->_request->get('id');
 
-        $rule = Ifw_Wp_ORM_Model::factory('Psn_Model_Rule')->find_one($id);
+        $rule = IfwPsn_Wp_ORM_Model::factory('Psn_Model_Rule')->find_one($id);
         $ruleNameBefore = $rule->get('name');
 
         $categories = $rule->getCategories();
@@ -137,10 +153,15 @@ class PsnRulesController extends PsnApplicationController
             $categories = array();
         }
 
-        Ifw_Wp_Proxy_Script::localize('psn_rule_form', 'psn_taxonomies_selected', $categories);
+        IfwPsn_Wp_Proxy_Script::localize('psn_rule_form', 'psn_taxonomies_selected', $categories);
 
+        $defaults = $rule->as_array();
+        $defaults['recipient'] = $rule->getRecipient();
+        $defaults['cc_select'] = $rule->getCcSelect();
+        $defaults['bcc_select'] = $rule->getBccSelect();
+        $defaults['editor_restriction'] = $rule->getEditorRestriction();
 
-        $this->_form->setDefaults($rule->as_array());
+        $this->_form->setDefaults($defaults);
 
         if ($this->_request->isPost()) {
             if ($this->_form->isValid($this->_request->getPost())) {
@@ -169,6 +190,8 @@ class PsnRulesController extends PsnApplicationController
         $values = $this->_form->getValues();
         $posttype = $values['posttype'];
 
+
+        // categories
         $categories = array();
 
         if ($this->_request->has('category_include_' . $posttype) && $this->_pm->isPremium()) {
@@ -194,8 +217,28 @@ class PsnRulesController extends PsnApplicationController
             $values['categories'] = serialize($categories);
         }
 
-        if (isset($values['to']) && $values['recipient'] != 'individual_email') {
-            $values['to'] = null;
+        // serialize recipients
+        $values['recipient'] = serialize($values['recipient']);
+
+        // serialize cc_select
+        if (empty($values['cc_select'])) {
+            $values['cc_select'] = null;
+        } else {
+            $values['cc_select'] = serialize($values['cc_select']);
+        }
+
+        // serialize bcc_select
+        if (empty($values['bcc_select'])) {
+            $values['bcc_select'] = null;
+        } else {
+            $values['bcc_select'] = serialize($values['bcc_select']);
+        }
+
+        // serialize editor_restriction
+        if (empty($values['editor_restriction'])) {
+            $values['editor_restriction'] = null;
+        } else {
+            $values['editor_restriction'] = serialize($values['editor_restriction']);
         }
 
         return $values;
@@ -206,13 +249,18 @@ class PsnRulesController extends PsnApplicationController
      */
     protected function _initFormView()
     {
+        require_once $this->_pm->getPathinfo()->getRootLib() . 'Psn/Patch/Database.php';
+        require_once $this->_pm->getPathinfo()->getRootLib() . 'Psn/Admin/Form/NotificationRule.php';
+        require_once $this->_pm->getPathinfo()->getRootLib() . 'Psn/Notification/Placeholders.php';
+        require_once $this->_pm->getPathinfo()->getRootLib() . 'IfwPsn/Wp/Plugin/Menu/Help.php';
+
         $dbPatcher = new Psn_Patch_Database();
         $this->view->dbPatcher = $dbPatcher;
 
         if (!$this->_pm->isPremium()) {
-            Ifw_Wp_Proxy_Filter::add('psn_rule_form_description_cc', create_function('$var','return $var . " " .
+            IfwPsn_Wp_Proxy_Filter::add('psn_rule_form_description_cc', create_function('$var','return $var . " " .
                 __("Limited to 1. Get the Premium version for unlimited Cc emails.", "psn");'));
-            Ifw_Wp_Proxy_Filter::add('psn_rule_form_description_bcc', create_function('$var','return $var . " " .
+            IfwPsn_Wp_Proxy_Filter::add('psn_rule_form_description_bcc', create_function('$var','return $var . " " .
                 __("(Premium feature)", "psn");'));
         }
 
@@ -228,9 +276,11 @@ class PsnRulesController extends PsnApplicationController
         }
 
         $this->_helper->viewRenderer('form');
-        $help = new Ifw_Wp_Plugin_Menu_Help($this->_pm);
+
+        $placeholders = new Psn_Notification_Placeholders();
+        $help = new IfwPsn_Wp_Plugin_Menu_Help($this->_pm);
         $help->setTitle(__('Placeholders', 'psn'))
-            ->setHelp($this->_getHelpTextPlaceholders())
+            ->setHelp($placeholders->getOnScreenHelp())
             ->setSidebar($this->_getHelpSidebar())
             ->load();
 
@@ -245,11 +295,11 @@ class PsnRulesController extends PsnApplicationController
         if ($this->_request->getActionName() == 'create') {
             $this->view->langHeadline = __('Create new rule', 'psn');
 
-            Ifw_Wp_Proxy_Script::loadAdmin('psn_rule_examples', $this->_pm->getEnv()->getUrlAdminJs() . 'rule_examples.js', array(), $this->_pm->getEnv()->getVersion());
-            Ifw_Wp_Proxy_Script::localize('psn_rule_examples', 'PsnExampleRule', array(
+            IfwPsn_Wp_Proxy_Script::loadAdmin('psn_rule_examples', $this->_pm->getEnv()->getUrlAdminJs() . 'rule_examples.js', array(), $this->_pm->getEnv()->getVersion());
+            IfwPsn_Wp_Proxy_Script::localize('psn_rule_examples', 'PsnExampleRule', array(
                 'ThePendingPost' => __('The pending post', 'psn'),
                 'ThePendingPostSubject' => __('[blog_name]: New post is waiting for review', 'psn'),
-                'ThePendingPostBody' => str_replace('<br>', "\n", __('Howdy admin,<br>there is a new post by [author_display_name] waiting for review:<br>"[post_title]".<br><br>Here is the permalink: [post_permalink]<br><br>The author\'s email address is [author_email]<br><br>[blog_wpurl]', 'psn')),
+                'ThePendingPostBody' => str_replace('<br>', "\n", __('Howdy admin,<br>there is a new post by [author_display_name] waiting for review:<br>"[post_title]".<br><br>Here is the permalink: [post_permalink]<br><br>Here is the backend edit link: [post_editlink]<br><br>The author\'s email address is [author_email]<br><br>[blog_wpurl]', 'psn')),
                 'TheHappyAuthor' => __('The happy author', 'psn'),
                 'TheHappyAuthorSubject' => __('Your post on [blog_name] got published!', 'psn'),
                 'TheHappyAuthorBody' => str_replace('<br>', "\n", __('Howdy [author_display_name],<br>we are happy to tell you that your post "[post_title]" got published.<br><br>Here is the permalink: [post_permalink]<br><br>Thanks for your good work,<br>your [blog_name]-Team<br><br>[blog_wpurl]', 'psn')),
@@ -258,7 +308,7 @@ class PsnRulesController extends PsnApplicationController
                 'ThePedanticAdminBody' => str_replace('<br>', "\n", __('Howdy admin,<br>a post status transition was a detected on "[post_title]".<br><br>Status before: [post_status_before]<br>Status after: [post_status_after]<br><br>Post permalink: [post_permalink]', 'psn')),
             ));
 
-            Ifw_Wp_Proxy_Style::loadAdmin('psn_rule_examples', $this->_pm->getEnv()->getUrlAdminCss() . 'rule_examples.css');
+            IfwPsn_Wp_Proxy_Style::loadAdmin('psn_rule_examples', $this->_pm->getEnv()->getUrlAdminCss() . 'rule_examples.css');
 
             $this->view->langExamples = __('Examples', 'psn');
             $this->view->langExamplesDesc = __('Click the buttons below to get an idea of how you can set up notification rules.', 'psn');
@@ -268,15 +318,18 @@ class PsnRulesController extends PsnApplicationController
             $this->view->langExamplesRuleTheHappyAuthorDesc = __('This rule sends an email to the author of a post when it got published.', 'psn');
             $this->view->langExamplesRuleThePedanticAdmin = __('The pedantic admin', 'psn');
             $this->view->langExamplesRuleThePedanticAdminDesc = __('This rule is for blog admins who want to be informed about every single post status change.', 'psn');
+
         } else {
             $this->view->langHeadline = __('Edit notification rule', 'psn');
             $this->_form->getElement('submit')->setLabel(__('Update', 'psn'));
         }
 
-        Ifw_Wp_Proxy_Script::loadAdmin('psn_rule_form', $this->_pm->getEnv()->getUrlAdminJs() . 'rule_form.js', array(), $this->_pm->getEnv()->getVersion());
-        Ifw_Wp_Proxy_Script::localize('psn_rule_form', 'psn', array('is_premium' => $this->_pm->isPremium()));
-        Ifw_Wp_Proxy_Script::localize('psn_rule_form', 'psn_taxonomies', array_merge(
-            Ifw_Wp_Proxy_Post::getAllTypesCategories(),
+        $this->view->actionName = $this->_request->getActionName();
+
+        IfwPsn_Wp_Proxy_Script::loadAdmin('psn_rule_form', $this->_pm->getEnv()->getUrlAdminJs() . 'rule_form.js', array(), $this->_pm->getEnv()->getVersion());
+        IfwPsn_Wp_Proxy_Script::localize('psn_rule_form', 'psn', array('is_premium' => $this->_pm->isPremium()));
+        IfwPsn_Wp_Proxy_Script::localize('psn_rule_form', 'psn_taxonomies', array_merge(
+            IfwPsn_Wp_Proxy_Post::getAllTypesCategories(),
             array(
                 'lang_Categories' => __('Categories', 'psn'),
                 'lang_categories_help' => sprintf(__('To select multiple categories hold down the control button (ctrl) on Windows or command button (cmd) on Mac.<br>If nothing is selected, all categories get included.<br>Exclude is dominant. See the <a href="%s" target="_blank">docs</a> for more details.', 'psn'),
@@ -290,7 +343,7 @@ class PsnRulesController extends PsnApplicationController
             ))
         );
 
-        Ifw_Wp_Proxy_Action::doPlugin($this->_pm, 'rule_form', $this->_form);
+        IfwPsn_Wp_Proxy_Action::doPlugin($this->_pm, 'rule_form', $this->_form);
     }
 
     /**
@@ -298,10 +351,9 @@ class PsnRulesController extends PsnApplicationController
      */
     public function deleteAction()
     {
-        $rule = Ifw_Wp_ORM_Model::factory('Psn_Model_Rule')->find_one((int)$this->_request->get('id'));
-        $rule->delete();
+        IfwPsn_Wp_ORM_Model::factory(self::MODEL)->find_one((int)$this->_request->get('id'))->delete();
 
-        $this->_gotoRoute('rules');
+        $this->_gotoIndex();
     }
 
     /**
@@ -309,29 +361,21 @@ class PsnRulesController extends PsnApplicationController
      */
     public function copyAction()
     {
-        $rule = Ifw_Wp_ORM_Model::factory('Psn_Model_Rule')->find_one((int)$this->_request->get('id'));
-        $values = $rule->as_array();
+        IfwPsn_Wp_ORM_Model::duplicate(self::MODEL, $this->_request->get('id'), array('values_callback' => array($this, 'copyCallback')));
 
-        unset($values['id']);
+        $this->_gotoIndex();
+    }
 
-        $newNameFormat = '%s [%s%s]';
-
-        $count = Ifw_Wp_ORM_Model::factory('Psn_Model_Rule')->where_like('name', sprintf($newNameFormat, $values['name'], __('Dupliacte', 'psn'), '%') . '%')->count();
-
-        $copyCount = '';
-        if ($count > 0) {
-            $copyCount = $count + 1;
-        }
-        $values['name'] = sprintf($newNameFormat, $values['name'], __('Dupliacte', 'psn'), $copyCount);
-
+    /**
+     * @param $values
+     * @return mixed
+     */
+    public function copyCallback($values)
+    {
         if ($this->_pm->getOptionsManager()->getOption('psn_deactivate_copied_rules') !== null) {
             $values['active'] = 0;
         }
-
-        $copy = Ifw_Wp_ORM_Model::factory('Psn_Model_Rule')->create($values);
-        $copy->save();
-
-        $this->_gotoRoute('rules');
+        return $values;
     }
 
     /**
@@ -339,61 +383,30 @@ class PsnRulesController extends PsnApplicationController
      */
     public function importAction()
     {
-        $tmpFilename = $_FILES['importfile']['tmp_name'];
+        $items = $this->_getImportedItems($_FILES['importfile']['tmp_name'], $this->_exportOptions['item_name_singular']);
 
-        // check if file was submitted
-        if (empty($tmpFilename)) {
-            $this->_addErrorMessage(__('Please select a valid import file.', 'psn'));
-            $this->_gotoRoute('rules');
-        }
+        $result = IfwPsn_Wp_ORM_Model::import(self::MODEL, $items, array(
+            'item_callback' => array($this, 'importItemCallback'),
+            'prefix' => esc_attr($this->_request->get('import_prefix'))
+        ));
 
-        $xml = simplexml_load_file($tmpFilename);
+        $this->_gotoIndex();
+    }
 
-        // check for valid xml
-        if (!$xml) {
-            $this->_addErrorMessage(__('Please select a valid import file.', 'psn'));
-            $this->_gotoRoute('rules');
-        }
-
-        // check if xml contains rules
-        if (count($xml->{'rule'}) == 0) {
-            // no rules found
-            $this->_addErrorMessage(__('No rules found in import file.', 'psn'));
-            $this->_gotoRoute('rules');
-        }
-
-        // get the rules
-        $rules = array();
-
-        foreach($xml->{'rule'} as $rule) {
-            $tmpRule = array();
-            foreach($rule as $col) {
-                $tmpRule[(string)$col['name']] = (string)$col;
-            }
-            array_push($rules, $tmpRule);
-        }
-
-        // fetch options
-        $prefix = esc_attr($this->_request->get('import_prefix'));
+    /**
+     * @param $item
+     * @internal param $values
+     * @return mixed
+     */
+    public function importItemCallback($item)
+    {
         $deactivate = $this->_request->get('import_deactivate');
 
-        // create imported rules
-        foreach ($rules as $rule) {
-            unset($rule['id']);
-            if (!empty($prefix)) {
-                $rule['name'] = $prefix . $rule['name'];
-            }
-            if ($deactivate != null) {
-                $rule['active'] = 0;
-            }
-            $importRule = Ifw_Wp_ORM_Model::factory('Psn_Model_Rule')->create($rule);
-            $importRule->save();
+        if ($deactivate != null) {
+            $item['active'] = 0;
         }
 
-        @unlink($tmpFilename);
-
-        // load rules admin
-        $this->_gotoRoute('rules');
+        return $item;
     }
 
     /**
@@ -401,46 +414,18 @@ class PsnRulesController extends PsnApplicationController
      */
     public function exportAction()
     {
-        $id = (int)$this->_request->get('id');
-
-        $rule = Ifw_Wp_ORM_Model::factory('Psn_Model_Rule')->find_one($id);
-        $values = $rule->as_array();
-
-        $this->_export(array($values));
+        $this->_export($this->_request->get('id'));
     }
 
     /**
      * @param $rules
-     * @param null $filename
      */
-    protected function _export($rules, $filename = null)
+    protected function _export($rules)
     {
-        $result = "<rules>\n";
+        $options = $this->_exportOptions;
+        $options['filename'] = sprintf($options['filename'], date('Y-m-d_H_i_s'));
 
-        foreach ( $rules as $rule ) {
-            $result .= "<rule>\n";
-            foreach ($rule as $field => $value) {
-
-                if (in_array($field, array('name', 'notification_subject', 'notification_body', 'recipient', 'to', 'cc', 'bcc', 'from', 'categories'))) {
-                    $value = '<![CDATA['. $value . ']]>';
-                }
-                $result .= "\t" . '<column name="'. $field .'">'. $value .'</column>' . "\n";
-            }
-            $result .= "</rule>\n";
-        }
-        $result .= "</rules>\n";
-
-        $xml = new SimpleXMLElement($result);
-
-        if ($filename == null) {
-            $filename = 'PSN_rules_export_'. date('Y-m-d_H_i_s');
-        }
-        $filename .= '.xml';
-
-        header('Content-disposition: attachment; filename="'. $filename .'"');
-        header('Content-type: "text/xml"; charset="utf8"');
-        echo $xml->asXML();
-        exit;
+        IfwPsn_Wp_ORM_Model::export(self::MODEL, $rules, $options);
     }
 
     /**
@@ -449,7 +434,7 @@ class PsnRulesController extends PsnApplicationController
     protected function _bulkDelete(array $rules)
     {
         foreach($rules as $ruleId) {
-            $rule = Ifw_Wp_ORM_Model::factory('Psn_Model_Rule')->find_one((int)$ruleId);
+            $rule = IfwPsn_Wp_ORM_Model::factory(self::MODEL)->find_one((int)$ruleId);
             $rule->delete();
         }
     }
@@ -460,7 +445,7 @@ class PsnRulesController extends PsnApplicationController
     protected function _bulkDeactivate(array $rules)
     {
         foreach($rules as $ruleId) {
-            $rule = Ifw_Wp_ORM_Model::factory('Psn_Model_Rule')->find_one((int)$ruleId);
+            $rule = IfwPsn_Wp_ORM_Model::factory(self::MODEL)->find_one((int)$ruleId);
             $rule->active = 0;
             $rule->save();
         }
@@ -472,21 +457,18 @@ class PsnRulesController extends PsnApplicationController
     protected function _bulkActivate($rules)
     {
         foreach($rules as $ruleId) {
-            $rule = Ifw_Wp_ORM_Model::factory('Psn_Model_Rule')->find_one((int)$ruleId);
+            $rule = IfwPsn_Wp_ORM_Model::factory(self::MODEL)->find_one((int)$ruleId);
             $rule->active = 1;
             $rule->save();
         }
     }
 
     /**
-     * @param array $rules
+     * @param array $items
      */
-    protected function _bulkExport($rules)
+    protected function _bulkExport($items)
     {
-        $rules = array_map('intval', $rules);
-        $result = Ifw_Wp_ORM_Model::factory('Psn_Model_Rule')->where_in('id', $rules)->find_array();
-
-        $this->_export($result);
+        $this->_export($items);
     }
 
     /**
@@ -514,33 +496,4 @@ class PsnRulesController extends PsnApplicationController
         return $sidebar;
     }
 
-    /**
-     * @return string
-     */
-    protected function _getHelpTextPlaceholders()
-    {
-        $tpl = Ifw_Wp_Tpl::getInstance($this->_pm);
-
-        $placholders = new Psn_Notification_Placeholders();
-        $placholders->addPlaceholder('post_status_before')->addPlaceholder('post_status_after');
-
-        $placholdersResult = $placholders->getDefaultPlaceholders();
-        asort($placholdersResult);
-        $placholdersDynamic = $placholders->getPlaceholders('dynamic');
-        asort($placholdersDynamic);
-
-        $context = array(
-            'placeholders' => $placholdersResult,
-            'placeholdersDynamic' => $placholdersDynamic,
-            'placeholdersDynamicHelp' => __('These placeholders are unique to this WordPress installation. They use the names of custom categories and tags.', 'psn'),
-            'langHeader' => __('List of placeholders available for notification subject and text', 'psn'),
-            'langStatic' => __('Static placeholders', 'psn'),
-            'langDynamic' => __('Dynamic placeholders', 'psn'),
-            'langCustomFields' => __('Custom fields', 'psn'),
-            'langCustomFields1' => __('To retrieve the contents of custom post fields use this placeholder', 'psn'),
-            'langCustomFields2' => __('The * stands for the name of the custom field.<br>Example: If you have a custom post field "actors" you should call your placeholder <b>[post_custom_field-actors]</b>', 'psn'),
-        );
-
-        return $tpl->render('admin_help_placeholders.html.twig', $context);
-    }
 }

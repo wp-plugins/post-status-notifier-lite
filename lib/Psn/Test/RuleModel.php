@@ -10,7 +10,7 @@
  * @version   $Id$
  * @package   
  */ 
-class Psn_Test_RuleModel implements Ifw_Wp_Plugin_Selftest_Interface
+class Psn_Test_RuleModel implements IfwPsn_Wp_Plugin_Selftest_Interface
 {
     private $_result = false;
 
@@ -36,10 +36,10 @@ class Psn_Test_RuleModel implements Ifw_Wp_Plugin_Selftest_Interface
 
     /**
      * Runs the test
-     * @param Ifw_Wp_Plugin_Manager $pm
+     * @param IfwPsn_Wp_Plugin_Manager $pm
      * @return mixed
      */
-    public function execute(Ifw_Wp_Plugin_Manager $pm)
+    public function execute(IfwPsn_Wp_Plugin_Manager $pm)
     {
         $model = new Psn_Model_Rule();
         if ($model->exists()) {
@@ -75,10 +75,10 @@ class Psn_Test_RuleModel implements Ifw_Wp_Plugin_Selftest_Interface
 
     /**
      * Handles an error, should provide a solution for an unsuccessful test
-     * @param Ifw_Wp_Plugin_Manager $pm
+     * @param IfwPsn_Wp_Plugin_Manager $pm
      * @return mixed
      */
-    public function handleError(Ifw_Wp_Plugin_Manager $pm)
+    public function handleError(IfwPsn_Wp_Plugin_Manager $pm)
     {
         $activation = new Psn_Installer_Activation();
         $activation->execute($pm);

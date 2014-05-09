@@ -7,34 +7,54 @@
  * @version     $Id$
  * @package     Psn_Installer
  */
-class Psn_Installer_Uninstall implements Ifw_Wp_Plugin_Installer_UninstallInterface
+class Psn_Installer_Uninstall implements IfwPsn_Wp_Plugin_Installer_UninstallInterface
 {
     /** (non-PHPdoc)
-     * @see Ifw_Wp_Plugin_Installer_UninstallInterface::execute()
+     * @see IfwPsn_Wp_Plugin_Installer_UninstallInterface::execute()
      */
     public static function execute($pm, $networkwide = false)
     {
-        if (Ifw_Wp_Proxy_Blog::isMultisite() && $networkwide == true) {
+        // handle the DB
+        if (IfwPsn_Wp_Proxy_Blog::isMultisite() && $networkwide == true) {
 
             // multisite installation
-            $currentBlogId = Ifw_Wp_Proxy_Blog::getBlogId();
+            $currentBlogId = IfwPsn_Wp_Proxy_Blog::getBlogId();
 
-            foreach (Ifw_Wp_Proxy_Blog::getMultisiteBlogIds() as $blogId) {
+            foreach (IfwPsn_Wp_Proxy_Blog::getMultisiteBlogIds() as $blogId) {
 
-                Ifw_Wp_Proxy_Blog::switchToBlog($blogId);
-                self::_dropTable();
+                IfwPsn_Wp_Proxy_Blog::switchToBlog($blogId);
+                self::_dropTable($pm);
             }
-            Ifw_Wp_Proxy_Blog::switchToBlog($currentBlogId);
+            IfwPsn_Wp_Proxy_Blog::switchToBlog($currentBlogId);
 
         } else {
             // single blog installation
-            self::_dropTable();
+            self::_dropTable($pm);
+        }
+
+        // remove update action
+        if ($pm->getConfig()->plugin->autoupdate == 1) {
+            IfwPsn_Wp_Proxy_Action::remove('in_plugin_update_message-' . $pm->getPathinfo()->getFilenamePath(), array($pm->getBootstrap()->getUpdateManager(), 'onPluginUpdateMessage'), 10, 3);
+            IfwPsn_Wp_Proxy_Filter::remove('pre_set_site_transient_update_plugins', array($pm->getBootstrap()->getUpdateManager(), 'checkForPremiumUpdate'));
+            if ($pm->isPremium()) {
+                IfwPsn_Wp_Proxy_Filter::remove('plugins_api', array($pm->getBootstrap()->getUpdateManager(), 'getPluginInfo'), 10, 3);
+            }
         }
     }
 
-    protected static function _dropTable()
+    /**
+     * @param IfwPsn_Wp_Plugin_Manager $pm
+     */
+    protected static function _dropTable($pm)
     {
         global $wpdb;
-        $wpdb->query('DROP TABLE IF EXISTS `'. $wpdb->prefix .'psn_rules`');
+
+        if ($pm->isPremium() ||
+            !$pm->isPremium() && !IfwPsn_Wp_Proxy_Blog::isPluginActive('post-status-notifier/post-status-notifier.php')
+        ) {
+            // only delete rules table if it's the Premium version
+            // or it's the Lite version and the Premium version is not activated
+            $wpdb->query('DROP TABLE IF EXISTS `'. $wpdb->prefix .'psn_rules`');
+        }
     }
 }

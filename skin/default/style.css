@@ -215,7 +215,7 @@
 
 .ifw-dialog-loading-bar {
     width: 100%;
-    background: url(icons/ajax-loader-bar.gif) 50% 50% no-repeat;
+    background: url(icons/ajax-loader.gif) 50% 50% no-repeat !important;
     height: 50px;
 }
 .ifw-dialog-success {

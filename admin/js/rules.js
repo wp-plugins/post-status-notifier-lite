@@ -1,5 +1,8 @@
 jQuery(document).ready( function($) {
-    $('#import_rules').on('click', function(event) {
-        $('#import_rules_container').fadeToggle( "slow", "linear" );
+
+    $('a.import_items_container_toggle').click(function(event) {
+        event.stopPropagation();
+        $('#import_items_container').fadeToggle( "slow", "linear" );
+        return false;
     });
 });
