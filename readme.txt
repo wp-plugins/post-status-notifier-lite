@@ -3,7 +3,7 @@ Tags: post, status, notification, notify, change, custom post type, email, log, 
 Contributors: worschtebrot
 Requires at least: 3.3
 Tested up to: 3.9
-Stable tag: 1.5
+Stable tag: 1.4
 
 
 Lets you create individual notification rules to be informed about all post status transitions of your blog. Features custom email texts with many placeholders and custom post types.
