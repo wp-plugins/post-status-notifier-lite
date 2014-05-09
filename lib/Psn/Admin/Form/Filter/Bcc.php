@@ -7,7 +7,7 @@
  * @copyright   Copyright (c) ifeelweb.de
  * @package     Psn_Admin
  */
-class Psn_Admin_Form_Filter_Bcc implements IfwZend_Filter_Interface
+class Psn_Admin_Form_Filter_Bcc implements IfwPsn_Vendor_Zend_Filter_Interface
 {
     protected $_isPremium = false;
 
@@ -26,7 +26,7 @@ class Psn_Admin_Form_Filter_Bcc implements IfwZend_Filter_Interface
      * Returns the result of filtering $value
      *
      * @param  mixed $value
-     * @throws IfwZend_Filter_Exception If filtering $value is impossible
+     * @throws IfwPsn_Vendor_Zend_Filter_Exception If filtering $value is impossible
      * @return mixed
      */
     public function filter($value)

@@ -4,14 +4,14 @@
  *
  * @author   Timo Reith <timo@ifeelweb.de>
  * @version  $Id$
- * @package  Ifw_Wp
+ * @package  IfwPsn_Wp
  */
 class PsnPatchesController extends PsnApplicationController
 {
 
     public function indexAction()
     {
-        $this->view->executeUrl = Ifw_Wp_Proxy_Admin::getMenuUrl($this->_pm, 'patches', 'execute');
+        $this->view->executeUrl = IfwPsn_Wp_Proxy_Admin::getMenuUrl($this->_pm, 'patches', 'execute');
     }
 
     public function executeAction()
@@ -21,14 +21,14 @@ class PsnPatchesController extends PsnApplicationController
 
         $this->view->patcher = $patcher;
         $this->view->updateManager = $this->_pm->getBootstrap()->getUpdateManager();
-        $this->view->proceedUrl = Ifw_Wp_Proxy_Admin::getMenuUrl($this->_pm, 'patches', 'proceed');
-        $this->view->continueUrl = Ifw_Wp_Proxy_Admin::getMenuUrl($this->_pm, 'index');
+        $this->view->proceedUrl = IfwPsn_Wp_Proxy_Admin::getMenuUrl($this->_pm, 'patches', 'proceed');
+        $this->view->continueUrl = IfwPsn_Wp_Proxy_Admin::getMenuUrl($this->_pm, 'index');
 
     }
 
     public function proceedAction()
     {
         $this->_pm->getBootstrap()->getUpdateManager()->refreshPresentVersion();
-        $this->view->continueUrl = Ifw_Wp_Proxy_Admin::getMenuUrl($this->_pm, 'index');
+        $this->view->continueUrl = IfwPsn_Wp_Proxy_Admin::getMenuUrl($this->_pm, 'index');
     }
 }

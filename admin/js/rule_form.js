@@ -53,17 +53,17 @@ jQuery(document).ready( function($) {
                 var el_id_include = 'category_include_'+ selected_posttype;
                 var el_id_exclude = 'category_exclude_'+ selected_posttype;
 
-                output += '<div style="width: 100%">';
-                output += '<div style="float: left; width: 45%;">';
+                output += '<table width="90%">';
+                output += '<tr><td>';
                 output += '<span class="cat_inc_ex_header">' + psn_taxonomies.lang_include_categories + '</span>:<br><a href="javascript:void(0)" onclick="psn_rule_form_select_all(\''+ el_id_include +'\');">'+ psn_taxonomies.lang_select_all +'</a>&nbsp;|&nbsp;<a href="javascript:void(0)" onclick="psn_rule_form_unselect_all(\''+ el_id_include +'\');">'+ psn_taxonomies.lang_remove_all +'</a><br>';
                 output += '<select size="'+ size +'" name="'+ el_id_include +'[]" id="'+ el_id_include +'" multiple>' + options_include + '</select>';
-                output += '</div>';
-                output += '<div style="">';
+                output += '</td>';
+                output += '<td>';
                 output += '<span class="cat_inc_ex_header">' + psn_taxonomies.lang_exclude_categories +  '</span>:<br><a href="javascript:void(0)" onclick="psn_rule_form_select_all(\''+ el_id_exclude +'\');">'+ psn_taxonomies.lang_select_all +'</a>&nbsp;|&nbsp;<a href="javascript:void(0)" onclick="psn_rule_form_unselect_all(\''+ el_id_exclude +'\');">'+ psn_taxonomies.lang_remove_all +'</a><br>';
                 output += '<select size="'+ size +'" name="'+ el_id_exclude +'[]" id="'+ el_id_exclude +'" multiple>' + options_exclude + '</select>';
-                output += '</div>';
-                output += '<div style="clear: both;"></div>';
-                output += '</div>';
+                output += '</td>';
+                output += '</tr>';
+                output += '</table>';
                 $('#categories_hint').show();
 
             } else {
@@ -79,35 +79,28 @@ jQuery(document).ready( function($) {
 
     $( "#posttype" ).trigger( "change" );
 
-    if ($('#to').length > 0 && psn.is_premium == true) {
-        $('#recipient').on('change', function (event) {
-            var selected_recipient = $(this).val();
-            var li = $('#to').closest('li');
-            var errors = li.next('.errors');
-            if (selected_recipient == 'individual_email') {
-                li.show();
 
-                if (errors.length > 0) {
-                    errors.show();
-                    errors.next('.hint').show();
-                } else {
-                    li.next('.hint').show();
-                }
+    if ($('#mail_tpl').length > 0 && psn.is_premium == true) {
 
+        $('#mail_tpl').on('change', function (event) {
+            var selected_mail_tpl = $(this).val();
+
+            if (selected_mail_tpl != '0') {
+                $('#form_element_notification_body').hide();
+                $('#form_element_notification_body').next('p').hide();
             } else {
-                li.hide();
-
-                if (errors.length > 0) {
-                    errors.hide();
-                    errors.next('.hint').hide();
-                } else {
-                    li.next('.hint').hide();
-                }
+                $('#form_element_notification_body').show();
+                $('#form_element_notification_body').next('p').show();
             }
         });
+
+        $( "#mail_tpl" ).trigger( "change" );
     }
 
-    $( "#recipient" ).trigger( "change" );
+    $('a.placeholder_help').on('click', function(event) {
+        $('#contextual-help-link').click();
+        return false;
+    });
 });
 
 function psn_rule_form_select_all(select_id) {

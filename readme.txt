@@ -2,27 +2,33 @@
 Tags: post, status, notification, notify, change, custom post type, email, log, logging, notify, placeholders,  transition
 Contributors: worschtebrot
 Requires at least: 3.3
-Tested up to: 3.8.1
-Stable tag: 1.4.1
+Tested up to: 3.9
+Stable tag: 1.5
 
 
-Notify everything! Create individual notification rules to be informed about all post status transitions of your blog. Features custom email texts with many placeholders. Supports custom post types and taxonomies.
+Lets you create individual notification rules to be informed about all post status transitions of your blog. Features custom email texts with many placeholders and custom post types.
 
 == Description ==
 
-= Notify everything! =
-
-For more information check out the [plugin homepage](http://www.ifeelweb.de/wp-plugins/post-status-notifier/ "Post Status Notifier for WordPress Homepage") or the always up-to-date [online documentation](http://docs.ifeelweb.de/post-status-notifier/ "Post Status Notifier Documentation")
+=Notify everything!=
 
 You want to **be notified** when one of your contributors have submitted a new post for revision or an editor published one? Vice versa you want to **notify your contributors** when their posts got published?
 This is just the beginning of what you can achieve with Post Status Notifier (PSN)!
 
 It works with all kind of **custom post types**, supports all **custom taxonomies** like categories and tags other plugins are using. You can grab all these taxonomy values and custom fields attached to a post and use them as **placeholders** in your custom notification texts. Define as many notification rules as you need with all kind of settings, like custom Cc, Bcc and From emails addresses.
 
-PSN works great with plugins like **WP Job Manager**, **Crowdfunding by Astoundify** or **Advanced Custom Fields**, just to name a few. The possibilities are endless. Want to **automate your publishing workflow** with [Buffer](http://bufferapp.com/)? No problem! [Read the blog post](http://www.ifeelweb.de/2014/569/using-post-status-notifier-buffer-share-wordpress-posts-social-profiles/ "Using Post Status Notifier and Buffer to share WordPress posts with your social profiles")
+PSN works great with plugins like **WP Job Manager**, **Crowdfunding by Astoundify** or **Advanced Custom Fields**, just to name a few. The possibilities are endless. Want to **automate your publishing workflow** with [Buffer](http://bufferapp.com/)? No problem!
 
+Plugin homepage:
+http://www.ifeelweb.de/wp-plugins/post-status-notifier/
 
-= Features =
+Always up-to-date online documentation:
+http://docs.ifeelweb.de/post-status-notifier/
+
+FAQ:
+http://docs.ifeelweb.de/post-status-notifier/faq.html
+
+Features:
 
 * Define **custom notification rules**
 * Support for posts, pages and all **custom post types**
@@ -30,6 +36,7 @@ PSN works great with plugins like **WP Job Manager**, **Crowdfunding by Astoundi
 * Create **custom email texts** with support for many placeholders
 * Manipulate placeholders content with **filters** to completely adjust the output to your needs (uses the filters of the famous PHP template engine Twig / limited to one filter in the Lite version)
 * WordPress **multisite compatible**
+* Premium version: HTML emails / mail templates
 * Premium version: Categories filter: Include or exclude categories (even from custom post types) from notifications
 * Premium version: Supports **SMTP**. You find all necessary SMTP settings to connect your SMTP server in the options section.
 * Premium version: Supports **user roles** (custom roles too) as email recipients
@@ -83,9 +90,19 @@ http://docs.ifeelweb.de/post-status-notifier/
 
 == Change Log ==
 
-= 1.4.1 =
+= 1.5 =
 
-Bugfix: Missing translation class (http://codecanyon.net/item/post-status-notifier/4809420/comments?#comment_5883580)
+- New feature: HTML mail support and email templates. Prepare your email templates once and select them for different notification rules.
+- New feature: Auto-update via WordPress backend. Never have to upload the files via FTP again. You have to enter your license code in the plugin's settings.
+- New feature: More flexible To, Cc, Bcc selection. Multiple selections are possible now.
+- New feature: Editor restriction. Select one or more roles the editor of a post must be member of so that the notification will be generated.
+- New feature: Recipients lists. Manage email addresses without the need to create user accounts.
+- New custom post status "Not pending": Matches all post status values except "pending"
+- New custom post status "Not private": Matches all post status values except "private"
+- New placeholder [post_editlink]: Contains the backend edit URL
+- Removed post types "attachement", "nav_menu_item" from rule settings as they are not treated like post types (have no status before/after)
+- Support for placeholders in FROM
+- Refactoring for percormance improvements
 
 = 1.4 = 
 
@@ -158,17 +175,19 @@ If you find any bugs please use the comments on the [plugin's homepage](http://w
 
 == Screenshots ==
 
-1. Use cases
-2. Form to create a new notification rule
-8. Options (Logger and SMTL is a Premium feature)
-4. Overview screen
-5. List of placeholders
-6. Extended recipients
+1. Use case 1: You host a blog with several authors and you want to be informed when a new post is ready for review.
+2. Use case 2: This rule sends an email to the author of a post when it got published.
+3. Use case 3: This rule is for blog admins who want to be informed about every single post status change.
+4. Use case 4: Use with Buffer (http://bufferapp.com)
+5. Form to create a new notification rule
+6. List of placeholders
 7. Buttons to create example rules
-8. Selftest routines
-9. List of log entries (Premium)
-10. Dashboard widget of log entries (Premium)
+8. Options (Logger is a Premium feature)
+9. Premium: List of log entries 
+10. Premium: Dashboard widget of log entries
 11. Example email generated by the plugin
-12. Category filter settings (Premium)
-13. German translation
+12. Overview screen
+13. Selftest feature
+14. Example HTML email (Premium feature)
+15. German translation
 

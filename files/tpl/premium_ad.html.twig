@@ -4,9 +4,11 @@
     </a>
 </p>
 
+<p>{% autoescape false %}{{ text.__('<b>Before upgrading</b>, please consider the <a href="%s" target="_blank">Uprade-HowTo</a>', 'ifw')|replace({'%s': 'http://docs.ifeelweb.de/post-status-notifier/upgrade_howto.html'}) }}{% endautoescape %}</p>
 <p>{{ text.__('Features of the Premium version', 'ifw') }}:</p>
 
 <ul id="premium_features">
+    <li>{{ text.__('HTML emails', 'psn') }}</li>
     <li>{{ text.__('Unlimited notification rules', 'psn') }}</li>
     <li>{{ text.__('Unlimited CC email recipients', 'psn') }}</li>
     <li>{{ text.__('Unlimited Bcc email recipients', 'psn') }}</li>

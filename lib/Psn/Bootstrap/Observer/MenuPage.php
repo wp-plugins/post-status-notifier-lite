@@ -10,7 +10,7 @@
  * @version   $Id$
  * @package   
  */ 
-class Psn_Bootstrap_Observer_MenuPage extends Ifw_Wp_Plugin_Bootstrap_Observer_Abstract
+class Psn_Bootstrap_Observer_MenuPage extends IfwPsn_Wp_Plugin_Bootstrap_Observer_Abstract
 {
     /**
      * @return string
@@ -22,14 +22,19 @@ class Psn_Bootstrap_Observer_MenuPage extends Ifw_Wp_Plugin_Bootstrap_Observer_A
 
     protected function _preBootstrap()
     {
-        $optionsPage = new Psn_Menu_Options($this->_pm);
+        if ($this->_pm->getAccess()->isAdmin()) {
 
-        $optionsPage
-            ->setMenuTitle($this->_pm->getEnv()->getName())
-            ->setSlug($this->_pm->getPathinfo()->getDirname())
-            ->init()
-        ;
+            require_once $this->_pm->getPathinfo()->getRootLib() . 'Psn/Menu/Options.php';
 
-        $this->_resource = $optionsPage;
+            $optionsPage = new Psn_Menu_Options($this->_pm);
+
+            $optionsPage
+                ->setMenuTitle($this->_pm->getEnv()->getName())
+                ->setSlug($this->_pm->getPathinfo()->getDirname())
+                ->init()
+            ;
+
+            $this->_resource = $optionsPage;
+        }
     }
 }

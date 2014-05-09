@@ -7,7 +7,7 @@
  * @copyright   Copyright (c) ifeelweb.de
  * @package     Psn_Admin
  */
-class Psn_Admin_Form_Validate_StatusTransition extends IfwZend_Validate_Abstract
+class Psn_Admin_Form_Validate_StatusTransition extends IfwPsn_Vendor_Zend_Validate_Abstract
 {
     const MSG_INVALID_TRANSITION_ANYTHING_ALL = 'invalidTransitionAnythingAll';
     const MSG_INVALID_TRANSITION_COMBINATION = 'invalidTransitionCombination';
@@ -25,7 +25,7 @@ class Psn_Admin_Form_Validate_StatusTransition extends IfwZend_Validate_Abstract
 
     /**
      * (non-PHPdoc)
-     * @see IfwZend_Validate_Interface::isValid()
+     * @see IfwPsn_Vendor_Zend_Validate_Interface::isValid()
      */
     public function isValid($value, $context = null)
     {

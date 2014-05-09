@@ -10,43 +10,51 @@
 class Psn_Admin_Navigation
 {
     /**
-     * @var Ifw_Wp_Plugin_Manager
+     * @var IfwPsn_Wp_Plugin_Manager
      */
     protected $_pm;
 
     /**
-     * @var IfwZend_Navigation
+     * @var IfwPsn_Vendor_Zend_Navigation
      */
     protected $_navigation;
 
 
 
     /**
-     * @param Ifw_Wp_Plugin_Manager $pm
+     * @param IfwPsn_Wp_Plugin_Manager $pm
      */
-    public function __construct(Ifw_Wp_Plugin_Manager $pm)
+    public function __construct(IfwPsn_Wp_Plugin_Manager $pm)
     {
         $this->_pm = $pm;
     }
 
     public function load()
     {
-        $this->_navigation = new IfwZend_Navigation();
+        require_once $this->_pm->getPathinfo()->getRootLib() . 'IfwPsn/Vendor/Zend/Navigation/Container.php';
+        require_once $this->_pm->getPathinfo()->getRootLib() . 'IfwPsn/Vendor/Zend/Navigation.php';
+        require_once $this->_pm->getPathinfo()->getRootLib() . 'IfwPsn/Vendor/Zend/Navigation/Page.php';
+        require_once $this->_pm->getPathinfo()->getRootLib() . 'IfwPsn/Zend/Navigation/Page/WpMvc.php';
 
-        Ifw_Zend_Controller_Front::getInstance()->initRouter($this->_pm);
+        $this->_registerLiteNav();
 
-        $page = new Ifw_Zend_Navigation_Page_WpMvc(array(
+        $this->_navigation = new IfwPsn_Vendor_Zend_Navigation();
+
+        IfwPsn_Zend_Controller_Front::getInstance()->initRouter($this->_pm);
+
+        $page = new IfwPsn_Zend_Navigation_Page_WpMvc(array(
             'label' => __('Overview', 'psn'),
             'page' => $this->_pm->getPathinfo()->getDirname(),
             'action' => 'index',
             'controller' => 'index',
             'route' => 'requestVars'
         ));
+        $page->set('exactActiveMatch', true);
         $this->_navigation->addPage($page);
 
-        Ifw_Wp_Proxy_Action::doPlugin($this->_pm, 'after_admin_navigation_overview', $this->_navigation);
+        IfwPsn_Wp_Proxy_Action::doPlugin($this->_pm, 'after_admin_navigation_overview', $this->_navigation);
 
-        $page = new Ifw_Zend_Navigation_Page_WpMvc(array(
+        $page = new IfwPsn_Zend_Navigation_Page_WpMvc(array(
             'label' => __('Rules', 'psn'),
             'page' => $this->_pm->getPathinfo()->getDirname(),
             'action' => 'index',
@@ -55,9 +63,9 @@ class Psn_Admin_Navigation
         ));
         $this->_navigation->addPage($page);
 
-        Ifw_Wp_Proxy_Action::doPlugin($this->_pm, 'after_admin_navigation_rules', $this->_navigation);
+        IfwPsn_Wp_Proxy_Action::doPlugin($this->_pm, 'after_admin_navigation_rules', $this->_navigation);
 
-        $page = new Ifw_Zend_Navigation_Page_WpMvc(array(
+        $page = new IfwPsn_Zend_Navigation_Page_WpMvc(array(
             'label' => __('Options', 'psn'),
             'controller' => 'options',
             'action' => 'index',
@@ -66,11 +74,66 @@ class Psn_Admin_Navigation
         ));
         $this->_navigation->addPage($page);
 
-        Ifw_Wp_Proxy_Action::doPlugin($this->_pm, 'after_admin_navigation_options', $this->_navigation);
+        IfwPsn_Wp_Proxy_Action::doPlugin($this->_pm, 'after_admin_navigation_options', $this->_navigation);
+
+        $page = new IfwPsn_Zend_Navigation_Page_WpMvc(array(
+            'label' => __('Service', 'psn'),
+            'controller' => 'service',
+            'action' => 'index',
+            'page' => $this->_pm->getPathinfo()->getDirname(),
+            'route' => 'requestVars'
+        ));
+        $this->_navigation->addPage($page);
+
+        IfwPsn_Wp_Proxy_Action::doPlugin($this->_pm, 'after_admin_navigation_service', $this->_navigation);
+    }
+
+    protected function _registerLiteNav()
+    {
+        if (!$this->_pm->isPremium()) {
+            IfwPsn_Wp_Proxy_Action::addPlugin($this->_pm, 'after_admin_navigation_rules', array($this, 'addMailTplNav'));
+            IfwPsn_Wp_Proxy_Action::addPlugin($this->_pm, 'after_admin_navigation_htmlmails', array($this, 'addRecipientsListsNav'));
+        }
     }
 
     /**
-     * @return IfwZend_Navigation
+     * @param $navigation
+     */
+    public function addMailTplNav(IfwPsn_Vendor_Zend_Navigation $navigation)
+    {
+        $page = new IfwPsn_Zend_Navigation_Page_WpMvc(array(
+            'label' => __('Mail templates', 'psn'),
+            'controller' => 'index',
+            'action' => 'adMailTpl',
+            'page' => $this->_pm->getPathinfo()->getDirname(),
+            'route' => 'requestVars'
+        ));
+        $page->set('exactActiveMatch', true);
+
+        $navigation->addPage($page);
+
+        IfwPsn_Wp_Proxy_Action::doPlugin($this->_pm, 'after_admin_navigation_htmlmails', $navigation);
+    }
+
+    /**
+     * @param $navigation
+     */
+    public function addRecipientsListsNav(IfwPsn_Vendor_Zend_Navigation $navigation)
+    {
+        $page = new IfwPsn_Zend_Navigation_Page_WpMvc(array(
+            'label' => __('Recipients lists', 'psn'),
+            'controller' => 'index',
+            'action' => 'adRecipientsLists',
+            'page' => $this->_pm->getPathinfo()->getDirname(),
+            'route' => 'requestVars'
+        ));
+        $page->set('exactActiveMatch', true);
+
+        $navigation->addPage($page);
+    }
+
+    /**
+     * @return IfwPsn_Vendor_Zend_Navigation
      */
     public function getNavigation()
     {
@@ -90,11 +153,11 @@ class Psn_Admin_Navigation
         $nav = $this->getNavigation();
 
         /**
-         * @var Ifw_Zend_Navigation_Page_WpMvc $page
+         * @var IfwPsn_Zend_Navigation_Page_WpMvc $page
          */
         foreach ($nav->getPages() as $page) {
             $result[] = array(
-                'href' => Ifw_Wp_Proxy_Admin::getMenuUrl(
+                'href' => IfwPsn_Wp_Proxy_Admin::getMenuUrl(
                     $this->_pm, $page->getController(),
                     $page->getAction(),
                     null,
