@@ -30,7 +30,7 @@ http://docs.ifeelweb.de/post-status-notifier/faq.html
 
 = Features =
 
-* Get the [Premium version](http://codecanyon.net/item/post-status-notifier/4809420?ref=ifeelweb) for all features
+Get the [Premium version](http://codecanyon.net/item/post-status-notifier/4809420?ref=ifeelweb) for all features
 
 * Define **custom notification rules**
 * Support for posts, pages and all **custom post types**
