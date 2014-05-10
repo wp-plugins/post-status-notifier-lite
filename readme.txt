@@ -10,7 +10,7 @@ Lets you create individual notification rules to be informed about all post stat
 
 == Description ==
 
-=Notify everything!=
+= Notify everything! =
 
 You want to **be notified** when one of your contributors have submitted a new post for revision or an editor published one? Vice versa you want to **notify your contributors** when their posts got published?
 This is just the beginning of what you can achieve with Post Status Notifier (PSN)!
