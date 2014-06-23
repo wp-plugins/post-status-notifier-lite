@@ -291,7 +291,7 @@ class IfwPsn_Wp_Proxy_Blog
     {
         $tpl = IfwPsn_Wp_Tpl::getFilesytemInstance($pm);
 
-        return $tpl->render('server_env.html.twig', array(
+        $context = array(
             'plugin_name' => $pm->getEnv()->getName(),
             'plugin_version' => $pm->getEnv()->getVersion(),
             'plugin_modules' => $pm->getBootstrap()->getModuleManager()->getModules(),
@@ -312,8 +312,15 @@ class IfwPsn_Wp_Proxy_Blog
             'mysql_version' => mysql_get_server_info(),
             'mysql_client' => mysql_get_client_info(),
             'server_software' => $_SERVER['SERVER_SOFTWARE'],
-            'apache_version' => apache_get_version(),
-            'apache_modules' => apache_get_modules()
-        ));
+        );
+
+        if (function_exists('apache_get_version')) {
+            $context['apache_version'] = apache_get_version();
+        }
+        if (function_exists('apache_get_modules')) {
+            $context['apache_modules'] = apache_get_modules();
+        }
+
+        return $tpl->render('server_env.html.twig', $context);
     }
 }
