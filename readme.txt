@@ -2,8 +2,8 @@
 Tags: post, status, notification, notify, change, custom post type, email, log, logging, notify, placeholders,  transition
 Contributors: worschtebrot
 Requires at least: 3.3
-Tested up to: 3.9
-Stable tag: 1.5
+Tested up to: 4.0
+Stable tag: 1.5.1
 
 
 Lets you create individual notification rules to be informed about all post status transitions of your blog. Features custom email texts with many placeholders and custom post types.
@@ -90,6 +90,10 @@ Here you can find a detailed documentation:
 http://docs.ifeelweb.de/post-status-notifier/
 
 == Change Log ==
+
+= 1.5.1 =
+
+- Bugfix: In some cases the service section could produce an error message (Call to undefined function apache_get_version())
 
 = 1.5 =
 
