@@ -7,11 +7,11 @@
  * @copyright   Copyright (c) ifeelweb.de
  * @package     Psn_Admin
  */
-class Psn_Admin_Metabox_Rules extends Ifw_Wp_Plugin_Metabox_Ajax
+class Psn_Admin_Metabox_Rules extends IfwPsn_Wp_Plugin_Metabox_Ajax
 {
 
     /** (non-PHPdoc)
-     * @see Ifw_Wp_Plugin_Admin_Menu_Metabox_Abstract::_initId()
+     * @see IfwPsn_Wp_Plugin_Admin_Menu_Metabox_Abstract::_initId()
      */
     protected function _initId()
     {
@@ -20,7 +20,7 @@ class Psn_Admin_Metabox_Rules extends Ifw_Wp_Plugin_Metabox_Ajax
 
     /**
      * (non-PHPdoc)
-     * @see Ifw_Wp_Plugin_Admin_Menu_Metabox_Abstract::_initTitle()
+     * @see IfwPsn_Wp_Plugin_Admin_Menu_Metabox_Abstract::_initTitle()
      */
     protected function _initTitle()
     {
@@ -28,7 +28,7 @@ class Psn_Admin_Metabox_Rules extends Ifw_Wp_Plugin_Metabox_Ajax
     }
 
     /** (non-PHPdoc)
-     * @see Ifw_Wp_Plugin_Admin_Menu_Metabox_Abstract::_initPriority()
+     * @see IfwPsn_Wp_Plugin_Admin_Menu_Metabox_Abstract::_initPriority()
      */
     protected function _initPriority()
     {
@@ -36,7 +36,7 @@ class Psn_Admin_Metabox_Rules extends Ifw_Wp_Plugin_Metabox_Ajax
     }
 
     /** (non-PHPdoc)
-     * @see Ifw_Wp_Plugin_Admin_Menu_Metabox_Ajax::getAjaxResponse()
+     * @see IfwPsn_Wp_Plugin_Admin_Menu_Metabox_Ajax::getAjaxResponse()
      */
     public function getAjaxResponse()
     {
@@ -45,11 +45,11 @@ class Psn_Admin_Metabox_Rules extends Ifw_Wp_Plugin_Metabox_Ajax
         if (isset($_POST['refresh_rows'])) {
             $html = $listTable->ajax_response();
         } else {
-            $html = '<p><a href="'.  Ifw_Wp_Proxy_Admin::getUrl() . Ifw_Wp_Proxy_Admin::getMenuUrl($this->_pm, 'rules', 'create') .'" class="ifw-wp-icon-plus" id="link_create_rule">'.
+            $html = '<p><a href="'.  IfwPsn_Wp_Proxy_Admin::getUrl() . IfwPsn_Wp_Proxy_Admin::getMenuUrl($this->_pm, 'rules', 'create') .'" class="ifw-wp-icon-plus" id="link_create_rule">'.
                 __('Create new rule', 'psn') .'</a></p>';
             $html .= $listTable->fetch();
         }
 
-        return new Ifw_Wp_Ajax_Response(true, $html);
+        return new IfwPsn_Wp_Ajax_Response(true, $html);
     }
 }

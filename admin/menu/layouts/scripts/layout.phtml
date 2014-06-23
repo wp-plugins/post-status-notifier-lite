@@ -1,6 +1,5 @@
 <div id="<?php echo $this->pm->getPathinfo()->getDirname(); ?>-general" class="wrap">
 
-    <?php screen_icon($this->pm->getAbbrLower()); ?>
     <h2><?php echo $this->pm->getEnv()->getName(); ?></h2>
 
     <?php if(!$this->isSupportedWpVersion): ?><div class="error"><p class="error"><?php echo $this->notSupportedWpVersionMessage; ?></p></div><?php endif; ?>

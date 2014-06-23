@@ -7,7 +7,7 @@
  * @version     $Id$
  * @package     Psn_Installer
  */
-class Psn_Installer_Activation implements Ifw_Wp_Plugin_Installer_ActivationInterface
+class Psn_Installer_Activation implements IfwPsn_Wp_Plugin_Installer_ActivationInterface
 {
     /**
      * @var Psn_Patch_Database
@@ -18,23 +18,28 @@ class Psn_Installer_Activation implements Ifw_Wp_Plugin_Installer_ActivationInte
 
     /**
      * (non-PHPdoc)
-     * @see Ifw_Wp_Plugin_Installer_ActivationInterface::execute()
+     * @see IfwPsn_Wp_Plugin_Installer_ActivationInterface::execute()
      */
-    public function execute(Ifw_Wp_Plugin_Manager $pm, $networkwide = false)
+    public function execute(IfwPsn_Wp_Plugin_Manager $pm, $networkwide = false)
     {
+        if ($pm->isPremium() &&
+            IfwPsn_Wp_Proxy_Blog::isPluginActive('post-status-notifier-lite/post-status-notifier-lite.php')) {
+            trigger_error(sprintf( __('The Lite version of this plugin is still activated. Please deactivate it! Refer to the <a href=\"%s\">Upgrade Howto</a>.', 'psn'), 'http://docs.ifeelweb.de/post-status-notifier/upgrade_howto.html'));
+        }
+
         $this->_dbPatcher = new Psn_Patch_Database();
 
-        if (Ifw_Wp_Proxy_Blog::isMultisite() && $networkwide == true) {
+        if (IfwPsn_Wp_Proxy_Blog::isMultisite() && $networkwide == true) {
 
             // multisite installation
-            $currentBlogId = Ifw_Wp_Proxy_Blog::getBlogId();
+            $currentBlogId = IfwPsn_Wp_Proxy_Blog::getBlogId();
 
-            foreach (Ifw_Wp_Proxy_Blog::getMultisiteBlogIds() as $blogId) {
+            foreach (IfwPsn_Wp_Proxy_Blog::getMultisiteBlogIds() as $blogId) {
 
-                Ifw_Wp_Proxy_Blog::switchToBlog($blogId);
+                IfwPsn_Wp_Proxy_Blog::switchToBlog($blogId);
                 $this->_createTable();
             }
-            Ifw_Wp_Proxy_Blog::switchToBlog($currentBlogId);
+            IfwPsn_Wp_Proxy_Blog::switchToBlog($currentBlogId);
 
         } else {
             // single blog installation
@@ -61,15 +66,19 @@ class Psn_Installer_Activation implements Ifw_Wp_Plugin_Installer_ActivationInte
               `notification_body` text COLLATE utf8_unicode_ci NOT NULL,
               `recipient` varchar(200) COLLATE utf8_unicode_ci NOT NULL,
               `to` varchar(255) COLLATE utf8_unicode_ci NULL,
+              `cc_select` text COLLATE utf8_unicode_ci,
               `cc` text COLLATE utf8_unicode_ci,
+              `bcc_select` text COLLATE utf8_unicode_ci,
               `bcc` text COLLATE utf8_unicode_ci,
               `active` tinyint(1) NOT NULL DEFAULT "1",
               `service_email` tinyint(1) NOT NULL DEFAULT "0",
               `service_log` tinyint(1) NOT NULL DEFAULT "0",
               `categories` text COLLATE utf8_unicode_ci,
               `from` varchar(255) COLLATE utf8_unicode_ci NULL,
+              `mail_tpl` int(11) NULL,
+              `editor_restriction` text COLLATE utf8_unicode_ci,
               PRIMARY KEY (`id`)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT="Plugin: Post Status Notifier";
+            ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT="Plugin: Post Status Notifier";
         ');
 
         // if the table already existed (eg on update) this will check if all new fields are present

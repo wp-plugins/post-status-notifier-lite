@@ -10,7 +10,7 @@
 class Psn_Notification_Manager
 {
     /**
-     * @var Ifw_Wp_Plugin_Manager
+     * @var IfwPsn_Wp_Plugin_Manager
      */
     protected $_pm;
 
@@ -32,9 +32,9 @@ class Psn_Notification_Manager
 
 
     /**
-     * @param Ifw_Wp_Plugin_Manager $pm
+     * @param IfwPsn_Wp_Plugin_Manager $pm
      */
-    public function __construct(Ifw_Wp_Plugin_Manager $pm)
+    public function __construct(IfwPsn_Wp_Plugin_Manager $pm)
     {
         $this->_pm = $pm;
         $this->_init();
@@ -42,9 +42,9 @@ class Psn_Notification_Manager
 
     protected function _init()
     {
-        Ifw_Wp_Proxy_Filter::add('transition_post_status', array($this, 'handlePostStatusTransition'), 10, 3);
-        Ifw_Wp_Proxy_Filter::add('psn_service_email_body', array($this, 'filterEmailBody'), 10, 3);
-        Ifw_Wp_Proxy_Filter::add('psn_service_email_subject', array($this, 'filterEmailSubject'), 10, 3);
+        IfwPsn_Wp_Proxy_Filter::add('transition_post_status', array($this, 'handlePostStatusTransition'), 10, 3);
+        IfwPsn_Wp_Proxy_Filter::add('psn_service_email_body', array($this, 'filterEmailBody'), 10, 3);
+        IfwPsn_Wp_Proxy_Filter::add('psn_service_email_subject', array($this, 'filterEmailSubject'), 10, 3);
         $this->_loadServices();
     }
 
@@ -53,8 +53,10 @@ class Psn_Notification_Manager
      */
     protected function _loadServices()
     {
+        require_once $this->_pm->getPathinfo()->getRootLib() . 'Psn/Notification/Service/Email.php';
+
         $this->addService(new Psn_Notification_Service_Email());
-        Ifw_Wp_Proxy_Action::doPlugin($this->_pm, 'after_load_services', $this);
+        IfwPsn_Wp_Proxy_Action::doPlugin($this->_pm, 'after_load_services', $this);
     }
 
     /**
@@ -67,7 +69,7 @@ class Psn_Notification_Manager
         $this->_statusBefore = $statusBefore;
         $this->_statusAfter = $statusAfter;
 
-        $activeRules = Ifw_Wp_ORM_Model::factory('Psn_Model_Rule')->filter('active')->find_many();
+        $activeRules = IfwPsn_Wp_ORM_Model::factory('Psn_Model_Rule')->filter('active')->find_many();
         
         if (Psn_Model_Rule::hasMax()) {
             $activeRules = array_slice($activeRules, 0, Psn_Model_Rule::getMax());
@@ -82,17 +84,16 @@ class Psn_Notification_Manager
                 $rule->setIgnoreInherit(true);
             }
 
-            if ($rule->matchesPostType($post->post_type) &&
-                $rule->matchesStatus($statusBefore, $statusAfter) &&
-                $rule->matchesCategories($post)
-                ) {
+            if ($rule->matches($post, $statusBefore, $statusAfter)) {
 
                 // rule matches
-                Ifw_Wp_Proxy_Action::addPlugin($this->_pm, 'notification_placeholders', array($this, 'addPlaceholders'));
-                Ifw_Wp_Proxy_Action::addPlugin($this->_pm, 'notification_placeholders', array($this, 'filterPlaceholders'));
-                Ifw_Wp_Proxy_Action::addPlugin($this->_pm, 'notification_dynamic_placeholders', array($this, 'filterPlaceholders'));
+                IfwPsn_Wp_Proxy_Action::addPlugin($this->_pm, 'notification_placeholders', array($this, 'addPlaceholders'));
+                IfwPsn_Wp_Proxy_Action::addPlugin($this->_pm, 'notification_placeholders', array($this, 'filterPlaceholders'));
+                IfwPsn_Wp_Proxy_Action::addPlugin($this->_pm, 'notification_dynamic_placeholders', array($this, 'filterPlaceholders'));
 
                 /**
+                 * Execute all registered notification services
+                 *
                  * @var $service Psn_Notification_Service_Interface
                  */
                 foreach($this->getServices() as $service) {
@@ -143,7 +144,7 @@ class Psn_Notification_Manager
                                 $filter_string = '{{ '. $filter_string . ' }}';
                             }
 
-                            $placeholders[$placeholder_name] = Ifw_Wp_Tpl::renderString($filter_string);
+                            $placeholders[$placeholder_name] = IfwPsn_Wp_Tpl::renderString($filter_string);
                         }
                     }
                 }
