@@ -49,7 +49,7 @@ class IfwPsn_Zend_Log_Writer_WpDb extends IfwPsn_Vendor_Zend_Log_Writer_Abstract
                 if (is_array($event[$item]) || is_object($event[$item])) {
                     $dataToInsert[$item] = var_export($dataToInsert[$item], true);
                 } else {
-                    $dataToInsert[$item] = htmlentities($event[$item], ENT_COMPAT, IfwPsn_Wp_Proxy_Blog::getCharset());
+                    $dataToInsert[$item] = htmlentities(utf8_encode($event[$item]), ENT_COMPAT, IfwPsn_Wp_Proxy_Blog::getCharset());
                 }
             }
         }

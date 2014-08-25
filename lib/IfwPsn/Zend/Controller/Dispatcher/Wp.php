@@ -58,6 +58,7 @@ class IfwPsn_Zend_Controller_Dispatcher_Wp extends IfwPsn_Vendor_Zend_Controller
              */
             if (!$this->isDispatchable($request)) {
                 $controller = $request->getControllerName();
+
                 if (!$this->getParam('useDefaultControllerAlways') && !empty($controller)) {
                     //require_once 'IfwZend/Controller/Dispatcher/Exception.php';
                     throw new IfwPsn_Vendor_Zend_Controller_Dispatcher_Exception('Invalid controller specified (' . $request->getControllerName() . ')');

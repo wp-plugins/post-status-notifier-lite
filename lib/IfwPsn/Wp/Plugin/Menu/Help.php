@@ -16,7 +16,12 @@ class IfwPsn_Wp_Plugin_Menu_Help
      * @var IfwPsn_Wp_Plugin_Manager
      */
     protected $_pm;
-    
+
+    /**
+     * @var string
+     */
+    protected $_id;
+
     /**
      * @var string
      */
@@ -64,9 +69,9 @@ class IfwPsn_Wp_Plugin_Menu_Help
         $screen = IfwPsn_Wp_Proxy_Screen::getCurrent();
 
         $help = array(
-            'id'=> 1,
-            'title'=> $this->_title,
-            'content'=> sprintf('<div class="ifw-help-tab-content">%s</div>', $this->_help)
+            'id' => $this->_id == null ? 1 : $this->_id,
+            'title' => $this->_title,
+            'content' => sprintf('<div class="ifw-help-tab-content">%s</div>', $this->_help)
         );
 
         IfwPsn_Wp_Proxy_Screen::addHelpTab($help);
@@ -88,7 +93,17 @@ class IfwPsn_Wp_Plugin_Menu_Help
     {
         return $this->_help;
     }
-    
+
+    /**
+     * @param string $id
+     * @return $this
+     */
+    public function setId($id)
+    {
+        $this->_id = $id;
+        return $this;
+    }
+
     /**
      * @param string $title
      * @return IfwPsn_Wp_Plugin_Menu_Help

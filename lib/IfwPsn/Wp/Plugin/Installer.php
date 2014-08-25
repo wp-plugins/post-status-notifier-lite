@@ -173,7 +173,8 @@ class IfwPsn_Wp_Plugin_Installer
      */
     public static function uninstall()
     {
-        $filenamePath = array_shift(array_values($_GET['checked']));
+        $checked = array_values($_GET['checked']);
+        $filenamePath = array_shift($checked);
         $pm = IfwPsn_Wp_Plugin_Manager::getInstanceFromFilenamePath($filenamePath);
 
         foreach(self::$_uninstall[$filenamePath] as $uninstall) {

@@ -25,19 +25,31 @@ abstract class IfwPsn_Wp_Options_Field
      */
     protected $_description;
 
+    /**
+     * @var array
+     */
+    protected $_params;
+
+    /**
+     * @var null|string
+     */
+    protected $_pageId;
 
 
     /**
      * @param $id
      * @param $label
+     * @param null $description
+     * @param array $params
      */
-    public function __construct($id, $label, $description = null)
+    public function __construct($id, $label, $description = null, $params = array())
     {
         $this->_id = $id;
         $this->_label = $label;
         if (!empty($description)) {
             $this->_description = $description;
         }
+        $this->_params = $params;
     }
 
     /**
@@ -86,6 +98,30 @@ abstract class IfwPsn_Wp_Options_Field
     public function getDescription()
     {
         return $this->_description;
+    }
+
+    /**
+     * @param null|string $pageId
+     */
+    public function setPageId($pageId)
+    {
+        $this->_pageId = $pageId;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getPageId()
+    {
+        return $this->_pageId;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function hasPageId()
+    {
+        return !empty($this->_pageId);
     }
 
     /**

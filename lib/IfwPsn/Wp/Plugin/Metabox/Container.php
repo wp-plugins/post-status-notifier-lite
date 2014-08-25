@@ -12,6 +12,11 @@
 class IfwPsn_Wp_Plugin_Metabox_Container
 {
     /**
+     * @var
+     */
+    protected $_id;
+
+    /**
      * @var string
      */
     protected $_screen;
@@ -25,14 +30,19 @@ class IfwPsn_Wp_Plugin_Metabox_Container
      * @var array
      */
     protected $_metaboxes = array();
-    
+
+
     /**
+     * @param $id
      * @param string $screen
      * @param string $context
      */
-    function __construct ($screen, $context = null)
+    function __construct ($id, $screen, $context = null)
     {
+        $this->_id = $id;
+
         $this->_screen = $screen;
+
         if ($context != null) {
             $this->_context = $context;
         }
@@ -58,12 +68,56 @@ class IfwPsn_Wp_Plugin_Metabox_Container
             ); 
         }
     }
+
+    /**
+     * @return mixed
+     */
+    public function getId()
+    {
+        return $this->_id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getScreen()
+    {
+        return $this->_screen;
+    }
+
+    /**
+     * @return string
+     */
+    public function getContext()
+    {
+        return $this->_context;
+    }
+
+    /**
+     * @return array
+     */
+    public function getMetaboxes()
+    {
+        return $this->_metaboxes;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasMetaboxes()
+    {
+        return count($this->_metaboxes) > 0;
+    }
     
     /**
      * Renders the container
      */
     public function render()
     {
-        do_meta_boxes($this->_screen, $this->_context, '');
+        if ($this->hasMetaboxes()) {
+            do_meta_boxes($this->_screen, $this->_context, '');
+        } else {
+            echo '<div id="'. $this->_id .'-sortables" class="meta-box-sortables ui-sortable empty-container"></div>';
+        }
     }
 }

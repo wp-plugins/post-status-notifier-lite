@@ -26,12 +26,12 @@ class IfwPsn_Wp_Tpl_Extension_Text extends IfwPsn_Vendor_Twig_Extension
         require_once dirname(__FILE__) . '/../../../Vendor/Twig/Filter/Function.php';
 
         $filters = array(
-            'truncate' => new IfwPsn_Vendor_Twig_Filter_Function('twig_truncate_filter', array('needs_environment' => true)),
-            'wordwrap' => new IfwPsn_Vendor_Twig_Filter_Function('twig_wordwrap_filter', array('needs_environment' => true)),
+            'truncate' => new IfwPsn_Vendor_Twig_Filter_Function('ifwpsn_twig_truncate_filter', array('needs_environment' => true)),
+            'wordwrap' => new IfwPsn_Vendor_Twig_Filter_Function('ifwpsn_twig_wordwrap_filter', array('needs_environment' => true)),
         );
 
         if (version_compare(IfwPsn_Vendor_Twig_Environment::VERSION, '1.5.0-DEV', '<')) {
-            $filters['nl2br'] = new IfwPsn_Vendor_Twig_Filter_Function('twig_nl2br_filter', array('pre_escape' => 'html', 'is_safe' => array('html')));
+            $filters['nl2br'] = new IfwPsn_Vendor_Twig_Filter_Function('ifwpsn_twig_nl2br_filter', array('pre_escape' => 'html', 'is_safe' => array('html')));
         }
 
         return $filters;
@@ -48,13 +48,15 @@ class IfwPsn_Wp_Tpl_Extension_Text extends IfwPsn_Vendor_Twig_Extension
     }
 }
 
-function twig_nl2br_filter($value, $sep = '<br />')
-{
-    return str_replace("\n", $sep."\n", $value);
+if (!function_exists('ifwpsn_twig_nl2br_filter')) {
+    function ifwpsn_twig_nl2br_filter($value, $sep = '<br />')
+    {
+        return str_replace("\n", $sep."\n", $value);
+    }
 }
 
 if (function_exists('mb_get_info')) {
-    function twig_truncate_filter(IfwPsn_Vendor_Twig_Environment $env, $value, $length = 30, $preserve = false, $separator = '...')
+    function ifwpsn_twig_truncate_filter(IfwPsn_Vendor_Twig_Environment $env, $value, $length = 30, $preserve = false, $separator = '...')
     {
         if (mb_strlen($value, $env->getCharset()) > $length) {
             if ($preserve) {
@@ -69,7 +71,7 @@ if (function_exists('mb_get_info')) {
         return $value;
     }
 
-    function twig_wordwrap_filter(IfwPsn_Vendor_Twig_Environment $env, $value, $length = 80, $separator = "\n", $preserve = false)
+    function ifwpsn_twig_wordwrap_filter(IfwPsn_Vendor_Twig_Environment $env, $value, $length = 80, $separator = "\n", $preserve = false)
     {
         $sentences = array();
 
@@ -91,7 +93,7 @@ if (function_exists('mb_get_info')) {
         return implode($separator, $sentences);
     }
 } else {
-    function twig_truncate_filter(IfwPsn_Vendor_Twig_Environment $env, $value, $length = 30, $preserve = false, $separator = '...')
+    function ifwpsn_twig_truncate_filter(IfwPsn_Vendor_Twig_Environment $env, $value, $length = 30, $preserve = false, $separator = '...')
     {
         if (strlen($value) > $length) {
             if ($preserve) {
@@ -106,7 +108,7 @@ if (function_exists('mb_get_info')) {
         return $value;
     }
 
-    function twig_wordwrap_filter(IfwPsn_Vendor_Twig_Environment $env, $value, $length = 80, $separator = "\n", $preserve = false)
+    function ifwpsn_twig_wordwrap_filter(IfwPsn_Vendor_Twig_Environment $env, $value, $length = 80, $separator = "\n", $preserve = false)
     {
         return wordwrap($value, $length, $separator, !$preserve);
     }

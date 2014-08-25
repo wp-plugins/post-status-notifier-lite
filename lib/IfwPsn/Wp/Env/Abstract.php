@@ -68,9 +68,7 @@ abstract class IfwPsn_Wp_Env_Abstract
     protected $_textDomain;
 
 
-    
     /**
-     * 
      * @param IfwPsn_Wp_Pathinfo_Abstract $pathinfo
      */
     protected function __construct(IfwPsn_Wp_Pathinfo_Abstract $pathinfo)
@@ -172,6 +170,22 @@ abstract class IfwPsn_Wp_Env_Abstract
     public function getHomepage()
     {
         return $this->_homepage;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getBuildNumber()
+    {
+        $buildFile = $this->_pathinfo->getRoot() . 'build.txt';
+
+        if (file_exists($buildFile)) {
+            $buildNumber = (int)file_get_contents($buildFile);
+        } else {
+            $buildNumber = null;
+        }
+
+        return $buildNumber;
     }
 
     /**

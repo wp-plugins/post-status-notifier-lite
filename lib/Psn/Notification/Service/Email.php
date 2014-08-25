@@ -51,10 +51,6 @@ class Psn_Notification_Service_Email implements Psn_Notification_Service_Interfa
      */
     protected $_bcc = array();
 
-    /**
-     * @var Psn_Notification_Placeholders
-     */
-    protected $_replacer;
 
 
 
@@ -68,21 +64,23 @@ class Psn_Notification_Service_Email implements Psn_Notification_Service_Interfa
             return;
         }
 
+        $this->_reset();
+
         $this->_rule = $rule;
         $this->_post = $post;
-        $this->_replacer = new Psn_Notification_Placeholders($post);
 
-        $this->_prepareData($rule, $post);
+        // create email object
+        $this->_email = new IfwPsn_Wp_Email();
+
+        // prepare recipients
+        $this->_prepareRecipients($rule, $post);
 
         if(!empty($this->_to)) {
             // send email
 
-            // create email object
-            $this->_email = new IfwPsn_Wp_Email();
-
             $this->_email->setTo($this->getFormattedEmails($this->_to))
-                ->setSubject($this->_subject)
-                ->setMessage($this->_body)
+                ->setSubject($this->_getPreparedSubject($rule))
+                ->setMessage($this->_getPreparedBody($rule))
             ;
 
             if ($this->hasCc()) {
@@ -107,14 +105,56 @@ class Psn_Notification_Service_Email implements Psn_Notification_Service_Interfa
     }
 
     /**
+     * Resets the email properties buffer variables
+     */
+    protected function _reset()
+    {
+        $this->_body = null;
+        $this->_subject = null;
+        $this->_to = array();
+        $this->_cc = array();
+        $this->_bcc = array();
+    }
+
+    /**
+     * @param Psn_Model_Rule $rule
+     * @return mixed|void
+     */
+    protected function _getPreparedBody(Psn_Model_Rule $rule)
+    {
+        $body = $rule->getNotificationBody();
+
+        /**
+         * Email service body filter
+         * @param string the email body
+         * @param Psn_Notification_Service_Email the email service
+         */
+        return IfwPsn_Wp_Proxy_Filter::apply('psn_service_email_body', $body, $this);
+    }
+
+    /**
+     * @param Psn_Model_Rule $rule
+     * @return mixed|void
+     */
+    protected function _getPreparedSubject(Psn_Model_Rule $rule)
+    {
+        $subject = $rule->getNotificationSubject();
+
+        /**
+         * Final subject filter
+         * @param string the email subject
+         */
+        return IfwPsn_Wp_Proxy_Filter::apply('psn_service_email_subject', $subject, $this);
+    }
+
+    /**
+     * Prepares TO, CC and BCC recipients
+     *
      * @param Psn_Model_Rule $rule
      * @param $post
      */
-    protected function _prepareData(Psn_Model_Rule $rule, $post)
+    protected function _prepareRecipients(Psn_Model_Rule $rule, $post)
     {
-        $this->_body = IfwPsn_Wp_Proxy_Filter::apply('psn_service_email_body', $this->_replacer->replace($rule->getNotificationBody()));
-        $this->_subject = IfwPsn_Wp_Proxy_Filter::apply('psn_service_email_subject', $this->_replacer->replace($rule->getNotificationSubject()));
-
         // recipient handling (To, Cc, Bcc)
         $recipientSelections = array(
             array(
@@ -140,7 +180,6 @@ class Psn_Notification_Service_Email implements Psn_Notification_Service_Interfa
         foreach ($recipientSelections as $recSel) {
 
             $recipient = $rule->$recSel['modelGetter']();
-
             if (in_array('admin', $recipient)) {
                 $this->$recSel['serviceAdder'](IfwPsn_Wp_Proxy_Blog::getAdminEmail());
             }
@@ -154,17 +193,14 @@ class Psn_Notification_Service_Email implements Psn_Notification_Service_Interfa
             // check for custom recipient
             $custom_recipient = $rule->get($recSel['custom_field_name']);
             if (!empty($custom_recipient)) {
-                $this->$recSel['serviceAdder']($this->_replacer->replace($custom_recipient));
+                $custom_recipient = $rule->getReplacer()->replace($custom_recipient);
+
+                $customRecipientStack = explode(',', $custom_recipient);
+                foreach ($customRecipientStack as $customRecipientEmail) {
+                    $this->$recSel['serviceAdder'](trim($customRecipientEmail));
+                }
             }
         }
-    }
-
-    /**
-     * @return \Psn_Notification_Placeholders
-     */
-    public function getReplacer()
-    {
-        return $this->_replacer;
     }
 
     /**
@@ -323,6 +359,31 @@ class Psn_Notification_Service_Email implements Psn_Notification_Service_Interfa
      */
     public function getFormattedEmails(array $emails)
     {
+        $emails = array_unique($emails);
         return implode(',' , $emails);
+    }
+
+    /**
+     * @param bool $set
+     * @return $this
+     */
+    public function setLoopTo($set = true)
+    {
+        if (is_bool($set) && $this->_email instanceof IfwPsn_Wp_Email) {
+            $this->_email->setLoopTo($set);
+        }
+        return $this;
+    }
+
+    /**
+     * @param $secs
+     * @return $this
+     */
+    public function setTimelimit($secs)
+    {
+        if (is_int($secs)) {
+            $this->_email->setTimelimit($secs);
+        }
+        return $this;
     }
 }

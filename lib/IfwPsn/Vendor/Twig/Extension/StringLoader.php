@@ -16,7 +16,7 @@ class IfwPsn_Vendor_Twig_Extension_StringLoader extends IfwPsn_Vendor_Twig_Exten
     public function getFunctions()
     {
         return array(
-            new IfwPsn_Vendor_Twig_SimpleFunction('template_from_string', 'ifw_twig_template_from_string', array('needs_environment' => true)),
+            new IfwPsn_Vendor_Twig_SimpleFunction('template_from_string', 'ifwpsn_twig_template_from_string', array('needs_environment' => true)),
         );
     }
 
@@ -41,7 +41,7 @@ class IfwPsn_Vendor_Twig_Extension_StringLoader extends IfwPsn_Vendor_Twig_Exten
  *
  * @return IfwPsn_Vendor_Twig_Template A IfwPsn_Vendor_Twig_Template instance
  */
-function ifw_twig_template_from_string(IfwPsn_Vendor_Twig_Environment $env, $template)
+function ifwpsn_twig_template_from_string(IfwPsn_Vendor_Twig_Environment $env, $template)
 {
     $name = sprintf('__string_template__%s', hash('sha256', uniqid(mt_rand(), true), false));
 

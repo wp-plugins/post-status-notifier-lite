@@ -15,14 +15,26 @@ class IfwPsn_Wp_Plugin_Application_Adapter_ZendFw_Autostart_ZendFormTranslation 
     public function execute()
     {
         require_once IFW_PSN_LIB_ROOT . 'IfwPsn/Vendor/Zend/Translate/Adapter/Array.php';
+        require_once IFW_PSN_LIB_ROOT . 'IfwPsn/Vendor/Zend/Locale.php';
 
-        $translator = new IfwPsn_Vendor_Zend_Translate(
-            'IfwPsn_Vendor_Zend_Translate_Adapter_Array',
-            $this->_adapter->getPluginManager()->getPathinfo()->getRootLib() . 'IfwPsn/Zend/Form/resources/languages',
-            IfwPsn_Wp_Proxy_Blog::getLanguage(),
-            array('scan' => IfwPsn_Vendor_Zend_Translate::LOCALE_DIRECTORY)
-        );
+        try {
+            // check if the WP locale is valid otherwise set it to default
+            $locale = IfwPsn_Wp_Proxy_Blog::getLanguage();
+            if (!IfwPsn_Vendor_Zend_Locale::isLocale($locale)) {
+                $locale = 'en_US';
+            }
 
-        IfwPsn_Vendor_Zend_Validate_Abstract::setDefaultTranslator($translator);
+            $translator = new IfwPsn_Vendor_Zend_Translate(
+                'IfwPsn_Vendor_Zend_Translate_Adapter_Array',
+                $this->_adapter->getPluginManager()->getPathinfo()->getRootLib() . 'IfwPsn/Zend/Form/resources/languages',
+                $locale,
+                array('scan' => IfwPsn_Vendor_Zend_Translate::LOCALE_DIRECTORY)
+            );
+            // set the validation translator
+            IfwPsn_Vendor_Zend_Validate_Abstract::setDefaultTranslator($translator);
+
+        } catch (Exception $e) {
+            // do nothing. if something failed, we just have no translation for Zend_Validate
+        }
     }
 }

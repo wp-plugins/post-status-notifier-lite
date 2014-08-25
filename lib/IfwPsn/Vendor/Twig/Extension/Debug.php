@@ -28,7 +28,7 @@ class IfwPsn_Vendor_Twig_Extension_Debug extends IfwPsn_Vendor_Twig_Extension
         ;
 
         return array(
-            new IfwPsn_Vendor_Twig_SimpleFunction('dump', 'ifw_twig_var_dump', array('is_safe' => $isDumpOutputHtmlSafe ? array('html') : array(), 'needs_context' => true, 'needs_environment' => true)),
+            new IfwPsn_Vendor_Twig_SimpleFunction('dump', 'ifwpsn_twig_var_dump', array('is_safe' => $isDumpOutputHtmlSafe ? array('html') : array(), 'needs_context' => true, 'needs_environment' => true)),
         );
     }
 
@@ -43,7 +43,7 @@ class IfwPsn_Vendor_Twig_Extension_Debug extends IfwPsn_Vendor_Twig_Extension
     }
 }
 
-function ifw_twig_var_dump(IfwPsn_Vendor_Twig_Environment $env, $context)
+function ifwpsn_twig_var_dump(IfwPsn_Vendor_Twig_Environment $env, $context)
 {
     if (!$env->isDebug()) {
         return;

@@ -41,7 +41,7 @@ class IfwPsn_Vendor_Twig_Node_For extends IfwPsn_Vendor_Twig_Node
             ->addDebugInfo($this)
             // the (array) cast bypasses a PHP 5.2.6 bug
             ->write("\$context['_parent'] = (array) \$context;\n")
-            ->write("\$context['_seq'] = ifw_twig_ensure_traversable(")
+            ->write("\$context['_seq'] = ifwpsn_twig_ensure_traversable(")
             ->subcompile($this->getNode('seq'))
             ->raw(");\n")
         ;

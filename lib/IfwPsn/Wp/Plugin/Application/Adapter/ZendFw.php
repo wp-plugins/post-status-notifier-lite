@@ -120,7 +120,7 @@ class IfwPsn_Wp_Plugin_Application_Adapter_ZendFw implements IfwPsn_Wp_Plugin_Ap
      */
     public function init()
     {
-        $this->_activateErrorReporting();
+        $this->_pm->getErrorHandler()->enableErrorReporting();
 
         try {
             // init the controller object to add actions before load-{page-id} action
@@ -130,7 +130,7 @@ class IfwPsn_Wp_Plugin_Application_Adapter_ZendFw implements IfwPsn_Wp_Plugin_Ap
             $this->_handleException($e);
         }
 
-        $this->_deactivateErrorReporting();
+        $this->_pm->getErrorHandler()->disableErrorReporting();
     }
 
     /**
@@ -138,16 +138,15 @@ class IfwPsn_Wp_Plugin_Application_Adapter_ZendFw implements IfwPsn_Wp_Plugin_Ap
      */
     public function render()
     {
-        $this->_activateErrorReporting();
+        $this->_pm->getErrorHandler()->enableErrorReporting();
 
         try {
             $this->_output = $this->_application->run();
-
         } catch (Exception $e) {
             $this->_handleException($e);
         }
 
-        $this->_deactivateErrorReporting();
+        $this->_pm->getErrorHandler()->disableErrorReporting();
     }
 
     /**
@@ -155,7 +154,7 @@ class IfwPsn_Wp_Plugin_Application_Adapter_ZendFw implements IfwPsn_Wp_Plugin_Ap
      */
     public function display()
     {
-        $this->_activateErrorReporting();
+        $this->_pm->getErrorHandler()->enableErrorReporting();
 
         try {
             echo $this->_output;
@@ -164,31 +163,7 @@ class IfwPsn_Wp_Plugin_Application_Adapter_ZendFw implements IfwPsn_Wp_Plugin_Ap
             $this->_handleException($e);
         }
 
-        $this->_deactivateErrorReporting();
-    }
-
-    /**
-     * Activates the error reporting in dev mode
-     */
-    protected function _activateErrorReporting()
-    {
-        // store the default error level
-        $this->_errorReporting = error_reporting();
-
-        if ($this->_pm->getEnv()->getEnvironmet() == 'development' || $this->_pm->getConfig()->debug->show_errors == '1') {
-            // E_ALL & ~E_STRICT
-            error_reporting(6143);
-        }
-    }
-
-    /**
-     * Resets the error reporting to default in dev mode
-     */
-    protected function _deactivateErrorReporting()
-    {
-        if ($this->_pm->getEnv()->getEnvironmet() == 'development' || $this->_pm->getConfig()->debug->show_errors == '1') {
-            error_reporting($this->_errorReporting);
-        }
+        $this->_pm->getErrorHandler()->disableErrorReporting();
     }
 
     /**
@@ -209,7 +184,9 @@ class IfwPsn_Wp_Plugin_Application_Adapter_ZendFw implements IfwPsn_Wp_Plugin_Ap
             'controller' => $this->_pm->getAbbrLower() . '-error'
         ));
         $error->type = IfwPsn_Vendor_Zend_Controller_Plugin_ErrorHandler::EXCEPTION_NO_CONTROLLER;
-        $error->request = clone($request);
+        if (is_object($request)) {
+            $error->request = clone($request);
+        }
         $error->exception = $e;
 
         $request->setParam('error_handler', $error);

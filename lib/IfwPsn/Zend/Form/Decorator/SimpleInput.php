@@ -107,6 +107,9 @@ class IfwPsn_Zend_Form_Decorator_SimpleInput extends IfwPsn_Vendor_Zend_Form_Dec
                 if ($element->getAttrib('maxlength') != null) {
                     $additionalParams .= sprintf('maxlength="%s"', $element->getAttrib('maxlength'));
                 }
+                if ($element->getAttrib('placeholder') != null) {
+                    $additionalParams .= sprintf('placeholder="%s"', htmlspecialchars($element->getAttrib('placeholder')));
+                }
                 $markup  = sprintf($this->_formatText, $id, $label, $id, $name, $value, $additionalParams);
                 break;
         }

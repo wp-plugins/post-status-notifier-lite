@@ -49,8 +49,8 @@ abstract class IfwPsn_Vendor_Twig_Test_NodeTestCase extends PHPUnit_Framework_Te
 
     protected function getAttributeGetter()
     {
-        if (function_exists('ifw_twig_template_get_attributes')) {
-            return 'ifw_twig_template_get_attributes($this, ';
+        if (function_exists('ifwpsn_twig_template_get_attributes')) {
+            return 'ifwpsn_twig_template_get_attributes($this, ';
         }
 
         return '$this->getAttribute(';

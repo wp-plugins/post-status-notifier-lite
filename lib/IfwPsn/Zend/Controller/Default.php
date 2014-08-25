@@ -70,7 +70,7 @@ class IfwPsn_Zend_Controller_Default extends IfwPsn_Vendor_Zend_Controller_Actio
 
         $this->_helper->layout()->setLayout('layout');
 
-        $this->_pageHook = 'page-'. $this->_pm->getPathinfo()->getDirname() . '-' . $this->getRequest()->getActionName();
+        $this->_pageHook = 'page-'. $this->_pm->getPathinfo()->getDirname() . '-' . $this->getRequest()->getControllerName() . '-' . $this->getRequest()->getActionName();
         $this->view->pageHook = $this->_pageHook;
 
         $this->initNavigation();
@@ -81,6 +81,9 @@ class IfwPsn_Zend_Controller_Default extends IfwPsn_Vendor_Zend_Controller_Actio
             IfwPsn_Wp_Proxy_Blog::getVersion(),
             'http://wordpress.org/download/'
         );
+
+        // Do action on controller init
+        IfwPsn_Wp_Proxy_Action::doAction(get_class($this) . '_init', $this);
     }
 
     /**
@@ -194,6 +197,17 @@ class IfwPsn_Zend_Controller_Default extends IfwPsn_Vendor_Zend_Controller_Actio
         ), $extra);
 
         $this->_redirector->gotoRoute($urlOptions, 'requestVars');
+    }
+
+    /**
+     * @param $controller
+     * @param string $action
+     * @param null $page
+     * @param array $extra
+     */
+    public function gotoRoute($controller, $action='index', $page=null, $extra = array())
+    {
+        $this->_gotoRoute($controller, $action, $page, $extra);
     }
 
     protected function _gotoIndex()

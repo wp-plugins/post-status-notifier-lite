@@ -17,17 +17,18 @@ class IfwPsn_Wp_Autoloader
     protected static $_libDir = array();
 
     protected static $_modules = array();
-    
+
     /**
      * Initializes the autoloader
      * @param string $libDir
+     * @return bool
      */
     public static function init($libDir)
     {
         if (!in_array($libDir, self::$_libDir) && is_dir($libDir)) {
             self::$_libDir[] = $libDir;
         }
-        spl_autoload_register(array('self', 'autoload'));
+        return spl_autoload_register(array('IfwPsn_Wp_Autoloader', 'autoload'));
     }
     
     /**
@@ -101,5 +102,13 @@ class IfwPsn_Wp_Autoloader
         if (!isset(self::$_modules[$classNamePrefix])) {
             self::$_modules[$classNamePrefix] = $libDir;
         }
+    }
+
+    /**
+     * @return array
+     */
+    public static function getAllRegisteredAutoloadFunctions()
+    {
+        return spl_autoload_functions();
     }
 }

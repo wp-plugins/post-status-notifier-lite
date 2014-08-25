@@ -18,8 +18,8 @@ class IfwPsn_Vendor_Twig_Node_Expression_GetAttr extends IfwPsn_Vendor_Twig_Node
 
     public function compile(IfwPsn_Vendor_Twig_Compiler $compiler)
     {
-        if (function_exists('ifw_twig_template_get_attributes') && !$this->getAttribute('disable_c_ext')) {
-            $compiler->raw('ifw_twig_template_get_attributes($this, ');
+        if (function_exists('ifwpsn_twig_template_get_attributes') && !$this->getAttribute('disable_c_ext')) {
+            $compiler->raw('ifwpsn_twig_template_get_attributes($this, ');
         } else {
             $compiler->raw('$this->getAttribute(');
         }

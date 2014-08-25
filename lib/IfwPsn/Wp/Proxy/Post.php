@@ -10,6 +10,8 @@
  */ 
 class IfwPsn_Wp_Proxy_Post extends IfwPsn_Wp_Proxy_Abstract
 {
+    protected static $_customFieldsAndValues;
+
     /**
      * Alias for get_post
      *
@@ -190,7 +192,41 @@ class IfwPsn_Wp_Proxy_Post extends IfwPsn_Wp_Proxy_Abstract
      */
     public static function getAttachedCategories($post)
     {
-        return self::getAllTerms($post);
+        $result = array();
+
+        if ($post instanceof WP_Post) {
+
+            if (self::isDefaultType($post)) {
+                foreach (self::getAttachedCategoriesIds($post) as $catId) {
+                    $cat = get_category($catId);
+                    array_push($result, $cat);
+                }
+            } else {
+                $result = self::getAllTerms($post);
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param $post
+     * @return array
+     */
+    public static function getAttachedCategoriesIds($post)
+    {
+        $result = array();
+
+        if ($post instanceof WP_Post) {
+            if (self::isDefaultType($post)) {
+                $result = wp_get_post_categories($post->ID);
+            } else {
+                // on custom post type
+                $result = self::getAllTermIds($post);
+            }
+        }
+
+        return $result;
     }
 
     /**
@@ -200,15 +236,17 @@ class IfwPsn_Wp_Proxy_Post extends IfwPsn_Wp_Proxy_Abstract
      */
     public static function getAttachedCategoriesNames($post, $taxonomy = null)
     {
-        $categories = array();
+        $result = array();
+
         foreach (self::getAttachedCategories($post) as $cat) {
             if (isset($cat->name)) {
                 if ($taxonomy === null or ($taxonomy !== null && $taxonomy == $cat->taxonomy)) {
-                    array_push($categories, $cat->name);
+                    array_push($result, $cat->name);
                 }
             }
         }
-        return $categories;
+
+        return $result;
     }
 
     /**
@@ -240,6 +278,7 @@ class IfwPsn_Wp_Proxy_Post extends IfwPsn_Wp_Proxy_Abstract
         // custom post types taxonomies
         foreach (self::getCustomPostTypesKeys() as $type) {
             $terms = self::getCustomPostTypeCategories($type);
+
             if (!empty($terms)) {
                 $categories[$type] = $terms;
             }
@@ -295,11 +334,13 @@ class IfwPsn_Wp_Proxy_Post extends IfwPsn_Wp_Proxy_Abstract
         $terms = array();
 
         $args = array(
-            'public' => true,
+//            'public' => false,
             '_builtin' => false,
             'object_type' => array($posttype)
         );
+
         $taxonomies = get_taxonomies( $args, 'names', 'and' );
+
         if ( $taxonomies ) {
             foreach ( $taxonomies  as $taxonomy ) {
                 foreach(get_terms($taxonomy, 'hide_empty=0') as $term) {
@@ -336,6 +377,15 @@ class IfwPsn_Wp_Proxy_Post extends IfwPsn_Wp_Proxy_Abstract
     public static function getType($post)
     {
         return get_post_type($post);
+    }
+
+    /**
+     * @param $post
+     * @return bool
+     */
+    public static function isDefaultType($post)
+    {
+        return self::getType($post) == 'post';
     }
 
     /**
@@ -449,7 +499,35 @@ class IfwPsn_Wp_Proxy_Post extends IfwPsn_Wp_Proxy_Abstract
      */
     public static function getAttachedTags($post)
     {
-        return self::getAllTerms($post, 'post_tag');
+        $result = array();
+
+        if ($post instanceof $post) {
+            if (self::isDefaultType($post)) {
+                $result = wp_get_post_tags($post->ID);
+            } else {
+                $result = self::getAllTerms($post, 'post_tag');
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param $post
+     * @return array
+     */
+    public static function getAttachedTagsId($post)
+    {
+        $result = array();
+
+        if ($post instanceof $post) {
+
+            foreach (self::getAttachedTags($post) as $tag) {
+                array_push($result, (int)$tag->term_id);
+            }
+        }
+
+        return $result;
     }
 
     /**
@@ -459,17 +537,17 @@ class IfwPsn_Wp_Proxy_Post extends IfwPsn_Wp_Proxy_Abstract
      */
     public static function getAttachedTagsNames($post, $taxonomy = null)
     {
-        $tags = array();
+        $result = array();
 
         foreach (self::getAttachedTags($post) as $tag) {
             if (isset($tag->name)) {
                 if ($taxonomy === null or ($taxonomy !== null && $taxonomy == $tag->taxonomy)) {
-                    array_push($tags, $tag->name);
+                    array_push($result, $tag->name);
                 }
             }
         }
 
-        return $tags;
+        return $result;
     }
 
     /**
@@ -566,13 +644,15 @@ class IfwPsn_Wp_Proxy_Post extends IfwPsn_Wp_Proxy_Abstract
      */
     public static function getCustomKeysAndValues($post)
     {
-        $result = array();
+        if (self::$_customFieldsAndValues == null) {
+            self::$_customFieldsAndValues = array();
 
-        foreach (self::getCustomKeys($post) as $key) {
-            $result[$key] = self::getCustomKeyValue($key, $post);
+            foreach (self::getCustomKeys($post) as $key) {
+                self::$_customFieldsAndValues[$key] = self::getCustomKeyValue($key, $post);
+            }
         }
 
-        return $result;
+        return self::$_customFieldsAndValues;
     }
 
     /**
@@ -589,5 +669,27 @@ class IfwPsn_Wp_Proxy_Post extends IfwPsn_Wp_Proxy_Abstract
             return $format;
         }
         return null;
+    }
+
+    /**
+     * @param $post
+     * @param int $limit
+     * @param string $appendix
+     * @return string
+     */
+    public static function getWords($post, $limit = 100, $appendix = ' ... ')
+    {
+        $result = '';
+
+        if ($post instanceof WP_Post) {
+
+            $words = explode(' ', strip_tags($post->post_content));
+            $result = implode(' ', array_splice($words, 0, $limit));
+            if (count($words) > $limit) {
+                $result .= $appendix;
+            }
+        }
+
+        return $result;
     }
 }

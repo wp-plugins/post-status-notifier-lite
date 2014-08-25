@@ -20,6 +20,16 @@ class Psn_Model_Rule extends IfwPsn_Wp_ORM_Model
     protected $_ignoreInherit = false;
 
     /**
+     * @var string|null
+     */
+    protected $_notificationBody;
+
+    /**
+     * @var string|null
+     */
+    protected $_notificationSubject;
+
+    /**
      * @var null|array
      */
     protected $_recipient;
@@ -38,6 +48,18 @@ class Psn_Model_Rule extends IfwPsn_Wp_ORM_Model
      * @var null|array
      */
     protected $_editorRestriction;
+
+    /**
+     * @var Psn_Notification_Placeholders
+     */
+    protected $_replacer;
+
+    /**
+     * Custom data storage
+     *
+     * @var array
+     */
+    protected $_data = array();
 
 
 
@@ -60,9 +82,35 @@ class Psn_Model_Rule extends IfwPsn_Wp_ORM_Model
     /**
      * @return string
      */
-    public function getNotificationSubject()
+    public function getRawSubject()
     {
         return $this->get('notification_subject');
+    }
+
+    /**
+     * Retrieves the prepared notification subject
+     *
+     * @return string
+     */
+    public function getNotificationSubject()
+    {
+        if ($this->_notificationSubject === null) {
+
+            $subject = $this->get('notification_subject');
+            $subject = IfwPsn_Wp_Proxy_Filter::apply('psn_rule_notification_subject', $this->_replacer->replace($subject), $this);
+
+            $this->_notificationSubject = $subject;
+        }
+
+        return $this->_notificationSubject;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRawBody()
+    {
+        return html_entity_decode($this->get('notification_body'));
     }
 
     /**
@@ -74,11 +122,27 @@ class Psn_Model_Rule extends IfwPsn_Wp_ORM_Model
     }
 
     /**
+     * Retrieves the prepared notification body text
+     *
      * @return string
      */
     public function getNotificationBody()
     {
-        return html_entity_decode($this->get('notification_body'), ENT_COMPAT, IfwPsn_Wp_Proxy_Blog::getCharset());
+        if ($this->_notificationBody === null) {
+
+            // see: http://stackoverflow.com/questions/6275380/does-html-entity-decode-replaces-nbsp-also-if-not-how-to-replace-it
+            if (IfwPsn_Wp_Proxy_Blog::getCharset() == 'UTF-8') {
+                $body = str_replace("\xC2\xA0", ' ', html_entity_decode($this->get('notification_body'), ENT_COMPAT, IfwPsn_Wp_Proxy_Blog::getCharset()));
+            } else {
+                $body = str_replace("\xA0", ' ', html_entity_decode($this->get('notification_body'), ENT_COMPAT, IfwPsn_Wp_Proxy_Blog::getCharset()));
+            }
+
+            $body = IfwPsn_Wp_Proxy_Filter::apply('psn_rule_notification_body', $this->_replacer->replace($body), $this);
+
+            $this->_notificationBody = $body;
+        }
+
+        return $this->_notificationBody;
     }
 
     /**
@@ -103,6 +167,14 @@ class Psn_Model_Rule extends IfwPsn_Wp_ORM_Model
     public function getStatusAfter()
     {
         return $this->get('status_after');
+    }
+
+    /**
+     * @return bool
+     */
+    public function isLoopTo()
+    {
+        return (int)$this->get('to_loop') === 1;
     }
 
     /**
@@ -301,7 +373,10 @@ class Psn_Model_Rule extends IfwPsn_Wp_ORM_Model
             ($this->getStatusBefore() == 'not_private' && $before != 'private') or
 
             // "not_pending" validation:
-            ($this->getStatusBefore() == 'not_pending' && $before != 'pending')
+            ($this->getStatusBefore() == 'not_pending' && $before != 'pending') or
+
+            // "not_trash" validation:
+            ($this->getStatusBefore() == 'not_trash' && $before != 'trash')
 
             ) {
 
@@ -333,7 +408,10 @@ class Psn_Model_Rule extends IfwPsn_Wp_ORM_Model
             ($this->getStatusAfter() == 'not_private' && $after != 'private') or
 
             // "not_pending" validation:
-            ($this->getStatusAfter() == 'not_pending' && $after != 'pending')
+            ($this->getStatusAfter() == 'not_pending' && $after != 'pending') or
+
+            // "not_trash" validation:
+            ($this->getStatusAfter() == 'not_trash' && $after != 'trash')
 
             ) {
 
@@ -414,7 +492,7 @@ class Psn_Model_Rule extends IfwPsn_Wp_ORM_Model
             return true;
         }
 
-        $postCategories = IfwPsn_Wp_Proxy_Post::getAllTermIds($post);
+        $postCategories = IfwPsn_Wp_Proxy_Post::getAttachedCategoriesIds($post);
 
         if (isset($categories['include'])) {
             $include = $categories['include'];
@@ -474,4 +552,52 @@ class Psn_Model_Rule extends IfwPsn_Wp_ORM_Model
     {
         return IfwPsn_Wp_ORM_Model::factory('Psn_Model_Rule')->count() >= self::getMax();
     }
+
+    /**
+     * @param Psn_Notification_Placeholders $replacer
+     */
+    public function setReplacer($replacer)
+    {
+        $this->_replacer = $replacer;
+    }
+
+    /**
+     * @return Psn_Notification_Placeholders
+     */
+    public function getReplacer()
+    {
+        return $this->_replacer;
+    }
+
+    /**
+     * @param $key
+     * @param $value
+     * @internal param array $data
+     */
+    public function setData($key, $value)
+    {
+        $this->_data[$key] = $value;
+    }
+
+    /**
+     * @param $key
+     * @return bool
+     */
+    public function hasData($key)
+    {
+        return isset($this->_data[$key]);
+    }
+
+    /**
+     * @param $key
+     * @return mixed|null
+     */
+    public function getData($key)
+    {
+        if (isset($this->_data[$key])) {
+            return $this->_data[$key];
+        }
+        return null;
+    }
+
 }

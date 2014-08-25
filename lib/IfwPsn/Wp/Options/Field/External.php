@@ -22,7 +22,15 @@ class IfwPsn_Wp_Options_Field_External extends IfwPsn_Wp_Options_Field
         $id = $options->getOptionRealId($this->_id);
         $name = $options->getPageId() . '['. $id .']';
 
-        $html = '<input type="hidden" id="'. $id .'" name="'. $name .'" value="'. $options->getOption($this->_id) .'" />';
+        $value = $options->getOption($this->_id);
+        if (is_array($value)) {
+            $html = '';
+            foreach ($value as $val) {
+                $html .= '<input type="hidden" id="'. $id .'" name="'. $name .'[]" value="'. $val .'" />';
+            }
+        } else {
+            $html = '<input type="hidden" id="'. $id .'" name="'. $name .'" value="'. $value .'" />';
+        }
 
         echo $html;
     }

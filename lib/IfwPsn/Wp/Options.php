@@ -72,6 +72,7 @@ class IfwPsn_Wp_Options
 
     public function init()
     {
+        require_once $this->_pm->getPathinfo()->getRootLib() . '/IfwPsn/Wp/Proxy/Action.php';
         IfwPsn_Wp_Proxy_Action::addAdminInit(array($this, 'register'));
     }
 
@@ -119,11 +120,13 @@ class IfwPsn_Wp_Options
                     continue;
                 }
 
+                $sectionPage = $section->hasPageId() ? $section->getPageId() : $this->_pageId;
+
                 add_settings_section(
                     $this->_sectionPrefix . $section->getId(), // section id
                     $section->getLabel(), // section label
                     array($section, 'render'), // callback to render the section's description
-                    $this->_pageId // options page id on which to add this section
+                    $sectionPage // options page id on which to add this section
                 );
 
                 /**
@@ -131,11 +134,13 @@ class IfwPsn_Wp_Options
                  */
                 foreach ($section->getFields() as $field) {
 
+                    $fieldPage = $field->hasPageId() ? $field->getPageId() : $sectionPage;
+
                     add_settings_field(
                         $this->_fieldPrefix . $field->getId(), // field id
                         $field->getLabel(), // field label
                         array($field, 'render'), // method to render the field
-                        $this->_pageId, // page id
+                        $fieldPage, // page id
                         $this->_sectionPrefix . $section->getId(), // section id
                         array($this) // passed to the render method of the field
                     );
@@ -151,15 +156,18 @@ class IfwPsn_Wp_Options
     /**
      * Renders the options form
      */
-    public function render()
+    public function render($pageId = null)
     {
         if ($this->_addedFields === 0):
             echo '<p>' . __('No options available.', 'ifw') . '</p>';
         else:
+            if ($pageId == null) {
+                $pageId = $this->_pageId;
+            }
         ?>
         <form method="post" action="options.php">
-            <?php settings_fields($this->_pageId); ?>
-            <?php do_settings_sections($this->_pageId); ?>
+            <?php settings_fields($pageId); ?>
+            <?php do_settings_sections($pageId); ?>
             <?php submit_button(); ?>
         </form>
         <?php

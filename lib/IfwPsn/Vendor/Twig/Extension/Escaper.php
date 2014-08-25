@@ -45,7 +45,7 @@ class IfwPsn_Vendor_Twig_Extension_Escaper extends IfwPsn_Vendor_Twig_Extension
     public function getFilters()
     {
         return array(
-            new IfwPsn_Vendor_Twig_SimpleFilter('raw', 'ifw_twig_raw_filter', array('is_safe' => array('all'))),
+            new IfwPsn_Vendor_Twig_SimpleFilter('raw', 'ifwpsn_twig_raw_filter', array('is_safe' => array('all'))),
         );
     }
 
@@ -101,7 +101,7 @@ class IfwPsn_Vendor_Twig_Extension_Escaper extends IfwPsn_Vendor_Twig_Extension
  *
  * @param string $string A PHP variable
  */
-function ifw_twig_raw_filter($string)
+function ifwpsn_twig_raw_filter($string)
 {
     return $string;
 }

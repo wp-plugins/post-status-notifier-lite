@@ -29,27 +29,52 @@ class IfwPsn_Wp_Env_Module extends IfwPsn_Wp_Env_Abstract
     protected $_dependencies = array();
 
     /**
+     * @var IfwPsn_Wp_Module_Bootstrap_Abstract
+     */
+    protected $_module;
+
+    /**
+     * @var string
+     */
+    protected $_customLocationName;
+
+    /**
      * Instance store
      * @var array
      */
     public static $_instances = array();
 
 
-
     /**
      * Retrieves singleton IfwPsn_Wp_Plugin_Config object
      *
      * @param IfwPsn_Wp_Pathinfo_Module $pathinfo
+     * @param IfwPsn_Wp_Module_Bootstrap_Abstract $module
+     * @param $customLocationName
      * @return IfwPsn_Wp_Plugin_Config
      */
-    public static function getInstance(IfwPsn_Wp_Pathinfo_Module $pathinfo)
+    public static function getInstance(IfwPsn_Wp_Pathinfo_Module $pathinfo, IfwPsn_Wp_Module_Bootstrap_Abstract $module,
+                                       $customLocationName)
     {
         $instanceToken = $pathinfo->getDirname();
 
         if (!isset(self::$_instances[$instanceToken])) {
-            self::$_instances[$instanceToken] = new self($pathinfo);
+            self::$_instances[$instanceToken] = new self($pathinfo, $module, $customLocationName);
         }
         return self::$_instances[$instanceToken];
+    }
+
+    /**
+     * @param IfwPsn_Wp_Pathinfo_Abstract $pathinfo
+     * @param IfwPsn_Wp_Module_Bootstrap_Abstract $module
+     * @param $customLocationName
+     */
+    protected function __construct(IfwPsn_Wp_Pathinfo_Abstract $pathinfo, IfwPsn_Wp_Module_Bootstrap_Abstract $module, $customLocationName)
+    {
+        $this->_module = $module;
+        $this->_customLocationName = $customLocationName;
+
+        parent::__construct($pathinfo);
     }
 
     /**
@@ -57,13 +82,29 @@ class IfwPsn_Wp_Env_Module extends IfwPsn_Wp_Env_Abstract
      */
     protected function _init()
     {
-        $dirnamePathParts = array_reverse(explode(DIRECTORY_SEPARATOR, $this->_pathinfo->getDirnamePath()));
+        if ($this->_module->isCustomModule()) {
 
-        $this->_url = plugins_url($dirnamePathParts[3]) . '/modules/' . $this->_pathinfo->getDirname() . '/';
+            $uploadDir = IfwPsn_Wp_Proxy_Blog::getUploadDir();
+
+            $this->_url = $uploadDir['baseurl'] .'/'. $this->_customLocationName .'/'. $this->_pathinfo->getDirname() . '/';
+
+        } else {
+            // built-in module
+            $dirnamePathParts = array_reverse(explode(DIRECTORY_SEPARATOR, $this->_pathinfo->getDirnamePath()));
+
+            $this->_url = plugins_url($dirnamePathParts[3]) . '/modules/' . $this->_pathinfo->getDirname() . '/';
+        }
+
         $this->_urlFiles = $this->_url . 'files/';
         $this->_urlCss = $this->_urlFiles . 'css/';
         $this->_urlJs = $this->_urlFiles . 'js/';
         $this->_urlImg = $this->_urlFiles . 'img/';
+
+        $this->_version = $this->_module->getVersion();
+        $this->_name = $this->_module->getName();
+        $this->_description = $this->_module->getDescription();
+        $this->_textDomain = $this->_module->getTextDomain();
+        $this->_homepage = $this->_module->getHomepage();
     }
 
     /**

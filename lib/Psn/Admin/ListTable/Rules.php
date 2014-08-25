@@ -43,11 +43,11 @@ class Psn_Admin_ListTable_Rules extends IfwPsn_Wp_Plugin_ListTable_Abstract
     {
         $columns = array(
             'cb' => '<input type="checkbox" />',
+            'active' => __('Active', 'psn'),
             'name' => __('Rule name', 'psn'),
             'posttype' => __('Post type', 'psn'),
             'status_before' => __('Status before', 'psn'),
             'status_after' => __('Status after', 'psn'),
-            'active' => __('Active', 'psn'),
         );
 
         if ($this->isMetaboxEmbedded()) {
@@ -63,11 +63,11 @@ class Psn_Admin_ListTable_Rules extends IfwPsn_Wp_Plugin_ListTable_Abstract
     public function getSortableColumns()
     {
         return $sortable_columns = array(
+            'active' => array('active', false),
             'name' => array('name', true),
             'posttype' => array('posttype', false),
             'status_before' => array('status_before', false),
             'status_after' => array('status_after', false),
-            'active' => array('active', false),
         );
     }
 
@@ -79,12 +79,25 @@ class Psn_Admin_ListTable_Rules extends IfwPsn_Wp_Plugin_ListTable_Abstract
      */
     public function getColumnActive($item)
     {
-        $format = '<img src="%sicons/%s.png" />';
+        $formatImg = '<img src="%s/%s.png" />';
+        $formatLink = '<a href="%s" title="%s">'. $formatImg .'</a>';
 
-        $skinUrl = $this->_pm->getEnv()->getSkinUrl();
-        $icon = $item['active'] == '1' ? 'true' : 'false';
+        $skinUrl = $this->_pm->getEnv()->getSkinUrl() . 'icons';
+        $icon = $item['active'] == '1' ? 'button-white-check' : 'cross';
 
-        return sprintf($format, $skinUrl, $icon);
+        if ($this->isMetaboxEmbedded()) {
+            $output = sprintf($formatImg, $skinUrl, $icon);
+        } else {
+
+            $appaction = $item['active'] == '1' ? 'deactivate' : 'activate';
+            $title = $item['active'] == '1' ? __('Deactivate', 'ifw') : __('Activate', 'ifw');
+            $urlFormat = '?page=%s&controller=rules&appaction=%s&id=%s';
+
+            $url = wp_nonce_url(sprintf($urlFormat, $_REQUEST['page'], $appaction, $item['id']), $appaction . $item['id']);
+            $output = sprintf($formatLink, $url, $title, $skinUrl, $icon);
+        }
+
+        return $output;
     }
 
     /**
@@ -144,6 +157,8 @@ class Psn_Admin_ListTable_Rules extends IfwPsn_Wp_Plugin_ListTable_Abstract
             $result = __('Not private', 'psn');
         } elseif ($status == 'not_pending') {
             $result = __('Not pending', 'psn');
+        } elseif ($status == 'not_trash') {
+            $result = __('Not trash', 'psn');
         } else {
             $result = IfwPsn_Wp_Proxy_Post::getStatusLabel($status);
         }
@@ -171,7 +186,7 @@ class Psn_Admin_ListTable_Rules extends IfwPsn_Wp_Plugin_ListTable_Abstract
             $actions = $actionsFilter['actions'];
 
             //Return the title contents
-            $result = sprintf('%1$s%2$s',
+            $result = sprintf('<b>%1$s</b>%2$s',
                 /*$1%s*/ $item['name'],
                 /*$2%s*/ $this->row_actions($actions)
             );

@@ -68,12 +68,12 @@ class PsnIndexController extends PsnApplicationController
             ->load();
 
         // set up metaboxes
-        $metaBoxContainerLeft = new IfwPsn_Wp_Plugin_Metabox_Container($this->_pageHook, 'left');
+        $metaBoxContainerLeft = new IfwPsn_Wp_Plugin_Metabox_Container('column1', $this->_pageHook, 'left');
         IfwPsn_Wp_Proxy_Action::doAction('psn_admin_overview_before_metabox_left', $metaBoxContainerLeft);
         $metaBoxContainerLeft->addMetabox(new Psn_Admin_Metabox_Rules($this->_pm));
         IfwPsn_Wp_Proxy_Action::doAction('psn_admin_overview_after_metabox_left', $metaBoxContainerLeft);
         
-        $metaBoxContainerRight = new IfwPsn_Wp_Plugin_Metabox_Container($this->_pageHook, 'right');
+        $metaBoxContainerRight = new IfwPsn_Wp_Plugin_Metabox_Container('column2', $this->_pageHook, 'right');
         IfwPsn_Wp_Proxy_Action::doAction('psn_admin_overview_before_metabox_right', $metaBoxContainerRight);
         if ($this->_pm->hasPremium() && $this->_pm->isPremium() == false) {
             $metaBoxContainerRight->addMetabox(new IfwPsn_Wp_Plugin_Metabox_PremiumAd($this->_pm));
@@ -93,6 +93,7 @@ class PsnIndexController extends PsnApplicationController
 
         $this->_helper->viewRenderer('premiumad');
     }
+
     public function adrecipientslistsAction()
     {
         $this->view->featureName = __('Recipients lists', 'psn');

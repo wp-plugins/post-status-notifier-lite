@@ -29,24 +29,26 @@ abstract class IfwPsn_Wp_Module_Bootstrap_Abstract implements IfwPsn_Wp_Module_B
     protected $_pathinfo;
 
     /**
+     * @var
+     */
+    protected $_locationName;
+
+    /**
      * @var bool
      */
     protected $_initialized = false;
 
 
     /**
-     * @param $bootstrapPath
+     * @param IfwPsn_Wp_Pathinfo_Module $pathinfo
+     * @param $locationName
      * @param IfwPsn_Wp_Plugin_Manager $pm
+     * @internal param $bootstrapPath
      */
-    public final function __construct($bootstrapPath, IfwPsn_Wp_Plugin_Manager $pm)
+    public final function __construct(IfwPsn_Wp_Pathinfo_Module $pathinfo, $locationName, IfwPsn_Wp_Plugin_Manager $pm)
     {
-        require_once $pm->getPathinfo()->getRootLib() . '/IfwPsn/Wp/Pathinfo/Module.php';
-        require_once $pm->getPathinfo()->getRootLib() . '/IfwPsn/Wp/Env/Module.php';
-
-        $this->_pathinfo = new IfwPsn_Wp_Pathinfo_Module($bootstrapPath);
-        // init module environment
-        $this->_env = IfwPsn_Wp_Env_Module::getInstance($this->_pathinfo);
-
+        $this->_pathinfo = $pathinfo;
+        $this->_locationName = $locationName;
         $this->_pm = $pm;
     }
 
@@ -86,12 +88,62 @@ abstract class IfwPsn_Wp_Module_Bootstrap_Abstract implements IfwPsn_Wp_Module_B
     }
 
     /**
+     * Fires when custom modules get activated, may be overwritten by custom modules
+     */
+    public function onActivate()
+    {
+    }
+
+    /**
+     * Fires when custom modules get deactivated, may be overwritten by custom modules
+     */
+    public function onDeactivate()
+    {
+    }
+
+    /**
+     * Fires when custom modules get deleted, may be overwritten by custom modules
+     */
+    public function onDelete()
+    {
+    }
+
+    /**
+     * Activates the module
+     */
+    public function activate()
+    {
+        IfwPsn_Wp_Module_Activator::getInstance($this->_pm)->activate($this);
+        $this->onActivate();
+    }
+
+    /**
+     * Deactivates the module
+     */
+    public function deactivate()
+    {
+        IfwPsn_Wp_Module_Activator::getInstance($this->_pm)->deactivate($this);
+        $this->onDeactivate();
+    }
+
+    /**
+     * Deletes the module
+     */
+    public function delete()
+    {
+        if (!$this->isActivated()) {
+            $this->onDelete();
+            ifw_rrmdir($this->getPathinfo()->getRoot());
+        }
+    }
+
+    /**
      * @return bool
      * @throws IfwPsn_Wp_Module_Exception
      */
     protected function _checkProperties()
     {
-        $properties = array('_id', '_name', '_description', '_textDomain', '_version', '_author', '_authorMail', '_homepage', '_dependencies');
+        $properties = array('_id', '_name', '_description', '_textDomain', '_version', '_author', '_authorHomepage', '_homepage', '_dependencies');
         foreach ($properties as $prop) {
             if (!isset($this->$prop)) {
                 throw new IfwPsn_Wp_Module_Exception('Module must have $' . $prop);
@@ -182,7 +234,7 @@ abstract class IfwPsn_Wp_Module_Bootstrap_Abstract implements IfwPsn_Wp_Module_B
 
         if (file_exists($adminCssPath)) {
             $handle = $this->getId() . '-' .'admin-css';
-            IfwPsn_Wp_Proxy_Style::loadAdmin($handle, $this->_env->getUrlCss() . 'admin.css');
+            IfwPsn_Wp_Proxy_Style::loadAdmin($handle, $this->_env->getUrlCss() . 'admin.css', array(), $this->getVersion());
         }
     }
 
@@ -195,8 +247,24 @@ abstract class IfwPsn_Wp_Module_Bootstrap_Abstract implements IfwPsn_Wp_Module_B
 
         if (file_exists($adminJsPath)) {
             $handle = $this->getId() . '-' .'admin-js';
-            IfwPsn_Wp_Proxy_Script::loadAdmin($handle, $this->_env->getUrlJs() . 'admin.js');
+            IfwPsn_Wp_Proxy_Script::loadAdmin($handle, $this->_env->getUrlJs() . 'admin.js', array(), $this->getVersion());
         }
+    }
+
+    /**
+     * @return \IfwPsn_Wp_Plugin_Manager
+     */
+    public function getPluginManager()
+    {
+        return $this->_pm;
+    }
+
+    /**
+     * @param \IfwPsn_Wp_Env_Module $env
+     */
+    public function setEnv($env)
+    {
+        $this->_env = $env;
     }
 
     /**
@@ -226,9 +294,9 @@ abstract class IfwPsn_Wp_Module_Bootstrap_Abstract implements IfwPsn_Wp_Module_B
     /**
      * @return string
      */
-    public function getAuthorMail()
+    public function getAuthorHomepage()
     {
-        return $this->_authorMail;
+        return $this->_authorHomepage;
     }
 
     /**
@@ -296,6 +364,30 @@ abstract class IfwPsn_Wp_Module_Bootstrap_Abstract implements IfwPsn_Wp_Module_B
     public function isInitialized()
     {
         return $this->_initialized === true;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isActivated()
+    {
+        return IfwPsn_Wp_Module_Activator::getInstance($this->_pm)->isActivated($this);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLocationName()
+    {
+        return $this->_locationName;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isCustomModule()
+    {
+        return $this->_locationName == IfwPsn_Wp_Module_Manager::LOCATION_NAME_CUSTOM;
     }
 
 }

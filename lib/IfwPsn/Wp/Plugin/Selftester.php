@@ -65,7 +65,7 @@ class IfwPsn_Wp_Plugin_Selftester
 
     public function activate()
     {
-        IfwPsn_Wp_Proxy_Action::doPlugin($this->_pm, 'selftester_activate', $this);
+        IfwPsn_Wp_Proxy_Action::doAction($this->_pm->getAbbrLower() . '_selftester_activate', $this);
 
         $this->_pm->getBootstrap()->getOptionsManager()->registerExternalOption($this->_timestampOptionName);
         $this->_pm->getBootstrap()->getOptionsManager()->registerExternalOption($this->_statusOptionName);

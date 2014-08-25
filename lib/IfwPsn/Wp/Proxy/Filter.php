@@ -175,7 +175,17 @@ class IfwPsn_Wp_Proxy_Filter
      */
     public static function apply($tag, $value)
     {
-        return apply_filters($tag, $value);
+        $numargs = func_num_args();
+        if ($numargs > 2) {
+            $args = func_get_args();
+            array_shift($args);
+            array_shift($args);
+            $args = array_merge(array($tag, $value), $args);
+
+            return call_user_func_array('apply_filters', $args);
+        } else {
+            return apply_filters($tag, $value);
+        }
     }
 
     /**
@@ -185,6 +195,7 @@ class IfwPsn_Wp_Proxy_Filter
      * @param $tag
      * @param $value
      * @return mixed|void
+     * @deprecated
      */
     public static function applyPlugin(IfwPsn_Wp_Plugin_Manager $pm, $tag, $value)
     {

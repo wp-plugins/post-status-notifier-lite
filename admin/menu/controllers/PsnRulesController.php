@@ -280,7 +280,14 @@ class PsnRulesController extends PsnApplicationController
         $placeholders = new Psn_Notification_Placeholders();
         $help = new IfwPsn_Wp_Plugin_Menu_Help($this->_pm);
         $help->setTitle(__('Placeholders', 'psn'))
+            ->setId('placeholders')
             ->setHelp($placeholders->getOnScreenHelp())
+            ->setSidebar($this->_getHelpSidebar())
+            ->load();
+        $help = new IfwPsn_Wp_Plugin_Menu_Help($this->_pm);
+        $help->setTitle(__('Conditions', 'psn'))
+            ->setId('conditions')
+            ->setHelp(IfwPsn_Wp_Tpl::getFilesytemInstance($this->_pm)->render('admin_help_conditions.html.twig', array('pm' => $this->_pm)))
             ->setSidebar($this->_getHelpSidebar())
             ->load();
 
@@ -334,7 +341,7 @@ class PsnRulesController extends PsnApplicationController
                 'lang_Categories' => __('Categories', 'psn'),
                 'lang_categories_help' => sprintf(__('To select multiple categories hold down the control button (ctrl) on Windows or command button (cmd) on Mac.<br>If nothing is selected, all categories get included.<br>Exclude is dominant. See the <a href="%s" target="_blank">docs</a> for more details.', 'psn'),
                     'http://docs.ifeelweb.de/post-status-notifier/rules.html#category-filter'),
-                'lang_include_categories' => __('Include categories', 'psn'),
+                'lang_include_categories' => __('Include only these categories', 'psn'),
                 'lang_exclude_categories' => __('Exclude categories', 'psn'),
                 'lang_select_all' => __('select all', 'psn'),
                 'lang_remove_all' => __('remove all', 'psn'),
@@ -343,7 +350,7 @@ class PsnRulesController extends PsnApplicationController
             ))
         );
 
-        IfwPsn_Wp_Proxy_Action::doPlugin($this->_pm, 'rule_form', $this->_form);
+        IfwPsn_Wp_Proxy_Action::doAction('psn_rule_form', $this->_form);
     }
 
     /**
@@ -449,6 +456,40 @@ class PsnRulesController extends PsnApplicationController
             $rule->active = 0;
             $rule->save();
         }
+    }
+
+    public function activateAction()
+    {
+        $id = (int)$this->_request->get('id');
+
+        if (wp_verify_nonce($this->_request->get('_wpnonce'), 'activate' . $id)) {
+            $rule = IfwPsn_Wp_ORM_Model::factory(self::MODEL)->find_one($id);
+
+            $ruleModelClass = self::MODEL;
+            if ($rule instanceof $ruleModelClass) {
+                $rule->active = 1;
+                $rule->save();
+            }
+        }
+
+        $this->_gotoIndex();
+    }
+
+    public function deactivateAction()
+    {
+        $id = (int)$this->_request->get('id');
+
+        if (wp_verify_nonce($this->_request->get('_wpnonce'), 'deactivate' . $id)) {
+            $rule = IfwPsn_Wp_ORM_Model::factory(self::MODEL)->find_one($id);
+
+            $ruleModelClass = self::MODEL;
+            if ($rule instanceof $ruleModelClass) {
+                $rule->active = 0;
+                $rule->save();
+            }
+        }
+
+        $this->_gotoIndex();
     }
 
     /**

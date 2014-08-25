@@ -47,10 +47,22 @@ class IfwPsn_Wp_Proxy_Action
      */
     public static function doAction($tag, $arg = '')
     {
-        return do_action($tag, $arg);
+        $numargs = func_num_args();
+        if ($numargs > 2) {
+            $args = func_get_args();
+            array_shift($args);
+            array_shift($args);
+            $args = array_merge(array($tag, $arg), $args);
+
+            return call_user_func_array('do_action', $args);
+        } else {
+            return do_action($tag, $arg);
+        }
     }
 
     /**
+     * For framework inside use. Dynamically set plugin abbreviation prefix to action tag
+     *
      * @param IfwPsn_Wp_Plugin_Manager $pm
      * @param $tag
      * @param string $args
@@ -308,5 +320,44 @@ class IfwPsn_Wp_Proxy_Action
     public static function addWpHead($function_to_add, $priority = 10, $accepted_args = 1)
     {
         return self::add('wp_head', $function_to_add, $priority, $accepted_args);
+    }
+
+    /**
+     * Shortcut for add_action( 'network_admin_menu', 'function_name' )
+     *
+     * @param $function_to_add
+     * @param int $priority
+     * @param int $accepted_args
+     * @return bool|void
+     */
+    public static function addNetworkAdminMenu($function_to_add, $priority = 10, $accepted_args = 1)
+    {
+        return self::add('network_admin_menu', $function_to_add, $priority, $accepted_args);
+    }
+
+    /**
+     * Shortcut for add_action( 'wpmu_options', 'function_name' )
+     *
+     * @param $function_to_add
+     * @param int $priority
+     * @param int $accepted_args
+     * @return bool|void
+     */
+    public static function addWpmuOptions($function_to_add, $priority = 10, $accepted_args = 1)
+    {
+        return self::add('wpmu_options', $function_to_add, $priority, $accepted_args);
+    }
+
+    /**
+     * Shortcut for add_action( 'update_wpmu_options', 'function_name' )
+     *
+     * @param $function_to_add
+     * @param int $priority
+     * @param int $accepted_args
+     * @return bool|void
+     */
+    public static function addUpdateWpmuOptions($function_to_add, $priority = 10, $accepted_args = 1)
+    {
+        return self::add('update_wpmu_options', $function_to_add, $priority, $accepted_args);
     }
 }

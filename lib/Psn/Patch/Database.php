@@ -21,7 +21,7 @@ class Psn_Patch_Database implements IfwPsn_Wp_Plugin_Update_Patch_Interface
     {
         $this->updateRulesTable();
 
-        IfwPsn_Wp_Proxy_Action::doPlugin($pm, 'patch_db');
+        IfwPsn_Wp_Proxy_Action::doAction('psn_patch_db');
     }
 
     /**
@@ -62,6 +62,11 @@ class Psn_Patch_Database implements IfwPsn_Wp_Plugin_Update_Patch_Interface
         }
         if (!$this->isFieldEditorRestriction()) {
             $this->createRulesFieldEditorRestriction();
+        }
+
+        // Updates for version 1.5.1
+        if (!$this->isFieldToLoop()) {
+            $this->createRulesFieldToLoop();
         }
     }
 
@@ -162,6 +167,14 @@ class Psn_Patch_Database implements IfwPsn_Wp_Plugin_Update_Patch_Interface
     }
 
     /**
+     * @return bool
+     */
+    public function isFieldToLoop()
+    {
+        return IfwPsn_Wp_Proxy_Db::columnExists('psn_rules', 'to_loop');
+    }
+
+    /**
      * Create field "bcc" on psn_rules table
      * @since 1.1
      */
@@ -244,6 +257,17 @@ class Psn_Patch_Database implements IfwPsn_Wp_Plugin_Update_Patch_Interface
     {
         // ALTER TABLE `wp_psn_rules` ADD `editor_restriction` TEXT NULL DEFAULT NULL ;
         $query = sprintf('ALTER TABLE `%s` ADD `editor_restriction` TEXT NULL DEFAULT NULL', IfwPsn_Wp_Proxy_Db::getTableName('psn_rules'));
+        IfwPsn_Wp_Proxy_Db::getObject()->query($query);
+    }
+
+    /**
+     * Create field "to_loop" on psn_rules table
+     * @since 1.5.1
+     */
+    public function createRulesFieldToLoop()
+    {
+        // ALTER TABLE `wp_psn_rules` ADD `editor_restriction` TEXT NULL DEFAULT NULL ;
+        $query = sprintf('ALTER TABLE `%s` ADD `to_loop` TINYINT(1) DEFAULT 0', IfwPsn_Wp_Proxy_Db::getTableName('psn_rules'));
         IfwPsn_Wp_Proxy_Db::getObject()->query($query);
     }
 

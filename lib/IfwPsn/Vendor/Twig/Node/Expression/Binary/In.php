@@ -18,7 +18,7 @@ class IfwPsn_Vendor_Twig_Node_Expression_Binary_In extends IfwPsn_Vendor_Twig_No
     public function compile(IfwPsn_Vendor_Twig_Compiler $compiler)
     {
         $compiler
-            ->raw('ifw_twig_in_filter(')
+            ->raw('ifwpsn_twig_in_filter(')
             ->subcompile($this->getNode('left'))
             ->raw(', ')
             ->subcompile($this->getNode('right'))

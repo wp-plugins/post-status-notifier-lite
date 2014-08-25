@@ -46,6 +46,11 @@ class IfwPsn_Wp_Plugin_Logger extends IfwPsn_Vendor_Zend_Log
      */
     protected $_pm;
 
+    /**
+     * @var
+     */
+    protected $_internalName;
+
 
     /**
      * @param IfwPsn_Wp_Plugin_Manager $pm
@@ -105,6 +110,7 @@ class IfwPsn_Wp_Plugin_Logger extends IfwPsn_Vendor_Zend_Log
             // create logger
             $logger = new self($writer);
             $logger->setPluginManager($pm);
+            $logger->setInternalName($name);
             self::$_instances[$pm->getAbbr()][$name] = $logger;
         } else {
             $logger = self::$_instances[$pm->getAbbr()][$name];
@@ -123,13 +129,17 @@ class IfwPsn_Wp_Plugin_Logger extends IfwPsn_Vendor_Zend_Log
     }
 
     /**
-     * @param \IfwPsn_Vendor_Zend_Log_FactoryInterface|\IfwPsn_Vendor_Zend_Log_FactoryInterface $writer
+     * @param mixed $writer
      * @return bool
      */
-    public function hasWriter(IfwPsn_Vendor_Zend_Log_FactoryInterface $writer)
+    public function hasWriter($writer)
     {
+        if (is_object($writer)) {
+            $writer = get_class($writer);
+        }
+
         foreach($this->_writers as $w) {
-            if (get_class($w) == get_class($writer)) {
+            if (get_class($w) == $writer) {
                 return true;
             }
         }
@@ -279,5 +289,22 @@ class IfwPsn_Wp_Plugin_Logger extends IfwPsn_Vendor_Zend_Log
             }
         }
     }
+
+    /**
+     * @param mixed $internalName
+     */
+    public function setInternalName($internalName)
+    {
+        $this->_internalName = $internalName;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getInternalName()
+    {
+        return $this->_internalName;
+    }
+
 }
 

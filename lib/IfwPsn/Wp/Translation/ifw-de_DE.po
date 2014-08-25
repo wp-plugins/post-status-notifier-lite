@@ -301,3 +301,39 @@ msgstr ""
 
 msgid "\"%s\" is a Premium feature."
 msgstr "\"%s\" ist ein Premium Feature."
+
+msgid "Upload module"
+msgstr ""
+
+msgid "Module installed."
+msgstr ""
+
+msgid "Error"
+msgstr ""
+
+msgid "Could not find module bootstrap."
+msgstr ""
+
+msgid "Installed modules"
+msgstr ""
+
+msgid "No custom modules found"
+msgstr ""
+
+msgid "By"
+msgstr ""
+
+msgid "Module Homepage"
+msgstr ""
+
+msgid "Activate"
+msgstr ""
+
+msgid "Deactivate"
+msgstr ""
+
+msgid "Delete"
+msgstr ""
+
+msgid "Learn how to extend %s"
+msgstr ""

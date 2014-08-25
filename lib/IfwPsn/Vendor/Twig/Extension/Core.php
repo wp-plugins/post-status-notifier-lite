@@ -149,22 +149,22 @@ class IfwPsn_Vendor_Twig_Extension_Core extends IfwPsn_Vendor_Twig_Extension
     {
         $filters = array(
             // formatting filters
-            new IfwPsn_Vendor_Twig_SimpleFilter('date', 'ifw_twig_date_format_filter', array('needs_environment' => true)),
-            new IfwPsn_Vendor_Twig_SimpleFilter('date_modify', 'ifw_twig_date_modify_filter', array('needs_environment' => true)),
+            new IfwPsn_Vendor_Twig_SimpleFilter('date', 'ifwpsn_twig_date_format_filter', array('needs_environment' => true)),
+            new IfwPsn_Vendor_Twig_SimpleFilter('date_modify', 'ifwpsn_twig_date_modify_filter', array('needs_environment' => true)),
             new IfwPsn_Vendor_Twig_SimpleFilter('format', 'sprintf'),
             new IfwPsn_Vendor_Twig_SimpleFilter('replace', 'strtr'),
-            new IfwPsn_Vendor_Twig_SimpleFilter('number_format', 'ifw_twig_number_format_filter', array('needs_environment' => true)),
+            new IfwPsn_Vendor_Twig_SimpleFilter('number_format', 'ifwpsn_twig_number_format_filter', array('needs_environment' => true)),
             new IfwPsn_Vendor_Twig_SimpleFilter('abs', 'abs'),
-            new IfwPsn_Vendor_Twig_SimpleFilter('round', 'ifw_twig_round'),
+            new IfwPsn_Vendor_Twig_SimpleFilter('round', 'ifwpsn_twig_round'),
 
             // encoding
-            new IfwPsn_Vendor_Twig_SimpleFilter('url_encode', 'ifw_twig_urlencode_filter'),
-            new IfwPsn_Vendor_Twig_SimpleFilter('json_encode', 'ifw_twig_jsonencode_filter'),
-            new IfwPsn_Vendor_Twig_SimpleFilter('convert_encoding', 'ifw_twig_convert_encoding'),
+            new IfwPsn_Vendor_Twig_SimpleFilter('url_encode', 'ifwpsn_twig_urlencode_filter'),
+            new IfwPsn_Vendor_Twig_SimpleFilter('json_encode', 'ifwpsn_twig_jsonencode_filter'),
+            new IfwPsn_Vendor_Twig_SimpleFilter('convert_encoding', 'ifwpsn_twig_convert_encoding'),
 
             // string filters
-            new IfwPsn_Vendor_Twig_SimpleFilter('title', 'ifw_twig_title_string_filter', array('needs_environment' => true)),
-            new IfwPsn_Vendor_Twig_SimpleFilter('capitalize', 'ifw_twig_capitalize_string_filter', array('needs_environment' => true)),
+            new IfwPsn_Vendor_Twig_SimpleFilter('title', 'ifwpsn_twig_title_string_filter', array('needs_environment' => true)),
+            new IfwPsn_Vendor_Twig_SimpleFilter('capitalize', 'ifwpsn_twig_capitalize_string_filter', array('needs_environment' => true)),
             new IfwPsn_Vendor_Twig_SimpleFilter('upper', 'strtoupper'),
             new IfwPsn_Vendor_Twig_SimpleFilter('lower', 'strtolower'),
             new IfwPsn_Vendor_Twig_SimpleFilter('striptags', 'strip_tags'),
@@ -172,31 +172,31 @@ class IfwPsn_Vendor_Twig_Extension_Core extends IfwPsn_Vendor_Twig_Extension
             new IfwPsn_Vendor_Twig_SimpleFilter('nl2br', 'nl2br', array('pre_escape' => 'html', 'is_safe' => array('html'))),
 
             // array helpers
-            new IfwPsn_Vendor_Twig_SimpleFilter('join', 'ifw_twig_join_filter'),
-            new IfwPsn_Vendor_Twig_SimpleFilter('split', 'ifw_twig_split_filter'),
-            new IfwPsn_Vendor_Twig_SimpleFilter('sort', 'ifw_twig_sort_filter'),
-            new IfwPsn_Vendor_Twig_SimpleFilter('merge', 'ifw_twig_array_merge'),
-            new IfwPsn_Vendor_Twig_SimpleFilter('batch', 'ifw_twig_array_batch'),
+            new IfwPsn_Vendor_Twig_SimpleFilter('join', 'ifwpsn_twig_join_filter'),
+            new IfwPsn_Vendor_Twig_SimpleFilter('split', 'ifwpsn_twig_split_filter'),
+            new IfwPsn_Vendor_Twig_SimpleFilter('sort', 'ifwpsn_twig_sort_filter'),
+            new IfwPsn_Vendor_Twig_SimpleFilter('merge', 'ifwpsn_twig_array_merge'),
+            new IfwPsn_Vendor_Twig_SimpleFilter('batch', 'ifwpsn_twig_array_batch'),
 
             // string/array filters
-            new IfwPsn_Vendor_Twig_SimpleFilter('reverse', 'ifw_twig_reverse_filter', array('needs_environment' => true)),
-            new IfwPsn_Vendor_Twig_SimpleFilter('length', 'ifw_twig_length_filter', array('needs_environment' => true)),
-            new IfwPsn_Vendor_Twig_SimpleFilter('slice', 'ifw_twig_slice', array('needs_environment' => true)),
-            new IfwPsn_Vendor_Twig_SimpleFilter('first', 'ifw_twig_first', array('needs_environment' => true)),
-            new IfwPsn_Vendor_Twig_SimpleFilter('last', 'ifw_twig_last', array('needs_environment' => true)),
+            new IfwPsn_Vendor_Twig_SimpleFilter('reverse', 'ifwpsn_twig_reverse_filter', array('needs_environment' => true)),
+            new IfwPsn_Vendor_Twig_SimpleFilter('length', 'ifwpsn_twig_length_filter', array('needs_environment' => true)),
+            new IfwPsn_Vendor_Twig_SimpleFilter('slice', 'ifwpsn_twig_slice', array('needs_environment' => true)),
+            new IfwPsn_Vendor_Twig_SimpleFilter('first', 'ifwpsn_twig_first', array('needs_environment' => true)),
+            new IfwPsn_Vendor_Twig_SimpleFilter('last', 'ifwpsn_twig_last', array('needs_environment' => true)),
 
             // iteration and runtime
-            new IfwPsn_Vendor_Twig_SimpleFilter('default', '_ifw_twig_default_filter', array('node_class' => 'IfwPsn_Vendor_Twig_Node_Expression_Filter_Default')),
-            new IfwPsn_Vendor_Twig_SimpleFilter('keys', 'ifw_twig_get_array_keys_filter'),
+            new IfwPsn_Vendor_Twig_SimpleFilter('default', '_ifwpsn_twig_default_filter', array('node_class' => 'IfwPsn_Vendor_Twig_Node_Expression_Filter_Default')),
+            new IfwPsn_Vendor_Twig_SimpleFilter('keys', 'ifwpsn_twig_get_array_keys_filter'),
 
             // escaping
-            new IfwPsn_Vendor_Twig_SimpleFilter('escape', 'ifw_twig_escape_filter', array('needs_environment' => true, 'is_safe_callback' => 'ifw_twig_escape_filter_is_safe')),
-            new IfwPsn_Vendor_Twig_SimpleFilter('e', 'ifw_twig_escape_filter', array('needs_environment' => true, 'is_safe_callback' => 'ifw_twig_escape_filter_is_safe')),
+            new IfwPsn_Vendor_Twig_SimpleFilter('escape', 'ifwpsn_twig_escape_filter', array('needs_environment' => true, 'is_safe_callback' => 'ifwpsn_twig_escape_filter_is_safe')),
+            new IfwPsn_Vendor_Twig_SimpleFilter('e', 'ifwpsn_twig_escape_filter', array('needs_environment' => true, 'is_safe_callback' => 'ifwpsn_twig_escape_filter_is_safe')),
         );
 
         if (function_exists('mb_get_info')) {
-            $filters[] = new IfwPsn_Vendor_Twig_SimpleFilter('upper', 'ifw_twig_upper_filter', array('needs_environment' => true));
-            $filters[] = new IfwPsn_Vendor_Twig_SimpleFilter('lower', 'ifw_twig_lower_filter', array('needs_environment' => true));
+            $filters[] = new IfwPsn_Vendor_Twig_SimpleFilter('upper', 'ifwpsn_twig_upper_filter', array('needs_environment' => true));
+            $filters[] = new IfwPsn_Vendor_Twig_SimpleFilter('lower', 'ifwpsn_twig_lower_filter', array('needs_environment' => true));
         }
 
         return $filters;
@@ -213,12 +213,12 @@ class IfwPsn_Vendor_Twig_Extension_Core extends IfwPsn_Vendor_Twig_Extension
             new IfwPsn_Vendor_Twig_SimpleFunction('max', 'max'),
             new IfwPsn_Vendor_Twig_SimpleFunction('min', 'min'),
             new IfwPsn_Vendor_Twig_SimpleFunction('range', 'range'),
-            new IfwPsn_Vendor_Twig_SimpleFunction('constant', 'ifw_twig_constant'),
-            new IfwPsn_Vendor_Twig_SimpleFunction('cycle', 'ifw_twig_cycle'),
-            new IfwPsn_Vendor_Twig_SimpleFunction('random', 'ifw_twig_random', array('needs_environment' => true)),
-            new IfwPsn_Vendor_Twig_SimpleFunction('date', 'ifw_twig_date_converter', array('needs_environment' => true)),
-            new IfwPsn_Vendor_Twig_SimpleFunction('include', 'ifw_twig_include', array('needs_environment' => true, 'needs_context' => true, 'is_safe' => array('all'))),
-            new IfwPsn_Vendor_Twig_SimpleFunction('source', 'ifw_twig_source', array('needs_environment' => true, 'is_safe' => array('all'))),
+            new IfwPsn_Vendor_Twig_SimpleFunction('constant', 'ifwpsn_twig_constant'),
+            new IfwPsn_Vendor_Twig_SimpleFunction('cycle', 'ifwpsn_twig_cycle'),
+            new IfwPsn_Vendor_Twig_SimpleFunction('random', 'ifwpsn_twig_random', array('needs_environment' => true)),
+            new IfwPsn_Vendor_Twig_SimpleFunction('date', 'ifwpsn_twig_date_converter', array('needs_environment' => true)),
+            new IfwPsn_Vendor_Twig_SimpleFunction('include', 'ifwpsn_twig_include', array('needs_environment' => true, 'needs_context' => true, 'is_safe' => array('all'))),
+            new IfwPsn_Vendor_Twig_SimpleFunction('source', 'ifwpsn_twig_source', array('needs_environment' => true, 'is_safe' => array('all'))),
         );
     }
 
@@ -240,8 +240,8 @@ class IfwPsn_Vendor_Twig_Extension_Core extends IfwPsn_Vendor_Twig_Extension
             new IfwPsn_Vendor_Twig_SimpleTest('divisibleby', null, array('node_class' => 'IfwPsn_Vendor_Twig_Node_Expression_Test_Divisibleby')),
             new IfwPsn_Vendor_Twig_SimpleTest('divisible by', null, array('node_class' => 'IfwPsn_Vendor_Twig_Node_Expression_Test_Divisibleby')),
             new IfwPsn_Vendor_Twig_SimpleTest('constant', null, array('node_class' => 'IfwPsn_Vendor_Twig_Node_Expression_Test_Constant')),
-            new IfwPsn_Vendor_Twig_SimpleTest('empty', 'ifw_twig_test_empty'),
-            new IfwPsn_Vendor_Twig_SimpleTest('iterable', 'ifw_twig_test_iterable'),
+            new IfwPsn_Vendor_Twig_SimpleTest('empty', 'ifwpsn_twig_test_empty'),
+            new IfwPsn_Vendor_Twig_SimpleTest('iterable', 'ifwpsn_twig_test_iterable'),
         );
     }
 
@@ -361,7 +361,7 @@ class IfwPsn_Vendor_Twig_Extension_Core extends IfwPsn_Vendor_Twig_Extension
  *
  * @return string The next value in the cycle
  */
-function ifw_twig_cycle($values, $position)
+function ifwpsn_twig_cycle($values, $position)
 {
     if (!is_array($values) && !$values instanceof ArrayAccess) {
         return $values;
@@ -383,7 +383,7 @@ function ifw_twig_cycle($values, $position)
  *
  * @return mixed A random value from the given sequence
  */
-function ifw_twig_random(IfwPsn_Vendor_Twig_Environment $env, $values = null)
+function ifwpsn_twig_random(IfwPsn_Vendor_Twig_Environment $env, $values = null)
 {
     if (null === $values) {
         return mt_rand();
@@ -401,7 +401,7 @@ function ifw_twig_random(IfwPsn_Vendor_Twig_Environment $env, $values = null)
         }
         if (null !== $charset = $env->getCharset()) {
             if ('UTF-8' != $charset) {
-                $values = ifw_twig_convert_encoding($values, 'UTF-8', $charset);
+                $values = ifwpsn_twig_convert_encoding($values, 'UTF-8', $charset);
             }
 
             // unicode version of str_split()
@@ -410,7 +410,7 @@ function ifw_twig_random(IfwPsn_Vendor_Twig_Environment $env, $values = null)
 
             if ('UTF-8' != $charset) {
                 foreach ($values as $i => $value) {
-                    $values[$i] = ifw_twig_convert_encoding($value, $charset, 'UTF-8');
+                    $values[$i] = ifwpsn_twig_convert_encoding($value, $charset, 'UTF-8');
                 }
             }
         } else {
@@ -443,7 +443,7 @@ function ifw_twig_random(IfwPsn_Vendor_Twig_Environment $env, $values = null)
  *
  * @return string The formatted date
  */
-function ifw_twig_date_format_filter(IfwPsn_Vendor_Twig_Environment $env, $date, $format = null, $timezone = null)
+function ifwpsn_twig_date_format_filter(IfwPsn_Vendor_Twig_Environment $env, $date, $format = null, $timezone = null)
 {
     if (null === $format) {
         $formats = $env->getExtension('core')->getDateFormat();
@@ -454,7 +454,7 @@ function ifw_twig_date_format_filter(IfwPsn_Vendor_Twig_Environment $env, $date,
         return $date->format($format);
     }
 
-    return ifw_twig_date_converter($env, $date, $timezone)->format($format);
+    return ifwpsn_twig_date_converter($env, $date, $timezone)->format($format);
 }
 
 /**
@@ -470,9 +470,9 @@ function ifw_twig_date_format_filter(IfwPsn_Vendor_Twig_Environment $env, $date,
  *
  * @return DateTime A new date object
  */
-function ifw_twig_date_modify_filter(IfwPsn_Vendor_Twig_Environment $env, $date, $modifier)
+function ifwpsn_twig_date_modify_filter(IfwPsn_Vendor_Twig_Environment $env, $date, $modifier)
 {
-    $date = ifw_twig_date_converter($env, $date, false);
+    $date = ifwpsn_twig_date_converter($env, $date, false);
     $date->modify($modifier);
 
     return $date;
@@ -493,7 +493,7 @@ function ifw_twig_date_modify_filter(IfwPsn_Vendor_Twig_Environment $env, $date,
  *
  * @return DateTime A DateTime instance
  */
-function ifw_twig_date_converter(IfwPsn_Vendor_Twig_Environment $env, $date = null, $timezone = null)
+function ifwpsn_twig_date_converter(IfwPsn_Vendor_Twig_Environment $env, $date = null, $timezone = null)
 {
     // determine the timezone
     if (!$timezone) {
@@ -540,7 +540,7 @@ function ifw_twig_date_converter(IfwPsn_Vendor_Twig_Environment $env, $date = nu
  *
  * @return integer|float The rounded number
  */
-function ifw_twig_round($value, $precision = 0, $method = 'common')
+function ifwpsn_twig_round($value, $precision = 0, $method = 'common')
 {
     if ('common' == $method) {
         return round($value, $precision);
@@ -568,7 +568,7 @@ function ifw_twig_round($value, $precision = 0, $method = 'common')
  *
  * @return string The formatted number
  */
-function ifw_twig_number_format_filter(IfwPsn_Vendor_Twig_Environment $env, $number, $decimal = null, $decimalPoint = null, $thousandSep = null)
+function ifwpsn_twig_number_format_filter(IfwPsn_Vendor_Twig_Environment $env, $number, $decimal = null, $decimalPoint = null, $thousandSep = null)
 {
     $defaults = $env->getExtension('core')->getNumberFormat();
     if (null === $decimal) {
@@ -594,7 +594,7 @@ function ifw_twig_number_format_filter(IfwPsn_Vendor_Twig_Environment $env, $num
  *
  * @return string The URL encoded value
  */
-function ifw_twig_urlencode_filter($url, $raw = false)
+function ifwpsn_twig_urlencode_filter($url, $raw = false)
 {
     if (is_array($url)) {
         return http_build_query($url, '', '&');
@@ -616,12 +616,12 @@ if (version_compare(PHP_VERSION, '5.3.0', '<')) {
      *
      * @return mixed The JSON encoded value
      */
-    function ifw_twig_jsonencode_filter($value, $options = 0)
+    function ifwpsn_twig_jsonencode_filter($value, $options = 0)
     {
         if ($value instanceof IfwPsn_Vendor_Twig_Markup) {
             $value = (string) $value;
         } elseif (is_array($value)) {
-            array_walk_recursive($value, '_ifw_twig_markup2string');
+            array_walk_recursive($value, '_ifwpsn_twig_markup2string');
         }
 
         return json_encode($value);
@@ -635,19 +635,19 @@ if (version_compare(PHP_VERSION, '5.3.0', '<')) {
      *
      * @return mixed The JSON encoded value
      */
-    function ifw_twig_jsonencode_filter($value, $options = 0)
+    function ifwpsn_twig_jsonencode_filter($value, $options = 0)
     {
         if ($value instanceof IfwPsn_Vendor_Twig_Markup) {
             $value = (string) $value;
         } elseif (is_array($value)) {
-            array_walk_recursive($value, '_ifw_twig_markup2string');
+            array_walk_recursive($value, '_ifwpsn_twig_markup2string');
         }
 
         return json_encode($value, $options);
     }
 }
 
-function _ifw_twig_markup2string(&$value)
+function _ifwpsn_twig_markup2string(&$value)
 {
     if ($value instanceof IfwPsn_Vendor_Twig_Markup) {
         $value = (string) $value;
@@ -670,7 +670,7 @@ function _ifw_twig_markup2string(&$value)
  *
  * @return array The merged array
  */
-function ifw_twig_array_merge($arr1, $arr2)
+function ifwpsn_twig_array_merge($arr1, $arr2)
 {
     if (!is_array($arr1) || !is_array($arr2)) {
         throw new IfwPsn_Vendor_Twig_Error_Runtime('The merge filter only works with arrays or hashes.');
@@ -690,7 +690,7 @@ function ifw_twig_array_merge($arr1, $arr2)
  *
  * @return mixed The sliced variable
  */
-function ifw_twig_slice(IfwPsn_Vendor_Twig_Environment $env, $item, $start, $length = null, $preserveKeys = false)
+function ifwpsn_twig_slice(IfwPsn_Vendor_Twig_Environment $env, $item, $start, $length = null, $preserveKeys = false)
 {
     if ($item instanceof Traversable) {
         $item = iterator_to_array($item, false);
@@ -717,9 +717,9 @@ function ifw_twig_slice(IfwPsn_Vendor_Twig_Environment $env, $item, $start, $len
  *
  * @return mixed The first element of the item
  */
-function ifw_twig_first(IfwPsn_Vendor_Twig_Environment $env, $item)
+function ifwpsn_twig_first(IfwPsn_Vendor_Twig_Environment $env, $item)
 {
-    $elements = ifw_twig_slice($env, $item, 0, 1, false);
+    $elements = ifwpsn_twig_slice($env, $item, 0, 1, false);
 
     return is_string($elements) ? $elements : current($elements);
 }
@@ -732,9 +732,9 @@ function ifw_twig_first(IfwPsn_Vendor_Twig_Environment $env, $item)
  *
  * @return mixed The last element of the item
  */
-function ifw_twig_last(IfwPsn_Vendor_Twig_Environment $env, $item)
+function ifwpsn_twig_last(IfwPsn_Vendor_Twig_Environment $env, $item)
 {
-    $elements = ifw_twig_slice($env, $item, -1, 1, false);
+    $elements = ifwpsn_twig_slice($env, $item, -1, 1, false);
 
     return is_string($elements) ? $elements : current($elements);
 }
@@ -757,7 +757,7 @@ function ifw_twig_last(IfwPsn_Vendor_Twig_Environment $env, $item)
  *
  * @return string The concatenated string
  */
-function ifw_twig_join_filter($value, $glue = '')
+function ifwpsn_twig_join_filter($value, $glue = '')
 {
     if ($value instanceof Traversable) {
         $value = iterator_to_array($value, false);
@@ -789,7 +789,7 @@ function ifw_twig_join_filter($value, $glue = '')
  *
  * @return array The split string as an array
  */
-function ifw_twig_split_filter($value, $delimiter, $limit = null)
+function ifwpsn_twig_split_filter($value, $delimiter, $limit = null)
 {
     if (empty($delimiter)) {
         return str_split($value, null === $limit ? 1 : $limit);
@@ -801,9 +801,9 @@ function ifw_twig_split_filter($value, $delimiter, $limit = null)
 // The '_default' filter is used internally to avoid using the ternary operator
 // which costs a lot for big contexts (before PHP 5.4). So, on average,
 // a function call is cheaper.
-function _ifw_twig_default_filter($value, $default = '')
+function _ifwpsn_twig_default_filter($value, $default = '')
 {
-    if (ifw_twig_test_empty($value)) {
+    if (ifwpsn_twig_test_empty($value)) {
         return $default;
     }
 
@@ -825,7 +825,7 @@ function _ifw_twig_default_filter($value, $default = '')
  *
  * @return array The keys
  */
-function ifw_twig_get_array_keys_filter($array)
+function ifwpsn_twig_get_array_keys_filter($array)
 {
     if (is_object($array) && $array instanceof Traversable) {
         return array_keys(iterator_to_array($array));
@@ -847,7 +847,7 @@ function ifw_twig_get_array_keys_filter($array)
  *
  * @return mixed The reversed input
  */
-function ifw_twig_reverse_filter(IfwPsn_Vendor_Twig_Environment $env, $item, $preserveKeys = false)
+function ifwpsn_twig_reverse_filter(IfwPsn_Vendor_Twig_Environment $env, $item, $preserveKeys = false)
 {
     if (is_object($item) && $item instanceof Traversable) {
         return array_reverse(iterator_to_array($item), $preserveKeys);
@@ -861,7 +861,7 @@ function ifw_twig_reverse_filter(IfwPsn_Vendor_Twig_Environment $env, $item, $pr
         $string = (string) $item;
 
         if ('UTF-8' != $charset) {
-            $item = ifw_twig_convert_encoding($string, 'UTF-8', $charset);
+            $item = ifwpsn_twig_convert_encoding($string, 'UTF-8', $charset);
         }
 
         preg_match_all('/./us', $item, $matches);
@@ -869,7 +869,7 @@ function ifw_twig_reverse_filter(IfwPsn_Vendor_Twig_Environment $env, $item, $pr
         $string = implode('', array_reverse($matches[0]));
 
         if ('UTF-8' != $charset) {
-            $string = ifw_twig_convert_encoding($string, $charset, 'UTF-8');
+            $string = ifwpsn_twig_convert_encoding($string, $charset, 'UTF-8');
         }
 
         return $string;
@@ -883,7 +883,7 @@ function ifw_twig_reverse_filter(IfwPsn_Vendor_Twig_Environment $env, $item, $pr
  *
  * @param array $array An array
  */
-function ifw_twig_sort_filter($array)
+function ifwpsn_twig_sort_filter($array)
 {
     asort($array);
 
@@ -891,7 +891,7 @@ function ifw_twig_sort_filter($array)
 }
 
 /* used internally */
-function ifw_twig_in_filter($value, $compare)
+function ifwpsn_twig_in_filter($value, $compare)
 {
     if (is_array($compare)) {
         return in_array($value, $compare, is_object($value));
@@ -917,7 +917,7 @@ function ifw_twig_in_filter($value, $compare)
  * @param string           $charset    The charset
  * @param Boolean          $autoescape Whether the function is called by the auto-escaping feature (true) or by the developer (false)
  */
-function ifw_twig_escape_filter(IfwPsn_Vendor_Twig_Environment $env, $string, $strategy = 'html', $charset = null, $autoescape = false)
+function ifwpsn_twig_escape_filter(IfwPsn_Vendor_Twig_Environment $env, $string, $strategy = 'html', $charset = null, $autoescape = false)
 {
     if ($autoescape && $string instanceof IfwPsn_Vendor_Twig_Markup) {
         return $string;
@@ -978,60 +978,60 @@ function ifw_twig_escape_filter(IfwPsn_Vendor_Twig_Environment $env, $string, $s
                 return htmlspecialchars($string, ENT_QUOTES | ENT_SUBSTITUTE, $charset);
             }
 
-            $string = ifw_twig_convert_encoding($string, 'UTF-8', $charset);
+            $string = ifwpsn_twig_convert_encoding($string, 'UTF-8', $charset);
             $string = htmlspecialchars($string, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 
-            return ifw_twig_convert_encoding($string, $charset, 'UTF-8');
+            return ifwpsn_twig_convert_encoding($string, $charset, 'UTF-8');
 
         case 'js':
             // escape all non-alphanumeric characters
             // into their \xHH or \uHHHH representations
             if ('UTF-8' != $charset) {
-                $string = ifw_twig_convert_encoding($string, 'UTF-8', $charset);
+                $string = ifwpsn_twig_convert_encoding($string, 'UTF-8', $charset);
             }
 
             if (0 == strlen($string) ? false : (1 == preg_match('/^./su', $string) ? false : true)) {
                 throw new IfwPsn_Vendor_Twig_Error_Runtime('The string to escape is not a valid UTF-8 string.');
             }
 
-            $string = preg_replace_callback('#[^a-zA-Z0-9,\._]#Su', '_ifw_twig_escape_js_callback', $string);
+            $string = preg_replace_callback('#[^a-zA-Z0-9,\._]#Su', '_ifwpsn_twig_escape_js_callback', $string);
 
             if ('UTF-8' != $charset) {
-                $string = ifw_twig_convert_encoding($string, $charset, 'UTF-8');
+                $string = ifwpsn_twig_convert_encoding($string, $charset, 'UTF-8');
             }
 
             return $string;
 
         case 'css':
             if ('UTF-8' != $charset) {
-                $string = ifw_twig_convert_encoding($string, 'UTF-8', $charset);
+                $string = ifwpsn_twig_convert_encoding($string, 'UTF-8', $charset);
             }
 
             if (0 == strlen($string) ? false : (1 == preg_match('/^./su', $string) ? false : true)) {
                 throw new IfwPsn_Vendor_Twig_Error_Runtime('The string to escape is not a valid UTF-8 string.');
             }
 
-            $string = preg_replace_callback('#[^a-zA-Z0-9]#Su', '_ifw_twig_escape_css_callback', $string);
+            $string = preg_replace_callback('#[^a-zA-Z0-9]#Su', '_ifwpsn_twig_escape_css_callback', $string);
 
             if ('UTF-8' != $charset) {
-                $string = ifw_twig_convert_encoding($string, $charset, 'UTF-8');
+                $string = ifwpsn_twig_convert_encoding($string, $charset, 'UTF-8');
             }
 
             return $string;
 
         case 'html_attr':
             if ('UTF-8' != $charset) {
-                $string = ifw_twig_convert_encoding($string, 'UTF-8', $charset);
+                $string = ifwpsn_twig_convert_encoding($string, 'UTF-8', $charset);
             }
 
             if (0 == strlen($string) ? false : (1 == preg_match('/^./su', $string) ? false : true)) {
                 throw new IfwPsn_Vendor_Twig_Error_Runtime('The string to escape is not a valid UTF-8 string.');
             }
 
-            $string = preg_replace_callback('#[^a-zA-Z0-9,\.\-_]#Su', '_ifw_twig_escape_html_attr_callback', $string);
+            $string = preg_replace_callback('#[^a-zA-Z0-9,\.\-_]#Su', '_ifwpsn_twig_escape_html_attr_callback', $string);
 
             if ('UTF-8' != $charset) {
-                $string = ifw_twig_convert_encoding($string, $charset, 'UTF-8');
+                $string = ifwpsn_twig_convert_encoding($string, $charset, 'UTF-8');
             }
 
             return $string;
@@ -1063,7 +1063,7 @@ function ifw_twig_escape_filter(IfwPsn_Vendor_Twig_Environment $env, $string, $s
 }
 
 /* used internally */
-function ifw_twig_escape_filter_is_safe(IfwPsn_Vendor_Twig_Node $filterArgs)
+function ifwpsn_twig_escape_filter_is_safe(IfwPsn_Vendor_Twig_Node $filterArgs)
 {
     foreach ($filterArgs as $arg) {
         if ($arg instanceof IfwPsn_Vendor_Twig_Node_Expression_Constant) {
@@ -1077,23 +1077,23 @@ function ifw_twig_escape_filter_is_safe(IfwPsn_Vendor_Twig_Node $filterArgs)
 }
 
 if (function_exists('mb_convert_encoding')) {
-    function ifw_twig_convert_encoding($string, $to, $from)
+    function ifwpsn_twig_convert_encoding($string, $to, $from)
     {
         return mb_convert_encoding($string, $to, $from);
     }
 } elseif (function_exists('iconv')) {
-    function ifw_twig_convert_encoding($string, $to, $from)
+    function ifwpsn_twig_convert_encoding($string, $to, $from)
     {
         return iconv($from, $to, $string);
     }
 } else {
-    function ifw_twig_convert_encoding($string, $to, $from)
+    function ifwpsn_twig_convert_encoding($string, $to, $from)
     {
         throw new IfwPsn_Vendor_Twig_Error_Runtime('No suitable convert encoding function (use UTF-8 as your encoding or install the iconv or mbstring extension).');
     }
 }
 
-function _ifw_twig_escape_js_callback($matches)
+function _ifwpsn_twig_escape_js_callback($matches)
 {
     $char = $matches[0];
 
@@ -1103,12 +1103,12 @@ function _ifw_twig_escape_js_callback($matches)
     }
 
     // \uHHHH
-    $char = ifw_twig_convert_encoding($char, 'UTF-16BE', 'UTF-8');
+    $char = ifwpsn_twig_convert_encoding($char, 'UTF-16BE', 'UTF-8');
 
     return '\\u'.strtoupper(substr('0000'.bin2hex($char), -4));
 }
 
-function _ifw_twig_escape_css_callback($matches)
+function _ifwpsn_twig_escape_css_callback($matches)
 {
     $char = $matches[0];
 
@@ -1123,7 +1123,7 @@ function _ifw_twig_escape_css_callback($matches)
     }
 
     // \uHHHH
-    $char = ifw_twig_convert_encoding($char, 'UTF-16BE', 'UTF-8');
+    $char = ifwpsn_twig_convert_encoding($char, 'UTF-16BE', 'UTF-8');
 
     return '\\'.ltrim(strtoupper(bin2hex($char)), '0').' ';
 }
@@ -1134,7 +1134,7 @@ function _ifw_twig_escape_css_callback($matches)
  * @copyright Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
-function _ifw_twig_escape_html_attr_callback($matches)
+function _ifwpsn_twig_escape_html_attr_callback($matches)
 {
     /*
      * While HTML supports far more named entities, the lowest common denominator
@@ -1167,7 +1167,7 @@ function _ifw_twig_escape_html_attr_callback($matches)
     if (strlen($chr) == 1) {
         $hex = strtoupper(substr('00'.bin2hex($chr), -2));
     } else {
-        $chr = ifw_twig_convert_encoding($chr, 'UTF-16BE', 'UTF-8');
+        $chr = ifwpsn_twig_convert_encoding($chr, 'UTF-16BE', 'UTF-8');
         $hex = strtoupper(substr('0000'.bin2hex($chr), -4));
     }
 
@@ -1194,7 +1194,7 @@ if (function_exists('mb_get_info')) {
      *
      * @return integer The length of the value
      */
-    function ifw_twig_length_filter(IfwPsn_Vendor_Twig_Environment $env, $thing)
+    function ifwpsn_twig_length_filter(IfwPsn_Vendor_Twig_Environment $env, $thing)
     {
         return is_scalar($thing) ? mb_strlen($thing, $env->getCharset()) : count($thing);
     }
@@ -1207,7 +1207,7 @@ if (function_exists('mb_get_info')) {
      *
      * @return string The uppercased string
      */
-    function ifw_twig_upper_filter(IfwPsn_Vendor_Twig_Environment $env, $string)
+    function ifwpsn_twig_upper_filter(IfwPsn_Vendor_Twig_Environment $env, $string)
     {
         if (null !== ($charset = $env->getCharset())) {
             return mb_strtoupper($string, $charset);
@@ -1224,7 +1224,7 @@ if (function_exists('mb_get_info')) {
      *
      * @return string The lowercased string
      */
-    function ifw_twig_lower_filter(IfwPsn_Vendor_Twig_Environment $env, $string)
+    function ifwpsn_twig_lower_filter(IfwPsn_Vendor_Twig_Environment $env, $string)
     {
         if (null !== ($charset = $env->getCharset())) {
             return mb_strtolower($string, $charset);
@@ -1241,7 +1241,7 @@ if (function_exists('mb_get_info')) {
      *
      * @return string The titlecased string
      */
-    function ifw_twig_title_string_filter(IfwPsn_Vendor_Twig_Environment $env, $string)
+    function ifwpsn_twig_title_string_filter(IfwPsn_Vendor_Twig_Environment $env, $string)
     {
         if (null !== ($charset = $env->getCharset())) {
             return mb_convert_case($string, MB_CASE_TITLE, $charset);
@@ -1258,7 +1258,7 @@ if (function_exists('mb_get_info')) {
      *
      * @return string The capitalized string
      */
-    function ifw_twig_capitalize_string_filter(IfwPsn_Vendor_Twig_Environment $env, $string)
+    function ifwpsn_twig_capitalize_string_filter(IfwPsn_Vendor_Twig_Environment $env, $string)
     {
         if (null !== ($charset = $env->getCharset())) {
             return mb_strtoupper(mb_substr($string, 0, 1, $charset), $charset).
@@ -1278,7 +1278,7 @@ else {
      *
      * @return integer The length of the value
      */
-    function ifw_twig_length_filter(IfwPsn_Vendor_Twig_Environment $env, $thing)
+    function ifwpsn_twig_length_filter(IfwPsn_Vendor_Twig_Environment $env, $thing)
     {
         return is_scalar($thing) ? strlen($thing) : count($thing);
     }
@@ -1291,7 +1291,7 @@ else {
      *
      * @return string The titlecased string
      */
-    function ifw_twig_title_string_filter(IfwPsn_Vendor_Twig_Environment $env, $string)
+    function ifwpsn_twig_title_string_filter(IfwPsn_Vendor_Twig_Environment $env, $string)
     {
         return ucwords(strtolower($string));
     }
@@ -1304,14 +1304,14 @@ else {
      *
      * @return string The capitalized string
      */
-    function ifw_twig_capitalize_string_filter(IfwPsn_Vendor_Twig_Environment $env, $string)
+    function ifwpsn_twig_capitalize_string_filter(IfwPsn_Vendor_Twig_Environment $env, $string)
     {
         return ucfirst(strtolower($string));
     }
 }
 
 /* used internally */
-function ifw_twig_ensure_traversable($seq)
+function ifwpsn_twig_ensure_traversable($seq)
 {
     if ($seq instanceof Traversable || is_array($seq)) {
         return $seq;
@@ -1334,7 +1334,7 @@ function ifw_twig_ensure_traversable($seq)
  *
  * @return Boolean true if the value is empty, false otherwise
  */
-function ifw_twig_test_empty($value)
+function ifwpsn_twig_test_empty($value)
 {
     if ($value instanceof Countable) {
         return 0 == count($value);
@@ -1357,7 +1357,7 @@ function ifw_twig_test_empty($value)
  *
  * @return Boolean true if the value is traversable
  */
-function ifw_twig_test_iterable($value)
+function ifwpsn_twig_test_iterable($value)
 {
     return $value instanceof Traversable || is_array($value);
 }
@@ -1373,7 +1373,7 @@ function ifw_twig_test_iterable($value)
  *
  * @return string The rendered template
  */
-function ifw_twig_include(IfwPsn_Vendor_Twig_Environment $env, $context, $template, $variables = array(), $withContext = true, $ignoreMissing = false, $sandboxed = false)
+function ifwpsn_twig_include(IfwPsn_Vendor_Twig_Environment $env, $context, $template, $variables = array(), $withContext = true, $ignoreMissing = false, $sandboxed = false)
 {
     $alreadySandboxed = false;
     $sandbox = null;
@@ -1408,7 +1408,7 @@ function ifw_twig_include(IfwPsn_Vendor_Twig_Environment $env, $context, $templa
  *
  * @return string The template source
  */
-function ifw_twig_source(IfwPsn_Vendor_Twig_Environment $env, $name)
+function ifwpsn_twig_source(IfwPsn_Vendor_Twig_Environment $env, $name)
 {
     return $env->getLoader()->getSource($name);
 }
@@ -1421,7 +1421,7 @@ function ifw_twig_source(IfwPsn_Vendor_Twig_Environment $env, $name)
  *
  * @return string
  */
-function ifw_twig_constant($constant, $object = null)
+function ifwpsn_twig_constant($constant, $object = null)
 {
     if (null !== $object) {
         $constant = get_class($object).'::'.$constant;
@@ -1439,7 +1439,7 @@ function ifw_twig_constant($constant, $object = null)
  *
  * @return array
  */
-function ifw_twig_array_batch($items, $size, $fill = null)
+function ifwpsn_twig_array_batch($items, $size, $fill = null)
 {
     if ($items instanceof Traversable) {
         $items = iterator_to_array($items, false);

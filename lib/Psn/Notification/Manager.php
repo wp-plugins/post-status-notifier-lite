@@ -10,6 +10,11 @@
 class Psn_Notification_Manager
 {
     /**
+     *
+     */
+    const POST_CUSTOM_FIELD_KEY_BLOCK_NOTIFICATIONS = 'psn-block-notifications';
+
+    /**
      * @var IfwPsn_Wp_Plugin_Manager
      */
     protected $_pm;
@@ -29,6 +34,11 @@ class Psn_Notification_Manager
      */
     protected $_statusAfter;
 
+    /**
+     * @var array
+     */
+    protected $_replacerInstances = array();
+
 
 
     /**
@@ -43,8 +53,17 @@ class Psn_Notification_Manager
     protected function _init()
     {
         IfwPsn_Wp_Proxy_Filter::add('transition_post_status', array($this, 'handlePostStatusTransition'), 10, 3);
+        // custom trigger. can be used to manually trigger the notification services on a post.
+        IfwPsn_Wp_Proxy_Filter::add('psn_trigger_notification_manager', array($this, 'handlePostStatusTransition'), 10, 3);
+
         IfwPsn_Wp_Proxy_Filter::add('psn_service_email_body', array($this, 'filterEmailBody'), 10, 3);
         IfwPsn_Wp_Proxy_Filter::add('psn_service_email_subject', array($this, 'filterEmailSubject'), 10, 3);
+
+        // add replacer filters
+        IfwPsn_Wp_Proxy_Filter::add('psn_notification_placeholders', array($this, 'addPlaceholders'));
+        IfwPsn_Wp_Proxy_Filter::add('psn_notification_placeholders', array($this, 'filterPlaceholders'));
+        IfwPsn_Wp_Proxy_Filter::add('psn_notification_dynamic_placeholders', array($this, 'filterPlaceholders'));
+
         $this->_loadServices();
     }
 
@@ -56,7 +75,7 @@ class Psn_Notification_Manager
         require_once $this->_pm->getPathinfo()->getRootLib() . 'Psn/Notification/Service/Email.php';
 
         $this->addService(new Psn_Notification_Service_Email());
-        IfwPsn_Wp_Proxy_Action::doPlugin($this->_pm, 'after_load_services', $this);
+        IfwPsn_Wp_Proxy_Action::doAction('psn_after_load_services', $this);
     }
 
     /**
@@ -66,9 +85,17 @@ class Psn_Notification_Manager
      */
     public function handlePostStatusTransition($statusAfter, $statusBefore, $post)
     {
+        if ($this->isBlockNotifications($post->ID)) {
+            // skip if option to block notifications is set
+            return;
+        }
+
+        $this->_pm->getErrorHandler()->enableErrorReporting();
+
         $this->_statusBefore = $statusBefore;
         $this->_statusAfter = $statusAfter;
 
+        // get all active rules
         $activeRules = IfwPsn_Wp_ORM_Model::factory('Psn_Model_Rule')->filter('active')->find_many();
         
         if (Psn_Model_Rule::hasMax()) {
@@ -87,9 +114,9 @@ class Psn_Notification_Manager
             if ($rule->matches($post, $statusBefore, $statusAfter)) {
 
                 // rule matches
-                IfwPsn_Wp_Proxy_Action::addPlugin($this->_pm, 'notification_placeholders', array($this, 'addPlaceholders'));
-                IfwPsn_Wp_Proxy_Action::addPlugin($this->_pm, 'notification_placeholders', array($this, 'filterPlaceholders'));
-                IfwPsn_Wp_Proxy_Action::addPlugin($this->_pm, 'notification_dynamic_placeholders', array($this, 'filterPlaceholders'));
+
+                // set the replacer
+                $rule->setReplacer($this->getReplacer($post));
 
                 /**
                  * Execute all registered notification services
@@ -101,6 +128,21 @@ class Psn_Notification_Manager
                 }
             }
         }
+
+        $this->_pm->getErrorHandler()->disableErrorReporting();
+    }
+
+    /**
+     * @param $post
+     * @return Psn_Notification_Placeholders
+     */
+    public function getReplacer($post)
+    {
+        if (!isset($this->_replacerInstances[$post->ID])) {
+            $this->_replacerInstances[$post->ID] = new Psn_Notification_Placeholders($post);
+        }
+
+        return $this->_replacerInstances[$post->ID];
     }
 
     /**
@@ -158,9 +200,10 @@ class Psn_Notification_Manager
 
     /**
      * @param $subject
+     * @param Psn_Notification_Service_Email $email
      * @return string
      */
-    public function filterEmailSubject($subject)
+    public function filterEmailSubject($subject, Psn_Notification_Service_Email $email)
     {
         $subject = $this->_handleSpecialChars($subject);
 
@@ -169,13 +212,15 @@ class Psn_Notification_Manager
 
     /**
      * @param $body
+     * @param Psn_Notification_Service_Email $email
      * @return string
      */
-    public function filterEmailBody($body)
+    public function filterEmailBody($body, Psn_Notification_Service_Email $email)
     {
         $body = $this->_handleSpecialChars($body);
 
         if (!$this->_pm->isPremium()) {
+            // please respect my work and buy the premium version if you want this plugin to stay alive!
             $body .= PHP_EOL . PHP_EOL .
                 sprintf(__('This email was sent by WordPress plugin "%s". Visit the plugin homepage: %s'),
                 $this->_pm->getEnv()->getName(),
@@ -210,5 +255,26 @@ class Psn_Notification_Manager
     public function getServices()
     {
         return $this->_services;
+    }
+
+    /**
+     * @param null $postId
+     * @return bool
+     */
+    public function isBlockNotifications($postId = null)
+    {
+        if ($postId == null) {
+            global $post;
+            $postId = $post->ID;
+        } else {
+            $postId = intval($postId);
+        }
+
+        if (!empty($postId)) {
+            $result = get_post_meta($postId, self::POST_CUSTOM_FIELD_KEY_BLOCK_NOTIFICATIONS, true);
+            return $result === '1';
+        }
+
+        return false;
     }
 }

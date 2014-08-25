@@ -56,6 +56,8 @@ class IfwPsn_Wp_Tpl
         if (isset($options['twig_options']) && is_array($options['twig_options'])) {
             $twigOptions = $options['twig_options'];
         }
+
+        $twigOptions['debug'] = true;
        
         switch ($options['twig_loader']) {
             
@@ -90,10 +92,12 @@ class IfwPsn_Wp_Tpl
         require_once dirname(__FILE__) . '/Tpl/Text.php';
         require_once dirname(__FILE__) . '/Tpl/Extension/DateLocale.php';
         require_once dirname(__FILE__) . '/Tpl/Extension/Text.php';
+        require_once dirname(__FILE__) . '/../Vendor/Twig/Extension/Debug.php';
 
         $tpl->addGlobal('text', new IfwPsn_Wp_Tpl_Text());
         $tpl->addExtension(new IfwPsn_Wp_Tpl_Extension_DateLocale());
         $tpl->addExtension(new IfwPsn_Wp_Tpl_Extension_Text());
+        $tpl->addExtension(new IfwPsn_Vendor_Twig_Extension_Debug());
 
         return $tpl;
     }
@@ -117,20 +121,6 @@ class IfwPsn_Wp_Tpl
         return self::$_stringLoaderInstance;
     }
 
-    /**
-     * Retrieves singleton IfwPsn_Tpl object
-     * obsolete, use self::getInstance instead
-     *
-     * @param IfwPsn_Wp_Plugin_Manager $pm
-     * @param string $loader
-     * @param array $options
-     * @return IfwPsn_Vendor_Twig_Environment
-     */
-    public static function getTwigInstance(IfwPsn_Wp_Plugin_Manager $pm, $loader='Filesystem', $options=array())
-    {
-        return self::getFilesytemInstance($pm, $options);
-    }
-    
     /**
      * Retrieves a Twig environment with filesystem loader
      * 
@@ -193,6 +183,10 @@ class IfwPsn_Wp_Tpl
         if (!empty($string)) {
             try {
                 $tpl = self::getStringLoaderInstance();
+                $string = strtr($string, array(
+                    '{{ ' => '{{',
+                    ' }}' => '}}'
+                ));
                 $string = $tpl->render($string);
             } catch (Exception $e) {
                 // invalid filter handling

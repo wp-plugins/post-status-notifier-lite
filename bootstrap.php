@@ -129,7 +129,7 @@ class Psn_Bootstrap extends IfwPsn_Wp_Plugin_Bootstrap_Abstract
                 'http://docs.ifeelweb.de/post-status-notifier/options.html#placeholders')
         ));
 
-        $this->_pm->getBootstrap()->getOptions()->addSection($placeholderFilterOptions, 11);
+        $this->_pm->getBootstrap()->getOptions()->addSection($placeholderFilterOptions, 300);
     }
 
     /**

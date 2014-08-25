@@ -51,13 +51,13 @@ class IfwPsn_Wp_Plugin_Application
      */
     public function load()
     {
-        IfwPsn_Wp_Proxy_Action::doPlugin($this->_pm, '_before_application_load', $this);
+        IfwPsn_Wp_Proxy_Action::doAction($this->_pm->getAbbrLower() . '_before_application_load', $this);
 
         $this->_pm->getLogger()->logPrefixed('Trying to load application...');
 
         $this->_adapter->load();
 
-        IfwPsn_Wp_Proxy_Action::doPlugin($this->_pm, '_after_application_load', $this);
+        IfwPsn_Wp_Proxy_Action::doAction($this->_pm->getAbbrLower() . '_after_application_load', $this);
     }
 
     public function render()

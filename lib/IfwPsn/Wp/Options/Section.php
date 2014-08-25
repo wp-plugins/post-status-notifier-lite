@@ -26,6 +26,11 @@ class IfwPsn_Wp_Options_Section
     protected $_description = '';
 
     /**
+     * @var null|string
+     */
+    protected $_pageId;
+
+    /**
      * @var array
      */
     protected $_fields = array();
@@ -103,4 +108,27 @@ class IfwPsn_Wp_Options_Section
         echo $this->_description;
     }
 
+    /**
+     * @param null|string $pageId
+     */
+    public function setPageId($pageId)
+    {
+        $this->_pageId = $pageId;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getPageId()
+    {
+        return $this->_pageId;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function hasPageId()
+    {
+        return !empty($this->_pageId);
+    }
 }

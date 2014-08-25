@@ -104,8 +104,12 @@ class IfwPsn_Wp_Plugin_Manager
      */
     public static function getInstanceFromFilenamePath($filenamePath)
     {
-        $filenameWithExtension = array_pop(explode(DIRECTORY_SEPARATOR, $filenamePath));
-        $filename = array_shift(explode('.', $filenameWithExtension));
+        $filenamePathParts = explode(DIRECTORY_SEPARATOR, $filenamePath);
+        $filenameWithExtension = array_pop($filenamePathParts);
+
+        $filenameWithExtensionParts = explode('.', $filenameWithExtension);
+        $filename = array_shift($filenameWithExtensionParts);
+
         $abbr = self::_createAbbr($filename);
 
         if (self::hasInstance($abbr)) {
@@ -155,6 +159,14 @@ class IfwPsn_Wp_Plugin_Manager
     {
         return strtolower($this->_abbr);
     }
+
+    /**
+     * Retrieves the plugin abbreviation in upper case
+     */
+    public function getAbbrUpper()
+    {
+        return strtoupper($this->_abbr);
+    }
     
     /**
      * @return IfwPsn_Wp_Pathinfo_Plugin $_pluginPathinfo
@@ -187,13 +199,26 @@ class IfwPsn_Wp_Plugin_Manager
     /**
      * @return IfwPsn_Vendor_Zend_Controller_Front|null
      */
-    public function getAdminFrontController()
+    public function getFrontController()
     {
-        $admin = $this->getBootstrap()->getAdmin();
-        if ($admin instanceof IfwPsn_Wp_Plugin_Admin) {
-            return $admin->getMenu()->getApplication()->getBootstrap()->getResource('FrontController');
-        }
-        return null;
+        require_once $this->getPathinfo()->getRootLib() . '/IfwPsn/Zend/Controller/Front.php';
+        return IfwPsn_Zend_Controller_Front::getInstance();
+    }
+
+    /**
+     * @return IfwPsn_Vendor_Zend_Controller_Action_Interface|null
+     */
+    public function getController()
+    {
+        return $this->getFrontController()->getDispatcher()->getController();
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasController()
+    {
+        return $this->getController() instanceof IfwPsn_Vendor_Zend_Controller_Action_Interface;
     }
 
     /**
@@ -202,6 +227,7 @@ class IfwPsn_Wp_Plugin_Manager
      */
     public function getConfig()
     {
+        require_once $this->getPathinfo()->getRootLib() . '/IfwPsn/Wp/Plugin/Config.php';
         return IfwPsn_Wp_Plugin_Config::getInstance($this->_pathinfo);
     }
     
@@ -212,6 +238,7 @@ class IfwPsn_Wp_Plugin_Manager
      */
     public function getEnv()
     {
+        require_once $this->getPathinfo()->getRootLib() . '/IfwPsn/Wp/Env/Plugin.php';
         return IfwPsn_Wp_Env_Plugin::getInstance($this->_pathinfo);
     }
 
@@ -223,6 +250,7 @@ class IfwPsn_Wp_Plugin_Manager
      */
     public function getLogger($name = null)
     {
+        require_once $this->getPathinfo()->getRootLib() . '/IfwPsn/Wp/Plugin/Logger.php';
         return IfwPsn_Wp_Plugin_Logger::getInstance($this, $name);
     }
 
@@ -231,6 +259,7 @@ class IfwPsn_Wp_Plugin_Manager
      */
     public function getAjaxManager()
     {
+        require_once $this->getPathinfo()->getRootLib() . '/IfwPsn/Wp/Ajax/Manager.php';
         return IfwPsn_Wp_Ajax_Manager::getInstance($this);
     }
     
@@ -248,6 +277,39 @@ class IfwPsn_Wp_Plugin_Manager
     public function getOptionsManager()
     {
         return $this->getBootstrap()->getOptionsManager();
+    }
+
+    /**
+     * @return IfwPsn_Wp_Plugin_Installer
+     */
+    public function getInstaller()
+    {
+        return $this->getBootstrap()->getInstaller();
+    }
+
+    /**
+     * @return IfwPsn_Wp_Plugin_Selftester
+     */
+    public function getSelftester()
+    {
+        return $this->getBootstrap()->getSelftester();
+    }
+
+    /**
+     * @return IfwPsn_Wp_Widget_Manager
+     */
+    public function getWidgetManager()
+    {
+        return $this->getBootstrap()->getWidgetManager();
+    }
+
+    /**
+     * @return IfwPsn_Wp_ErrorHandler
+     */
+    public function getErrorHandler()
+    {
+        require_once $this->getPathinfo()->getRootLib() . '/IfwPsn/Wp/ErrorHandler.php';
+        return IfwPsn_Wp_ErrorHandler::getInstance($this);
     }
 
     /**

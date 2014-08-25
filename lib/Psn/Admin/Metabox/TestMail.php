@@ -51,7 +51,11 @@ class Psn_Admin_Metabox_TestMail extends IfwPsn_Wp_Plugin_Metabox_Abstract
         $testMailForm = new Psn_Admin_Form_TestMail(array(
             'action' => IfwPsn_Wp_Proxy_Admin::getUrl() . IfwPsn_Wp_Proxy_Admin::getMenuUrl($this->_pm, 'service', 'send-test-mail')
         ));
+
+        IfwPsn_Wp_Proxy_Action::doPlugin($this->_pm, 'testmail_form', $testMailForm);
+
         $testMailForm->setView(new IfwPsn_Vendor_Zend_View());
+
         ?>
 
         <p><?php _e('Send a test email to check the general email functionality of your WordPress installation. Settings in the options section will be considered (e.g. SMTP).', 'psn'); ?></p>

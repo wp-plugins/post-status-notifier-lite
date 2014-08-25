@@ -20,6 +20,11 @@ class Psn_Notification_Placeholders extends IfwPsn_Util_Replacements
      */
     protected $_isMockUpPost = false;
 
+    /**
+     * @var array
+     */
+    protected $_twigContext = array();
+
 
 
     /**
@@ -34,11 +39,21 @@ class Psn_Notification_Placeholders extends IfwPsn_Util_Replacements
             $this->_post = $post;
         }
 
-        $options = array('auto_delimiters' => true);
+        $options = array(
+            'auto_delimiters' => true,
+            'lazy_filter_prefix' => 'psn_load_placeholder_value_'
+        );
 
         parent::__construct($this->_getNotificationPlaceholders(), $options);
 
         $this->_addDynamicPlaceholders();
+        $this->_addArrayData();
+
+        IfwPsn_Wp_Proxy_Action::doAction('psn_notification_placeholders_loaded', $this);
+
+        if (!$this->isMockUpPost()) {
+            $this->prepareTwigContext();
+        }
     }
 
     /**
@@ -68,6 +83,20 @@ class Psn_Notification_Placeholders extends IfwPsn_Util_Replacements
         }
 
         foreach (IfwPsn_Wp_Proxy_Filter::apply('psn_notification_dynamic_placeholders', $dynamicPlaceholders) as $key => $value) {
+            $this->addPlaceholder($key, $value, $group);
+        }
+    }
+
+    protected function _addArrayData()
+    {
+        $arrayPlaceholders = array();
+        $group = 'arrays';
+
+        $arrayPlaceholders['post_categories_array'] = IfwPsn_Wp_Proxy_Post::getAttachedCategoriesNames($this->_post);
+        $arrayPlaceholders['post_tags_array'] = IfwPsn_Wp_Proxy_Post::getAttachedTagsNames($this->_post);
+        $arrayPlaceholders['post_custom_fields_array'] = IfwPsn_Wp_Proxy_Post::getCustomKeysAndValues($this->_post);
+
+        foreach (IfwPsn_Wp_Proxy_Filter::apply('psn_notification_array_placeholders', $arrayPlaceholders) as $key => $value) {
             $this->addPlaceholder($key, $value, $group);
         }
     }
@@ -104,12 +133,21 @@ class Psn_Notification_Placeholders extends IfwPsn_Util_Replacements
         $result['post_permalink'] = IfwPsn_Wp_Proxy_Post::getPermalink($this->_post);
         $result['post_editlink'] = IfwPsn_Wp_Proxy_Post::getEditLink($this->_post->ID);
         $result['post_format'] = IfwPsn_Wp_Proxy_Post::getFormat($this->_post);
+        $result['post_preview_25'] = IfwPsn_Wp_Proxy_Post::getWords($this->_post, 25);
+        $result['post_preview_50'] = IfwPsn_Wp_Proxy_Post::getWords($this->_post, 50);
+        $result['post_preview_75'] = IfwPsn_Wp_Proxy_Post::getWords($this->_post, 75);
+        $result['post_preview_100'] = IfwPsn_Wp_Proxy_Post::getWords($this->_post, 100);
+
+        $strippedContent = strip_tags($this->_post->post_content);
+        $result['post_content_strip_tags'] = trim(preg_replace('/\[.*?\]/U', '', $strippedContent));
 
         // get the post's categories
-        $result['post_categories'] = implode(', ', IfwPsn_Wp_Proxy_Post::getAttachedCategoriesNames($this->_post));
+        $categories = IfwPsn_Wp_Proxy_Post::getAttachedCategoriesNames($this->_post);
+        $result['post_categories'] = implode(', ', $categories);
 
         // get the post's tags
-        $result['post_tags'] = implode(', ', IfwPsn_Wp_Proxy_Post::getAttachedTagsNames($this->_post));
+        $tags = IfwPsn_Wp_Proxy_Post::getAttachedTagsNames($this->_post);
+        $result['post_tags'] = implode(', ', $tags);
 
         // custom keys
         $customKeys = IfwPsn_Wp_Proxy_Post::getCustomKeys($this->_post);
@@ -117,11 +155,27 @@ class Psn_Notification_Placeholders extends IfwPsn_Util_Replacements
 
 
         // custom keys and values
+        $customFields = IfwPsn_Wp_Proxy_Post::getCustomKeysAndValues($this->_post);
+
         $custom_keys_and_values = array();
-        foreach (IfwPsn_Wp_Proxy_Post::getCustomKeysAndValues($this->_post) as $key => $value) {
+        foreach ($customFields as $key => $value) {
             array_push($custom_keys_and_values, $key . ': ' . $value);
         }
         $result['post_custom_fields_and_values'] = implode(', ', $custom_keys_and_values);
+
+        // featured image
+        if (has_post_thumbnail($this->_post->ID)) {
+            $featuredImgData = wp_get_attachment_image_src( get_post_thumbnail_id( $this->_post->ID ));
+            if ($featuredImgData != false) {
+                $result['post_featured_image_url'] = $featuredImgData[0];
+                $result['post_featured_image_width'] = $featuredImgData[1];
+                $result['post_featured_image_height'] = $featuredImgData[2];
+            }
+        } else {
+            $result['post_featured_image_src'] = '';
+            $result['post_featured_image_width'] = '';
+            $result['post_featured_image_height'] = '';
+        }
 
         return $result;
     }
@@ -242,27 +296,80 @@ class Psn_Notification_Placeholders extends IfwPsn_Util_Replacements
      */
     public function getOnScreenHelp()
     {
-        $tpl = IfwPsn_Wp_Tpl::getInstance(IfwPsn_Wp_Plugin_Manager::getInstance('Psn'));
-
         $this->addPlaceholder('post_status_before')->addPlaceholder('post_status_after');
 
-        $placholdersResult = $this->getDefaultPlaceholders();
-        asort($placholdersResult);
-        $placholdersDynamic = $this->getPlaceholders('dynamic');
-        asort($placholdersDynamic);
+        $placeholdersResult = $this->getDefaultPlaceholders(true, true);
+        asort($placeholdersResult);
+        $placeholdersDynamic = $this->getPlaceholders('dynamic');
+        asort($placeholdersDynamic);
+        $placeholdersArray = $this->getPlaceholders('arrays');
+        asort($placeholdersArray);
+
 
         $context = array(
-            'placeholders' => $placholdersResult,
-            'placeholdersDynamic' => $placholdersDynamic,
-            'placeholdersDynamicHelp' => __('These placeholders are unique to this WordPress installation. They use the names of custom categories and tags.', 'psn'),
-            'langHeader' => __('List of placeholders available for notification subject and text', 'psn'),
-            'langStatic' => __('Static placeholders', 'psn'),
-            'langDynamic' => __('Dynamic placeholders', 'psn'),
-            'langCustomFields' => __('Custom fields', 'psn'),
-            'langCustomFields1' => __('To retrieve the contents of custom post fields use this placeholder', 'psn'),
-            'langCustomFields2' => __('The * stands for the name of the custom field.<br>Example: If you have a custom post field "actors" you should call your placeholder <b>[post_custom_field-actors]</b>', 'psn'),
+            'placeholders' => $placeholdersResult,
+            'placeholdersDynamic' => $placeholdersDynamic,
+            'placeholdersArray' => $placeholdersArray,
         );
 
-        return $tpl->render('admin_help_placeholders.html.twig', $context);
+        return IfwPsn_Wp_WunderScript_Parser::getFileInstance(IfwPsn_Wp_Plugin_Manager::getInstance('Psn'))->parse('admin_help_placeholders.html.twig', $context);
+    }
+
+    /**
+     * @return array
+     */
+    public function prepareTwigContext()
+    {
+        // transfer the undelimited array placeholders to $context
+        $context = $this->getReplacements('arrays', false);
+
+        $this->removeGroup('arrays');
+
+        foreach ($context as $key => $value) {
+            $this->addPlaceholder($key, $key, 'arrays');
+        }
+
+        $this->_twigContext = $context;
+    }
+
+    /**
+     * @param null $string
+     * @return array
+     */
+    public function getTwigContext($string = null)
+    {
+        if (is_string($string)) {
+
+            // only return the used placeholders
+            $result = array();
+            foreach ($this->_twigContext as $placeholder => $value) {
+                if (strstr($string, $placeholder) !== false) {
+                    // placeholder is used
+                    if (empty($value)) {
+                        // value is empty, try to lazy load
+                        $value = $this->_lazyGetValue($this->addDelimiters($placeholder));
+                    }
+                    $result[$placeholder] = $value;
+                }
+            }
+
+            return $result;
+
+        } else {
+            // return all placeholders
+            return $this->_twigContext;
+        }
+    }
+
+    /**
+     *
+     */
+    public function revertTwigContext()
+    {
+        $this->removeGroup('arrays');
+
+        foreach ($this->getTwigContext() as $key => $value) {
+            $this->addPlaceholder($key, $value, 'arrays');
+        }
     }
 }

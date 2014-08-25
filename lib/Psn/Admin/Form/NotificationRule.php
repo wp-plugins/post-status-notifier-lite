@@ -71,6 +71,9 @@ class Psn_Admin_Form_NotificationRule extends IfwPsn_Zend_Form
             $postTypeOptions['public'] = true;
         }
 
+        /**
+         * Post Type
+         */
         $postType = $this->createElement('select', 'posttype');
         $postTypeOptions = array_merge(array('all' => __('all types', 'psn')), IfwPsn_Wp_Proxy_Post::getAllTypesWithLabels($postTypeOptions));
         unset($postTypeOptions['attachment']);
@@ -84,12 +87,16 @@ class Psn_Admin_Form_NotificationRule extends IfwPsn_Zend_Form
             ->setOrder(20);
         $this->addElement($postType);
 
+        /**
+         * Post status
+         */
         $statusValues = array_merge(
             array(
                 'new' => __('New', 'ifw'),
                 'not_published' => __('Not published', 'psn'),
                 'not_private' => __('Not private', 'psn'),
                 'not_pending' => __('Not pending', 'psn'),
+                'not_trash' => __('Not trash', 'psn'),
             ),
             IfwPsn_Wp_Proxy_Post::getAllStatusesWithLabels(array('show_domain' => true))
         );
@@ -97,6 +104,9 @@ class Psn_Admin_Form_NotificationRule extends IfwPsn_Zend_Form
 
         $statusValues = array_merge(array('anything' => __('anything', 'psn')), $statusValues);
 
+        /**
+         * Status before
+         */
         $statusBefore = $this->createElement('select', 'status_before');
         $statusBefore
             ->setLabel(__('Status before', 'psn'))
@@ -106,6 +116,9 @@ class Psn_Admin_Form_NotificationRule extends IfwPsn_Zend_Form
             ->setOrder(30);
         $this->addElement($statusBefore);
 
+        /**
+         * Status after
+         */
         $statusAfter = $this->createElement('select', 'status_after');
         $statusAfter
             ->setLabel(__('Status after', 'psn'))
@@ -116,9 +129,13 @@ class Psn_Admin_Form_NotificationRule extends IfwPsn_Zend_Form
             ->setOrder(40);
         $this->addElement($statusAfter);
 
+        /**
+         * Subject
+         */
         $this->addElement('text', 'notification_subject', array(
             'label'          => __('Subject', 'psn'),
-            'description'    => sprintf(__('Open the help menu in the upper right corner to see a list of all <a %s>supported placeholders</a>.', 'psn'), 'href="javascript:void(0)" class="placeholder_help"'),
+            'description'    => sprintf(__('Open the help menu in the upper right corner to see a list of all <a %s>supported placeholders</a>.', 'psn'), 'href="javascript:void(0)" class="placeholder_help"') . ' ' .
+                sprintf( __('Supports <a %s>conditions</a> (if activated in the options).', 'psn'), 'href="javascript:void(0)" class="conditions_help"' ),
             'required'       => true,
             'filters'        => array('StringTrim', 'StripTags'),
             'maxlength'      => 200,
@@ -127,9 +144,13 @@ class Psn_Admin_Form_NotificationRule extends IfwPsn_Zend_Form
         ));
         $this->getElement('notification_subject')->getDecorator('Description')->setEscape(false);
 
+        /**
+         * Body
+         */
         $this->addElement('textarea', 'notification_body', array(
             'label'          => __('Text', 'psn'),
-            'description'    => sprintf(__('Open the help menu in the upper right corner to see a list of all <a %s>supported placeholders</a>.', 'psn'), 'href="javascript:void(0)" class="placeholder_help"'),
+            'description'    => sprintf(__('Open the help menu in the upper right corner to see a list of all <a %s>supported placeholders</a>.', 'psn'), 'href="javascript:void(0)" class="placeholder_help"') . ' ' .
+                sprintf( __('Supports <a %s>conditions</a> (if activated in the options).', 'psn'), 'href="javascript:void(0)" class="conditions_help"'),
             'validators'     => array(new Psn_Admin_Form_Validate_MailBody()),
             'required'       => false,
             'filters'        => array('StringTrim', 'HtmlEntities'),
@@ -142,11 +163,18 @@ class Psn_Admin_Form_NotificationRule extends IfwPsn_Zend_Form
         $this->getElement('notification_body')->getDecorator('Description')->setEscape(false);
 
 
+
+        /**
+         * Recipients
+         */
         $recipients = IfwPsn_Wp_Proxy_Filter::apply('psn_rule_form_recipients_options', array(
             'admin'  => __('Blog admin', 'psn'),
             'author' => __('Post author', 'psn'),
         ));
 
+        /**
+         * TO
+         */
         $recipient = $this->createElement('multiselect', 'recipient');
         $recipient
             ->setLabel(__('Recipient', 'psn'))
@@ -162,9 +190,12 @@ class Psn_Admin_Form_NotificationRule extends IfwPsn_Zend_Form
             ->setOrder(70);
         $this->addElement($recipient);
 
+        /**
+         * CC
+         */
         $cc_select = $this->createElement('multiselect', 'cc_select');
         $cc_select
-            ->setLabel(__('Cc', 'psn'))
+            ->setLabel(__('CC', 'psn'))
             ->setDescription(__('To select multiple cc recipients hold down the control button (ctrl) on Windows or command button (cmd) on Mac.', 'psn'))
             ->setDecorators($this->getFieldDecorators())
             ->setFilters(array('StringTrim', 'StripTags'))
@@ -174,7 +205,7 @@ class Psn_Admin_Form_NotificationRule extends IfwPsn_Zend_Form
         $this->addElement($cc_select);
 
         $this->addElement('textarea', 'cc', array(
-            'label'          => __('Custom cc', 'psn'),
+            'label'          => __('Custom CC', 'psn'),
             'description'    => IfwPsn_Wp_Proxy_Filter::apply('psn_rule_form_description_cc',
                 sprintf(__('Add additional recipient emails. Comma separated. Supports placeholders like [author_email], [blog_admin_email], [current_user_email] or the dynamic [recipient_*] placeholders. Check the <a %s>placeholders help</a>.', 'psn'), 'href="javascript:void(0)" class="placeholder_help"')
                 ),
@@ -188,9 +219,12 @@ class Psn_Admin_Form_NotificationRule extends IfwPsn_Zend_Form
 
         $this->getElement('cc')->getDecorator('Description')->setEscape(false);
 
+        /**
+         * BCC
+         */
         $bcc_select = $this->createElement('multiselect', 'bcc_select');
         $bcc_select
-            ->setLabel(__('Bcc', 'psn'))
+            ->setLabel(__('BCC', 'psn'))
             ->setDescription(__('To select multiple bcc recipients hold down the control button (ctrl) on Windows or command button (cmd) on Mac.', 'psn'))
             ->setDecorators($this->getFieldDecorators())
             ->setFilters(array('StringTrim', 'StripTags'))
@@ -200,7 +234,7 @@ class Psn_Admin_Form_NotificationRule extends IfwPsn_Zend_Form
         $this->addElement($bcc_select);
 
         $this->addElement('textarea', 'bcc', array(
-            'label'          => __('Custom bcc', 'psn'),
+            'label'          => __('Custom BCC', 'psn'),
             'description'    => IfwPsn_Wp_Proxy_Filter::apply('psn_rule_form_description_bcc',
                 sprintf(__('Add bcc recipient emails. Comma separated. Supports placeholders like [author_email], [blog_admin_email], [current_user_email] or the dynamic [recipient_*] placeholders. Check the <a %s>placeholders help</a>.', 'psn'), 'href="javascript:void(0)" class="placeholder_help"')
                 ),
@@ -215,6 +249,9 @@ class Psn_Admin_Form_NotificationRule extends IfwPsn_Zend_Form
 
         $this->getElement('bcc')->getDecorator('Description')->setEscape(false);
 
+        /**
+         * Active
+         */
         $active = $this->createElement('checkbox', 'active');
         $active->setLabel(__('Active', 'psn'))
             ->setDecorators($this->getFieldDecorators())
@@ -225,6 +262,9 @@ class Psn_Admin_Form_NotificationRule extends IfwPsn_Zend_Form
             ;
         $this->addElement($active);
 
+        /**
+         * Service email
+         */
         $email = $this->createElement('checkbox', 'service_email');
         $email->setLabel(__('Email', 'psn'))
             ->setDecorators($this->getFieldDecorators())
@@ -235,8 +275,9 @@ class Psn_Admin_Form_NotificationRule extends IfwPsn_Zend_Form
         ;
         $this->addElement($email);
 
-
-        // Add the submit button
+        /**
+         * Submit button
+         */
         $this->addElement('submit', 'submit', array(
             'ignore'   => true,
             'label'    => __('Add rule', 'psn'),

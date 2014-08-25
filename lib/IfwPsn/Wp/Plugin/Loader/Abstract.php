@@ -50,8 +50,13 @@ abstract class IfwPsn_Wp_Plugin_Loader_Abstract implements IfwPsn_Wp_Plugin_Load
         if (!class_exists('IfwPsn_Wp_Autoloader')) {
             require_once $this->_pluginPathinfo->getRootLib() . 'IfwPsn/Wp/Autoloader.php';
         }
-        IfwPsn_Wp_Autoloader::init($this->_pluginPathinfo->getRootLib());
-        IfwPsn_Wp_Autoloader::init($this->_pluginPathinfo->getRootAdminMenu());
+
+        if (!IfwPsn_Wp_Autoloader::init($this->_pluginPathinfo->getRootLib())) {
+            ifw_debug('Autoloader error: Could not init ' . $this->_pluginPathinfo->getRootLib());
+        }
+        if (!IfwPsn_Wp_Autoloader::init($this->_pluginPathinfo->getRootAdminMenu())) {
+            ifw_debug('Autoloader error: Could not init ' . $this->_pluginPathinfo->getRootAdminMenu());
+        }
     }
 
     /**

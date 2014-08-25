@@ -97,8 +97,24 @@ jQuery(document).ready( function($) {
         $( "#mail_tpl" ).trigger( "change" );
     }
 
+    var help_tab_active = '';
+
     $('a.placeholder_help').on('click', function(event) {
-        $('#contextual-help-link').click();
+        $('#tab-link-placeholders a').click();
+        if ($('#contextual-help-wrap').is(":visible") == false || help_tab_active == 'placeholders') {
+            $('#contextual-help-link').click();
+        }
+        $('html, body').animate({scrollTop:0});
+        help_tab_active = 'placeholders';
+        return false;
+    });
+    $('a.conditions_help').on('click', function(event) {
+        $('#tab-link-conditions a').click();
+        if ($('#contextual-help-wrap').is(":visible") == false || help_tab_active == 'conditions') {
+            $('#contextual-help-link').click();
+        }
+        $('html, body').animate({scrollTop:0});
+        help_tab_active = 'conditions';
         return false;
     });
 });

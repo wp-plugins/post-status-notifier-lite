@@ -11,11 +11,9 @@
  */
 class IfwPsn_Wp_Module_Manager
 {
-    /**
-     * Module instance store
-     * @var array
-     */
-    public $_instances = array();
+    const LOCATION_NAME_BUILTIN = 'built-in';
+
+    const LOCATION_NAME_CUSTOM = 'custom';
 
     /**
      * @var IfwPsn_Wp_Plugin_Manager
@@ -47,6 +45,15 @@ class IfwPsn_Wp_Module_Manager
      */
     protected $_hasModules;
 
+    /**
+     * @var array
+     */
+    protected $_locations = array();
+
+    /**
+     * @var array
+     */
+    protected $_nameBuffer = array();
 
 
 
@@ -56,6 +63,65 @@ class IfwPsn_Wp_Module_Manager
     public function __construct(IfwPsn_Wp_Plugin_Manager $pm)
     {
         $this->_pm = $pm;
+
+        $this->_initLocations();
+
+        require_once dirname(__FILE__) . '/Activator.php';
+        IfwPsn_Wp_Module_Activator::getInstance($this->_pm);
+    }
+
+    protected function _initLocations()
+    {
+        if ($this->_locations == null) {
+
+            if ($this->_pm->getPathinfo()->hasModulesDir()) {
+                $this->addLocation('built-in', $this->_pm->getPathinfo()->getRootModules());
+            }
+
+            $customLocation = $this->getCustomModulesLocation();
+            if (!empty($customLocation) && is_dir($customLocation)) {
+                $this->addLocation('custom', $customLocation);
+            }
+        }
+    }
+
+    /**
+     * @param $name
+     * @param $location
+     */
+    public function addLocation($name, $location)
+    {
+        if (!isset($this->_locations[$name])) {
+            $this->_locations[$name] = $location;
+        }
+    }
+
+    /**
+     * Retrieves dir to search for custom modules
+     * @return null|string
+     */
+    public function getCustomModulesLocation()
+    {
+        $uploadDir = IfwPsn_Wp_Proxy_Blog::getUploadDir();
+        $dirName = $this->getCustomModulesLocationName();
+
+        if (is_array($uploadDir) &&
+            (isset($uploadDir['error']) && empty($uploadDir['error'])) &&
+            (isset($uploadDir['basedir']) && !empty($uploadDir['basedir']))
+            ) {
+
+            return $uploadDir['basedir'] . DIRECTORY_SEPARATOR . $dirName . DIRECTORY_SEPARATOR;
+        }
+
+        return null;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCustomModulesLocationName()
+    {
+        return $this->_pm->getPathinfo()->getDirname();
     }
 
     /**
@@ -68,9 +134,16 @@ class IfwPsn_Wp_Module_Manager
 
         while(!empty($modules) && $loop < 10) {
 
-            for($i = 0; $i < count($modules); $i++) {
+            /**
+             * @var IfwPsn_Wp_Module_Bootstrap_Abstract $module
+             */
+            foreach ($modules as $id => $module) {
 
-                $module = $modules[$i];
+                if (!$module->isActivated()) {
+                    // module is not activated, skip
+                    unset($modules[$id]);
+                    continue;
+                }
 
                 $dependencies = $module->getDependencies();
 
@@ -81,14 +154,10 @@ class IfwPsn_Wp_Module_Manager
                         // try to bootstrap module's custom logic
                         $module->bootstrap();
 
-                        array_push($this->_loaded, $module->getId());
+                        array_push($this->_loaded, $id);
 
-                        if (!isset($this->_instances[$module->getId()])) {
-                            $this->_instances[$module->getId()] = $module;
-                        }
-
-                        unset($modules[$i]);
-                        $modules = array_values($modules);
+                        unset($modules[$id]);
+                        //$modules = array_values($modules);
 
                     } catch (IfwPsn_Wp_Model_Exception $e) {
                         $this->_pm->getLogger()->err('Module error: '. $e->getMessage());
@@ -117,24 +186,89 @@ class IfwPsn_Wp_Module_Manager
      */
     public function getModules()
     {
-        if ($this->_pm->getPathinfo()->hasModulesDir() && empty($this->_modules)) {
+        require_once $this->_pm->getPathinfo()->getRootLib() . '/IfwPsn/Wp/Pathinfo/Module.php';
+        require_once $this->_pm->getPathinfo()->getRootLib() . '/IfwPsn/Wp/Env/Module.php';
 
-            foreach ($this->_getModulesFilenames() as $module) {
-                try {
-                    if ($this->_isValidModule($module)) {
-                        $className = $this->_getModuleClassName($module);
-                        $mod = new $className($this->_getModuleBootstrapPath($module), $this->_pm);
-                        array_push($this->_modules, $mod);
+        if (empty($this->_modules) && !empty($this->_locations)) {
+
+            // loop through module locations
+            foreach ($this->_locations as $locationName => $location) {
+
+                // get all subdirs
+                foreach ($this->_getModulesDirnames($location) as $moduleDir) {
+                    try {
+                        // check if it is a valid module
+                        if ($this->_isValidModule($moduleDir, $location, $locationName)) {
+                            // try to instantiate module object
+                            $className = $this->_getModuleClassName($moduleDir);
+
+
+                            $modulePathinfo = new IfwPsn_Wp_Pathinfo_Module($this->_getModuleBootstrapPath($moduleDir, $location));
+
+                            $mod = new $className($modulePathinfo, $locationName, $this->_pm);
+
+                            // init module environment
+                            $moduleEnv = IfwPsn_Wp_Env_Module::getInstance($modulePathinfo, $mod, $this->getCustomModulesLocationName());
+                            $mod->setEnv($moduleEnv);
+
+                            if (!isset($this->_modules[$mod->getId()])) {
+                                $this->_modules[$mod->getId()] = $mod;
+                            }
+                            //array_push($this->_modules, $mod);
+                        } else {
+                            $this->_pm->getLogger()->err('Invalid module: '. $moduleDir);
+                        }
+                    } catch (IfwPsn_Wp_Module_Exception $e) {
+                        $this->_pm->getLogger()->err('Module error: '. $e->getMessage());
+                    } catch (Exception $e) {
+                        $this->_pm->getLogger()->err('Unexpected exception in module "'. $moduleDir .'":'. $e->getMessage());
                     }
-                } catch (IfwPsn_Wp_Module_Exception $e) {
-                    $this->_pm->getLogger()->err('Module error: '. $e->getMessage());
-                } catch (Exception $e) {
-                    $this->_pm->getLogger()->err('Unexpected exception in module "'. $module .'":'. $e->getMessage());
                 }
+
             }
         }
 
         return $this->_modules;
+    }
+
+    /**
+     * Retrieves built-in modules
+     * @return array
+     */
+    public function getBuiltinModules()
+    {
+        return $this->getModulesByLocationName(self::LOCATION_NAME_BUILTIN);
+    }
+
+    /**
+     * Retrieves custom modules
+     * @return array
+     */
+    public function getCustomModules()
+    {
+        return $this->getModulesByLocationName(self::LOCATION_NAME_CUSTOM);
+    }
+
+    /**
+     * Retrieves modules by location name
+     *
+     * @param $locationName
+     * @return array
+     */
+    public function getModulesByLocationName($locationName)
+    {
+        $result = array();
+
+        /**
+         * @var IfwPsn_Wp_Module_Bootstrap_Abstract $mod
+         */
+        foreach ($this->getModules() as $mod) {
+            if ($mod->getLocationName() == $locationName) {
+                array_push($result, $mod);
+            }
+        }
+
+        return $result;
     }
 
     /**
@@ -157,42 +291,66 @@ class IfwPsn_Wp_Module_Manager
     }
 
     /**
+     * @param $location
      * @return array
      */
-    protected function _getModulesFilenames()
+    protected function _getModulesDirnames($location)
     {
-        if ($this->_pm->getPathinfo()->hasModulesDir() && empty($this->_modulesFilenames)) {
+        $result = array();
+        $modulesDir = new DirectoryIterator($location);
 
-            $modulesDir = new DirectoryIterator($this->_pm->getPathinfo()->getRootModules());
+        foreach ($modulesDir as $fileinfo) {
 
-            foreach ($modulesDir as $fileinfo) {
-
-                if (!$fileinfo->isDir() || $fileinfo->isDot()) {
-                    continue;
-                }
-
-                array_push($this->_modulesFilenames, $fileinfo->getFilename());
+            if (!$fileinfo->isDir() || $fileinfo->isDot()) {
+                continue;
             }
 
+            array_push($result, $fileinfo->getFilename());
         }
 
-        return $this->_modulesFilenames;
+        return $result;
     }
 
     /**
      * @param $module
-     * @throws IfwPsn_Wp_Module_Exception
+     * @param $location
+     * @param null $locationName
      * @throws IfwPsn_Wp_Model_Exception
      * @return bool
      */
-    protected function _isValidModule($module)
+    protected function _isValidModule($module, $location, $locationName = null)
     {
+        // check for duplicate names
+        if (!in_array($module, $this->_nameBuffer)) {
+            array_push($this->_nameBuffer, $module);
+        } else {
+            $error = 'Module name already exists'. $module;
+            if ($locationName == self::LOCATION_NAME_BUILTIN) {
+                throw new IfwPsn_Wp_Model_Exception($error);
+            } else {
+                $this->_pm->getLogger()->err($error);
+            }
+        }
+
+        // check for bootstrap class
         require_once $this->_pm->getPathinfo()->getRootLib() . '/IfwPsn/Wp/Module/Bootstrap/Abstract.php';
-        require_once $this->_getModuleBootstrapPath($module);
+        $path = $this->_getModuleBootstrapPath($module, $location);
+
+        if (!file_exists($path)) {
+            $this->_pm->getLogger()->err('Missing bootstrap class in module: '. $module);
+            return false;
+        }
+
+        require_once $path;
 
         if (!class_exists($this->_getModuleClassName($module))) {
-            throw new IfwPsn_Wp_Model_Exception('Invalid module class found for module "'. $module .'". Expecting: '.
-                $this->_getModuleClassName($module));
+            $error = 'Invalid module class found for module "'. $module .'". Expecting: '.
+                $this->_getModuleClassName($module);
+            if ($locationName == self::LOCATION_NAME_BUILTIN) {
+                throw new IfwPsn_Wp_Module_Exception($error);
+            } else {
+                $this->_pm->getLogger()->err($error);
+            }
         }
 
         return true;
@@ -200,12 +358,13 @@ class IfwPsn_Wp_Module_Manager
 
     /**
      * @param $module
+     * @param $location
      * @return string
      */
-    protected function _getModuleBootstrapPath($module)
+    protected function _getModuleBootstrapPath($module, $location)
     {
         if (!isset($this->_bootstrapPath[$module])) {
-            $this->_bootstrapPath[$module] = $this->_pm->getPathinfo()->getRootModules() . $module . DIRECTORY_SEPARATOR . 'bootstrap.php';
+            $this->_bootstrapPath[$module] = $location . $module . DIRECTORY_SEPARATOR . 'bootstrap.php';
         }
 
         return $this->_bootstrapPath[$module];
@@ -217,17 +376,19 @@ class IfwPsn_Wp_Module_Manager
      */
     protected function _getModuleClassName($module)
     {
-        return $module . '_Bootstrap';
+        return $this->_pm->getAbbr() . '_' . $module . '_Bootstrap';
     }
 
     /**
+     * Retrieve module by ID
+     *
      * @param $id
      * @return IfwPsn_Wp_Module_Bootstrap_Abstract|null
      */
     public function getModule($id)
     {
-        if (isset($this->_instances[$id])) {
-            return $this->_instances[$id];
+        if (isset($this->_modules[$id])) {
+            return $this->_modules[$id];
         }
         return null;
     }

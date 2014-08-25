@@ -11,6 +11,18 @@
 class IfwPsn_Wp_Proxy_User
 {
     /**
+     * @var array
+     */
+    protected static $_allUsersEmails;
+
+    /**
+     * @var array
+     */
+    protected static $_roleMembersEmails;
+
+
+
+    /**
      * Proxy method for get_current_user_id
      * @return int
      */
@@ -217,6 +229,33 @@ class IfwPsn_Wp_Proxy_User
     public static function getAllUsers()
     {
         return get_users();
+    }
+
+    /**
+     * @return array
+     */
+    public static function getAllUsersEmails()
+    {
+        if (self::$_allUsersEmails === null) {
+            self::$_allUsersEmails = self::getEmails(self::getAllUsers());
+        }
+
+        return self::$_allUsersEmails;
+    }
+
+    /**
+     * @param $rolename
+     * @return array
+     */
+    public static function getRoleMembersEmails($rolename)
+    {
+        if (!isset(self::$_roleMembersEmails[$rolename])) {
+
+            $members = self::getUsersByRoleName($rolename);
+            self::$_roleMembersEmails[$rolename] = self::getEmails($members);
+        }
+
+        return self::$_roleMembersEmails[$rolename];
     }
 
 }

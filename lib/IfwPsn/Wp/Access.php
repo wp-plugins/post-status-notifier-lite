@@ -186,6 +186,34 @@ class IfwPsn_Wp_Access
     }
 
     /**
+     * Checks for post-new access
+     * @return bool
+     */
+    public function isPostNew()
+    {
+        $requestInfo = pathinfo($this->_requestUri);
+
+        if ($this->isAdmin() && $requestInfo['filename'] == 'post-new') {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Checks for post-edit access
+     * @return bool
+     */
+    public function isPostEdit()
+    {
+        $requestInfo = pathinfo($this->_requestUri);
+
+        if ($this->isAdmin() && $requestInfo['filename'] == 'post') {
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * @param $page
      * @return bool
      */

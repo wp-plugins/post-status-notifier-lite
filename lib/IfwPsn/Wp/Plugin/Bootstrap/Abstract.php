@@ -164,7 +164,7 @@ abstract class IfwPsn_Wp_Plugin_Bootstrap_Abstract implements IfwPsn_Wp_Plugin_B
         $this->_notifyObservers(self::OBSERVER_PRE_BOOTSTRAP);
 
         // trigger action before_bootstrap
-        IfwPsn_Wp_Proxy_Action::doPlugin($this->_pm, 'before_bootstrap', $this);
+        IfwPsn_Wp_Proxy_Action::doAction($this->_pm->getAbbrLower() . '_before_bootstrap', $this);
     }
 
     /**
@@ -208,7 +208,7 @@ abstract class IfwPsn_Wp_Plugin_Bootstrap_Abstract implements IfwPsn_Wp_Plugin_B
     private function _postBootstrap()
     {
         // trigger action after_bootstrap
-        IfwPsn_Wp_Proxy_Action::doPlugin($this->_pm, 'after_bootstrap', $this);
+        IfwPsn_Wp_Proxy_Action::doAction($this->_pm->getAbbrLower() . '_after_bootstrap', $this);
 
         $this->_notifyObservers(self::OBSERVER_POST_BOOTSTRAP);
     }

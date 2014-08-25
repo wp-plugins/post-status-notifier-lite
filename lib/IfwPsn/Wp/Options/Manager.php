@@ -27,6 +27,11 @@ class IfwPsn_Wp_Options_Manager
      */
     private $_externalOptions = array();
 
+    /**
+     * @var array
+     */
+    private $_externalOptionsBuffer = array();
+
 
 
     public function __construct(IfwPsn_Wp_Plugin_Manager $pm)
@@ -58,17 +63,24 @@ class IfwPsn_Wp_Options_Manager
     }
 
     /**
+     * Registered an option which should not appear on the options page
+     *
      * @param string $id
      * @param int $priority
      * @return $this
      */
     public function registerExternalOption($id, $priority = 100)
     {
-        if (!isset($this->_externalOptions[$priority])) {
-            $this->_externalOptions[$priority] = array();
-        }
+        if (!in_array($id, $this->_externalOptionsBuffer)) {
 
-        array_push($this->_externalOptions[$priority], new IfwPsn_Wp_Options_Field_External($id, ''));
+            array_push($this->_externalOptionsBuffer, $id);
+
+            if (!isset($this->_externalOptions[$priority])) {
+                $this->_externalOptions[$priority] = array();
+            }
+
+            array_push($this->_externalOptions[$priority], new IfwPsn_Wp_Options_Field_External($id, ''));
+        }
 
         return $this;
     }
@@ -128,6 +140,16 @@ class IfwPsn_Wp_Options_Manager
     {
         $value = $this->getOption($id);
         return empty($value);
+    }
+
+    /**
+     * @param $id
+     * @return bool
+     */
+    public function isNotEmptyOption($id)
+    {
+        $value = $this->getOption($id);
+        return !empty($value);
     }
 
     /**
