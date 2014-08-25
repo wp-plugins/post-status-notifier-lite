@@ -2,7 +2,7 @@
 #icon-psn {
     background: url("../img/icon-32-grey.png") no-repeat scroll 1px 1px transparent;
 }
-#rules_form {
+.psn_form_container, #rules_form {
     border: 1px solid #C0C0C0;
     border-radius: 4px;
     -webkit-border-radius: 4px;
@@ -18,6 +18,9 @@ form#psn_form_rule #submit {
 form#psn_form_rule input[type="text"] {
     width: 500px;
 }
+form#psn_form_rule #mail_tpl {
+    max-width: 500px;
+}
 form#psn_form_rule textarea {
     width: 500px;
 }
@@ -29,6 +32,10 @@ form#psn_form_rule .cat_inc_ex_header {
     font-weight: bold;
     font-size: 14px;
 }
+form#psn_form_rule #recipient, form#psn_form_rule #cc_select, form#psn_form_rule #bcc_select, form#psn_form_rule #editor_restriction {
+    width: 500px;
+    overflow-y: scroll;
+}
 #psn_option_placeholders_filters {
     width: 95%;
     height: 200px;
@@ -38,18 +45,18 @@ form#psn_form_rule .cat_inc_ex_header {
     height: 200px;
     border: 1px solid #ddd;
 }
-#psn_option_psn_default_from {
+#psn_option_psn_default_from, #psn_option_license_code {
     width: 400px;
 }
-#import_rules {
+.import_items_container_toggle {
     margin-left: 15px;
 }
-#import_rules_container {
+#import_items_container {
     border: 1px solid #ddd;
     padding: 10px;
     background-color: white;
 }
-#import_rules_container h3 {
+#import_items_container h3 {
     margin-top: 0;
 }
 #import_rules_form label {
@@ -57,4 +64,75 @@ form#psn_form_rule .cat_inc_ex_header {
 }
 #import_rules_form input[type="file"] {
     width: 400px;
+}
+form#psn_form_rule #category_container select {
+    width: 100%;
+    height: auto !important;
+}
+#ifw_server_env {
+    width: 100%;
+    height: 400px;
+}
+#premium_ads img {
+    margin: 10px 10px 0 0;
+}
+/* Options page */
+#psn-options-page h3 {
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 10px;
+}
+div#psn-options-page img {
+    border: 1px solid #ccc;
+}
+
+
+table#custom_modules {
+    width: 100%;
+    border-collapse: collapse; border-spacing: 0;
+}
+table#custom_modules caption {
+    text-align: left;
+    font-weight: bold;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+table#custom_modules th {
+    text-align: left;
+}
+table#custom_modules th, table#custom_modules td {
+    padding: 2px;
+}
+table#custom_modules .module_description {
+    font-style: italic;
+}
+table#custom_modules .module_name {
+    font-size: 14px;
+    font-weight: bold;
+}
+div#module_upload {
+    padding: 10px 0;
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 30px;
+}
+div#module_upload h3 {
+    padding: 0;
+}
+div#module_upload .extending_doc_link {
+    text-align: right;
+}
+.psn_placeholder_warning {
+    border-left:4px solid #dd3d36;
+    background:#fff;
+    -webkit-box-shadow: 0 1px 1px 0 rgba(0,0,0,.1);
+    box-shadow:0 1px 1px 0 rgba(0,0,0,.1);
+    padding:1px 12px;
+}
+
+/* List table rules */
+.wp-list-table.rules th#active {
+    width: 75px;
+    text-align: center;
+}
+.wp-list-table.rules td.column-active {
+    text-align: center;
 }

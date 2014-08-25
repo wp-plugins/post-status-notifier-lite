@@ -10,13 +10,13 @@
  * @version   $Id$
  * @package   
  */ 
-class Psn_Menu_Options extends Ifw_Wp_Plugin_Menu_Page_Options
+class Psn_Menu_Options extends IfwPsn_Wp_Plugin_Menu_Page_Options
 {
     public function onInit()
     {
         $application = $this->_pm->getBootstrap()->getApplication();
 
-        if ($application->getAdapter() instanceof Ifw_Wp_Plugin_Application_Adapter_ZendFw) {
+        if ($application->getAdapter() instanceof IfwPsn_Wp_Plugin_Application_Adapter_ZendFw) {
             $application->getAdapter()->init();
         }
     }
@@ -25,8 +25,8 @@ class Psn_Menu_Options extends Ifw_Wp_Plugin_Menu_Page_Options
     {
         $application = $this->_pm->getBootstrap()->getApplication();
 
-        if ($application->getAdapter() instanceof Ifw_Wp_Plugin_Application_Adapter_ZendFw) {
-            Ifw_Wp_Proxy_Action::add('load-'. $this->getPageHook(), array($application, 'render'));
+        if ($application->getAdapter() instanceof IfwPsn_Wp_Plugin_Application_Adapter_ZendFw) {
+            IfwPsn_Wp_Proxy_Action::add('load-'. $this->getPageHook(), array($application, 'render'));
         }
     }
 
@@ -34,7 +34,7 @@ class Psn_Menu_Options extends Ifw_Wp_Plugin_Menu_Page_Options
     {
         $application = $this->_pm->getBootstrap()->getApplication();
 
-        if ($application->getAdapter() instanceof Ifw_Wp_Plugin_Application_Adapter_ZendFw) {
+        if ($application->getAdapter() instanceof IfwPsn_Wp_Plugin_Application_Adapter_ZendFw) {
             $application->display();
         }
     }

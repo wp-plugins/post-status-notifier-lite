@@ -1,2 +1,2 @@
 @echo off
-../lib/Ifw/Wp/Plugin/Cli/Executables/script.bat %*
+../lib/IfwPsn/Wp/Plugin/Cli/Executables/script.bat %*
