@@ -3,7 +3,7 @@ Tags: post, status, notification, notify, change, custom post type, email, log, 
 Contributors: worschtebrot
 Requires at least: 3.3
 Tested up to: 4.0
-Stable tag: 1.5.1
+Stable tag: 1.6
 
 
 Lets you create individual notification rules to be informed about all post status transitions of your blog. Features custom email texts with many placeholders and custom post types.
@@ -15,9 +15,11 @@ Lets you create individual notification rules to be informed about all post stat
 You want to **be notified** when one of your contributors have submitted a new post for revision or an editor published one? Vice versa you want to **notify your contributors** when their posts got published?
 This is just the beginning of what you can achieve with Post Status Notifier (PSN)!
 
-It works with all kind of **custom post types**, supports all **custom taxonomies** like categories and tags other plugins are using. You can grab all these taxonomy values and custom fields attached to a post and use them as **placeholders** in your custom notification texts. Define as many notification rules as you need with all kind of settings, like custom Cc, Bcc and From emails addresses.
+It works with all kind of **custom post types**, supports all **custom taxonomies** like categories and tags other plugins are using. You can grab all these taxonomy values and custom fields attached to a post and use them as **placeholders** in your custom notification texts. PSN has a powerful **conditional template syntax** featuring many filters and functions to get the most out of the placeholders!
 
-PSN works great with plugins like **WP Job Manager**, **Crowdfunding by Astoundify** or **Advanced Custom Fields**, just to name a few. The possibilities are endless. Want to **automate your publishing workflow** with [Buffer](http://bufferapp.com/)? No problem!
+Define as many notification rules as you need with all kind of settings, like custom **CC**, **BCC** and **FROM** emails addresses. PSN is **extensible**! Build your custom module to implement a new notification service.
+
+PSN works great with plugins like **WP Job Manager** ([read more](http://www.ifeelweb.de/2014/666/notify-wp-job-manager-listings-wordpress-plugin-post-status-notifier/)), Calendarize.it ([read more](http://www.ifeelweb.de/2014/748/notify-calendarize-events-wordpress-plugin-post-status-notifier/)), **Crowdfunding by Astoundify** ([read more](http://www.ifeelweb.de/2014/706/notify-payments-crowdfunding-astoundify-post-status-notifier/)) or **Advanced Custom Fields**, just to name a few. The possibilities are endless. Want to **automate your publishing workflow** with [Buffer](http://bufferapp.com/)? No problem!
 
 Plugin homepage:
 http://www.ifeelweb.de/wp-plugins/post-status-notifier/
@@ -46,6 +48,8 @@ Get the [Premium version](http://codecanyon.net/item/post-status-notifier/480942
 * Premium version: **Dashboard widget** showing the latest log entries (can be disabled)
 * Premium version: **Import / Export** of your notification rules
 * Premium version: **Copy** rules
+* Premium version: **Conditional template syntax** ([Manual](http://docs.ifeelweb.de/post-status-notifier/conditional_templates.html))
+* Premium version: Extensible ([Manual](http://docs.ifeelweb.de/post-status-notifier/extending_index.html))
 * Premium version: Custom sender e-mail. Define the notification sender (**FROM**) per rule or as a default in the options.
 * Comprehensive **documentation**
 * Included **translations**: english, german
@@ -91,9 +95,30 @@ http://docs.ifeelweb.de/post-status-notifier/
 
 == Change Log ==
 
+= 1.6 =
+
+- New placeholder: [post_categories_array] Contains an array for easy use with filters
+- New placeholder: [post_tags_array] Contains an array for easy use with filters
+- New placeholder: [post_custom_fields_array] Contains an array for easy use with filters
+- New placeholder: [post_preview_25] Contains the first 25 words of the post content
+- New placeholder: [post_preview_50] Contains the first 50 words of the post content
+- New placeholder: [post_preview_75] Contains the first 75 words of the post content
+- New placeholder: [post_preview_100] Contains the first 100 words of the post content
+- New placeholder: [post_content_strip_tags] The post content without HTML tags
+- New placeholder: [post_featured_image_url] If a post has a featured image, this placeholders contains its URL
+- New placeholder: [post_featured_image_width] The featured image width
+- New placeholder: [post_featured_image_height] The featured image height
+- New placeholder: [recipient_first_name] Only works in "One email per TO recipient" mode. The firstname of the recipient if it is available in the user profile.
+- New placeholder: [recipient_last_name] Only works in "One email per TO recipient" mode. The lastname of the recipient if it is available in the user profile.
+- New custom post status: "Not trash" will match every status but "Trash"
+- New Premium feature: Support for conditions, loops, functions and filters in subject and body texts. Enables to access any kind of data attached to a post. Allows to create dynamic texts.
+- New Premium feature: Block notifications options in Post submit box. Lets you decide to completely block notifications before you update / create a post
+- New Premium feature: One email per TO recipient. Notifications can get send in a loop with one email per TO recipient disregarding CC and BCC recipients. This feature is has Beta status.
+
 = 1.5.1 =
 
-- Bugfix: In some cases the service section could produce an error message (Call to undefined function apache_get_version())
+- Improvement: Duplicate recipients get removed
+- Bugfix: Fixed a bug in the Logger module (Sent emails haven't been logged correctly)
 
 = 1.5 =
 
