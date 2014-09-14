@@ -172,6 +172,7 @@ class IfwPsn_Zend_Controller_Dispatcher_Wp extends IfwPsn_Vendor_Zend_Controller
          * arguments; throw exception if it's not an action controller
          */
         $controller = new $className($request, $this->getResponse(), $this->getParams());
+        
         if (!($controller instanceof IfwPsn_Vendor_Zend_Controller_Action_Interface) &&
             !($controller instanceof IfwPsn_Vendor_Zend_Controller_Action)) {
             //require_once 'IfwZend/Controller/Dispatcher/Exception.php';

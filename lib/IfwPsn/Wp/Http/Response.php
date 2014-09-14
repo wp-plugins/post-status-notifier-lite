@@ -60,6 +60,14 @@ class IfwPsn_Wp_Http_Response
     }
 
     /**
+     * @return bool
+     */
+    public function isError()
+    {
+        return !$this->isSuccess();
+    }
+
+    /**
      * @return string
      */
     public function getErrorMessage()
@@ -81,6 +89,14 @@ class IfwPsn_Wp_Http_Response
     public function getResponse()
     {
         return $this->_response;
+    }
+
+    /**
+     * @return int
+     */
+    public function getStatusCode()
+    {
+        return $this->_statusCode;
     }
 
 }

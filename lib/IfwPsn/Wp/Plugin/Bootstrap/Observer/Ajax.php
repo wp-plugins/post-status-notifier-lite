@@ -24,8 +24,23 @@ class IfwPsn_Wp_Plugin_Bootstrap_Observer_Ajax extends IfwPsn_Wp_Plugin_Bootstra
 
     protected function _preBootstrap()
     {
+        if ($this->_pm->getAccess()->isAdmin() && $this->_pm->getAccess()->isAjax() && !$this->_pm->getAccess()->isHeartbeat()) {
+
+            // register admin ajax request
+            if (method_exists($this->_pm->getBootstrap(), 'registerAdminAjaxRequests')) {
+                $requests = $this->_pm->getBootstrap()->registerAdminAjaxRequests();
+                if (!is_array($requests)) {
+                    $requests = array($requests);
+                }
+                foreach ($requests as $request) {
+                    $this->_pm->getAjaxManager()->registerRequest($request);
+                }
+            }
+        }
+
         if ($this->_pm->getAccess()->isAjax() && !$this->_pm->getAccess()->isHeartbeat()) {
 
+            // register global admin ajax request
             if (method_exists($this->_pm->getBootstrap(), 'registerAjaxRequests')) {
                 $requests = $this->_pm->getBootstrap()->registerAjaxRequests();
                 if (!is_array($requests)) {

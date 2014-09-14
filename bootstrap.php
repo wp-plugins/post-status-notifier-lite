@@ -69,6 +69,7 @@ class Psn_Bootstrap extends IfwPsn_Wp_Plugin_Bootstrap_Abstract
 
         require_once $this->_pm->getPathinfo()->getRootLib() . '/Psn/Notification/Manager.php';
         $this->_notificationManager = new Psn_Notification_Manager($this->_pm);
+        $this->_notificationManager->setDeferredExecution();
     }
 
     /**

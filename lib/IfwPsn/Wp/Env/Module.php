@@ -56,7 +56,7 @@ class IfwPsn_Wp_Env_Module extends IfwPsn_Wp_Env_Abstract
     public static function getInstance(IfwPsn_Wp_Pathinfo_Module $pathinfo, IfwPsn_Wp_Module_Bootstrap_Abstract $module,
                                        $customLocationName)
     {
-        $instanceToken = $pathinfo->getDirname();
+        $instanceToken = $pathinfo->getDirnamePath();
 
         if (!isset(self::$_instances[$instanceToken])) {
             self::$_instances[$instanceToken] = new self($pathinfo, $module, $customLocationName);

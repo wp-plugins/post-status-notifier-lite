@@ -30,14 +30,21 @@ class IfwPsn_Wp_Http_Request
      */
     protected $_data = array();
 
+    /**
+     * @var string
+     */
+    protected $_sendMethod = 'post';
+
 
 
     /**
      * @param IfwPsn_Wp_Plugin_Manager $pm
      */
-    public function __construct(IfwPsn_Wp_Plugin_Manager $pm)
+    public function __construct($pm = null)
     {
-        $this->_pm = $pm;
+        if ($pm instanceof IfwPsn_Wp_Plugin_Manager) {
+            $this->_pm = $pm;
+        }
 
         $this->_init();
     }
@@ -62,9 +69,17 @@ class IfwPsn_Wp_Http_Request
             'user-agent' => $this->getUserAgent()
         );
 
-        $response = wp_remote_post($this->getUrl(), $args);
+        if ($this->getSendMethod() == 'post') {
+            $response = wp_remote_post($this->getUrl(), $args);
+        } elseif ($this->getSendMethod() == 'get') {
+            $response = wp_remote_get($this->getUrl(), $args);
+        }
 
-        return new IfwPsn_Wp_Http_Response($response);
+        if (isset($response)) {
+            return new IfwPsn_Wp_Http_Response($response);
+        }
+
+        return null;
     }
 
     /**
@@ -121,5 +136,26 @@ class IfwPsn_Wp_Http_Request
     {
         return $this->_data;
     }
+
+    /**
+     * @param string $sendMethod
+     * @return $this
+     */
+    public function setSendMethod($sendMethod)
+    {
+        if (in_array($sendMethod, array('get', 'post'))) {
+            $this->_sendMethod = $sendMethod;
+        }
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSendMethod()
+    {
+        return $this->_sendMethod;
+    }
+
 }
  

@@ -26,6 +26,7 @@ class Psn_Menu_Options extends IfwPsn_Wp_Plugin_Menu_Page_Options
         $application = $this->_pm->getBootstrap()->getApplication();
 
         if ($application->getAdapter() instanceof IfwPsn_Wp_Plugin_Application_Adapter_ZendFw) {
+            IfwPsn_Wp_Proxy_Action::addAdminInit(array($application->getAdapter(), 'init'));
             IfwPsn_Wp_Proxy_Action::add('load-'. $this->getPageHook(), array($application, 'render'));
         }
     }

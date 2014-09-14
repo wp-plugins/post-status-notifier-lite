@@ -45,6 +45,8 @@ class Psn_Admin_ListTable_Rules extends IfwPsn_Wp_Plugin_ListTable_Abstract
             'cb' => '<input type="checkbox" />',
             'active' => __('Active', 'psn'),
             'name' => __('Rule name', 'psn'),
+            'services' => __('Services', 'psn'),
+            'filters' => __('Filter', 'psn'),
             'posttype' => __('Post type', 'psn'),
             'status_before' => __('Status before', 'psn'),
             'status_after' => __('Status after', 'psn'),
@@ -118,6 +120,53 @@ class Psn_Admin_ListTable_Rules extends IfwPsn_Wp_Plugin_ListTable_Abstract
         }
 
         return $result;
+    }
+
+    /**
+     * @param $items
+     * @internal param $item
+     * @return string
+     */
+    public function getColumnServices($items)
+    {
+        $services = array();
+
+        $email = $items['service_email'];
+        $log = $items['service_log'];
+
+        if ($email == '1') {
+            array_push($services, '<a class="rule-service ifw-wp-icon-mail hint--bottom" data-hint="'. __('Email', 'psn') .'"></a>');
+        }
+        if ($log == '1') {
+            array_push($services, '<a class="rule-service ifw-wp-icon-log hint--bottom" data-hint="'. __('Log', 'psn_log') .'"></a>');
+        }
+
+        return implode('', $services);
+    }
+
+    /**
+     * @param $items
+     * @internal param $item
+     * @return string
+     */
+    public function getColumnFilters($items)
+    {
+        $filter = array();
+
+        $categories = $items['categories'];
+        $editor_restriction = $items['editor_restriction'];
+
+        if (!empty($categories)) {
+            array_push($filter, __('Categories', 'psn'));
+        }
+        if (!empty($editor_restriction)) {
+            array_push($filter, __('Editor restriction', 'psn_rec'));
+        }
+
+        if (count($filter) > 0) {
+            return '<a class="rule-service ifw-wp-icon-filter hint--bottom" data-hint="'. implode(', ', $filter) .'"></a>';
+        }
+        return '';
     }
 
     /**

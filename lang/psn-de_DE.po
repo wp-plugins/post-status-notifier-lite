@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: Post Status Notifier 1.0\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/tag/post-status-notifier\n"
 "POT-Creation-Date: 2013-04-17 20:01:32+00:00\n"
-"PO-Revision-Date: 2014-08-25 21:59+0100\n"
+"PO-Revision-Date: 2014-09-13 23:44+0100\n"
 "Last-Translator: Timo Reith <timo@hhesse.de>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -833,3 +833,9 @@ msgstr "Eine E-Mail pro TO Empfänger"
 
 msgid "Extensible"
 msgstr "Erweiterbar"
+
+msgid "Services"
+msgstr "Dienste"
+
+msgid "Filter"
+msgstr "Filter"

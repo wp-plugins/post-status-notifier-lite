@@ -371,6 +371,21 @@ class IfwPsn_Wp_Proxy_Blog
         $mysql_server_info = @mysql_get_server_info();
         $mysql_client_info = @mysql_get_client_info();
 
+        $phpAutoloadFunctions = array();
+        foreach (IfwPsn_Wp_Autoloader::getAllRegisteredAutoloadFunctions() as $function) {
+            try {
+                if (is_string($function)) {
+                    array_push($phpAutoloadFunctions, $function);
+                } elseif (is_array($function) && count($function) == 2) {
+                    array_push($phpAutoloadFunctions, $function[0] . '::' . $function[1]);
+                } elseif (is_object($function)) {
+                    array_push($phpAutoloadFunctions, get_class($function));
+                }
+            } catch (Exception $e) {
+                // no action
+            }
+        }
+
         $context = array(
             'plugin_name' => $pm->getEnv()->getName(),
             'plugin_version' => $pm->getEnv()->getVersion(),
@@ -396,7 +411,7 @@ class IfwPsn_Wp_Proxy_Blog
             'php_extensions' => IfwPsn_Wp_Server_Php::getExtensions(),
             'php_include_path' => get_include_path(),
             'php_open_basedir' => ini_get('open_basedir'),
-            'php_autoload_functions' => IfwPsn_Wp_Autoloader::getAllRegisteredAutoloadFunctions(),
+            'php_autoload_functions' => $phpAutoloadFunctions,
             'mysql_version' => !empty($mysql_server_info) ? $mysql_server_info : '',
             'mysql_client' => !empty($mysql_client_info) ? $mysql_client_info : '',
             'server_software' => $_SERVER['SERVER_SOFTWARE'],

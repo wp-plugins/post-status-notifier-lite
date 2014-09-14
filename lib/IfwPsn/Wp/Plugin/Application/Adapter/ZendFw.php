@@ -35,6 +35,11 @@ class IfwPsn_Wp_Plugin_Application_Adapter_ZendFw implements IfwPsn_Wp_Plugin_Ap
      */
     protected $_errorReporting;
 
+    /**
+     * @var bool
+     */
+    protected $_isInit = false;
+
 
 
     /**
@@ -120,11 +125,16 @@ class IfwPsn_Wp_Plugin_Application_Adapter_ZendFw implements IfwPsn_Wp_Plugin_Ap
      */
     public function init()
     {
+        if ($this->_isInit) {
+            return;
+        }
+
         $this->_pm->getErrorHandler()->enableErrorReporting();
 
         try {
             // init the controller object to add actions before load-{page-id} action
             $this->_application->initController();
+            $this->_isInit = true;
 
         } catch (Exception $e) {
             $this->_handleException($e);

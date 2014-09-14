@@ -13,8 +13,18 @@ require_once IFW_PSN_LIB_ROOT . 'IfwPsn/Vendor/Zend/Navigation/Page/Mvc.php';
 
 class IfwPsn_Zend_Navigation_Page_WpMvc extends IfwPsn_Vendor_Zend_Navigation_Page_Mvc
 {
+    /**
+     * @var string
+     */
     protected $_page;
-    
+
+    /**
+     * @var string
+     */
+    protected $_adminpage;
+
+
+
     /**
      * Returns href for this page
      *
@@ -48,8 +58,12 @@ class IfwPsn_Zend_Navigation_Page_WpMvc extends IfwPsn_Vendor_Zend_Navigation_Pa
             $params[IfwPsn_Zend_Controller_Front::getInstance()->getRequest()->getActionKey()] = $param;
         }
         
-        if ($this->_page != null) {
-            $params['page'] = $this->_page;
+        if ($param = $this->getPage()) {
+            $params['page'] = $param;
+        }
+
+        if ($param = $this->getAdminpage()) {
+            $params['adminpage'] = $param;
         }
 
         $url = self::$_urlHelper->url($params,
@@ -66,13 +80,7 @@ class IfwPsn_Zend_Navigation_Page_WpMvc extends IfwPsn_Vendor_Zend_Navigation_Pa
         return $this->_hrefCache = $url;
     }
         
-    /**
-     * @param field_type $_page
-     */
-    public function setPage($_page)
-    {
-        $this->_page = $_page;
-    }
+
 
     /**
      * Returns whether page should be considered active or not
@@ -153,4 +161,37 @@ class IfwPsn_Zend_Navigation_Page_WpMvc extends IfwPsn_Vendor_Zend_Navigation_Pa
 
         return parent::isActive($recursive);
     }
+
+    /**
+     * @param string $page
+     */
+    public function setPage($page)
+    {
+        $this->_page = $page;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPage()
+    {
+        return $this->_page;
+    }
+
+    /**
+     * @param string $adminpage
+     */
+    public function setAdminpage($adminpage)
+    {
+        $this->_adminpage = $adminpage;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAdminpage()
+    {
+        return $this->_adminpage;
+    }
+
 }

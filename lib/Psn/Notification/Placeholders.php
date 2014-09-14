@@ -10,6 +10,11 @@
 class Psn_Notification_Placeholders extends IfwPsn_Util_Replacements
 {
     /**
+     * @var array
+     */
+    protected static $_instances = array();
+
+    /**
      * The post object the notification is related to
      * @var object|WP_Post
      */
@@ -26,6 +31,19 @@ class Psn_Notification_Placeholders extends IfwPsn_Util_Replacements
     protected $_twigContext = array();
 
 
+
+    /**
+     * @param $post
+     * @return Psn_Notification_Placeholders
+     */
+    public static function getInstance($post)
+    {
+        if (!isset(self::$_instances[$post->ID])) {
+            self::$_instances[$post->ID] = new self($post);
+        }
+
+        return self::$_instances[$post->ID];
+    }
 
     /**
      * @param WP_Post $post
@@ -65,10 +83,10 @@ class Psn_Notification_Placeholders extends IfwPsn_Util_Replacements
 
         $group = 'dynamic';
 
-        foreach (IfwPsn_Wp_Proxy_Taxonomy::getPublicCategoriesNames() as $category) {
+        foreach (IfwPsn_Wp_Proxy_Taxonomy::getCategoriesNames() as $category) {
             $dynamicPlaceholders['post_category-' . $category] = implode(', ', IfwPsn_Wp_Proxy_Post::getAttachedCategoriesNames($this->_post, $category));
         }
-        foreach (IfwPsn_Wp_Proxy_Taxonomy::getPublicTagsNames() as $tag) {
+        foreach (IfwPsn_Wp_Proxy_Taxonomy::getTagsNames() as $tag) {
             if ($tag == 'post_format') {
                 continue;
             }
@@ -152,7 +170,6 @@ class Psn_Notification_Placeholders extends IfwPsn_Util_Replacements
         // custom keys
         $customKeys = IfwPsn_Wp_Proxy_Post::getCustomKeys($this->_post);
         $result['post_custom_fields'] = implode(', ', $customKeys);
-
 
         // custom keys and values
         $customFields = IfwPsn_Wp_Proxy_Post::getCustomKeysAndValues($this->_post);

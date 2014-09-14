@@ -59,7 +59,7 @@ class IfwPsn_Wp_Plugin_Manager
      * @param bool|\false|string $abbr
      * @return IfwPsn_Wp_Plugin_Manager
      */
-    public static function init(IfwPsn_Wp_Pathinfo_Plugin $pluginPathinfo, $abbr=false)
+    public static function init(IfwPsn_Wp_Pathinfo_Plugin $pluginPathinfo, $abbr = null)
     {
         if (!is_string($abbr)) {
             $abbr = self::_createAbbr($pluginPathinfo->getFilename());

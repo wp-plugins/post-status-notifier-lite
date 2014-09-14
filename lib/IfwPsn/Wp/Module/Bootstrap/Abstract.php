@@ -164,6 +164,7 @@ abstract class IfwPsn_Wp_Module_Bootstrap_Abstract implements IfwPsn_Wp_Module_B
 
                 $front = IfwPsn_Zend_Controller_Front::getInstance();
                 if ($front instanceof IfwPsn_Vendor_Zend_Controller_Front) {
+
                     $front->addControllerDirectory($this->_pathinfo->getDirnamePath() . 'controllers',
                         strtolower($this->_pathinfo->getDirname()));
                 }

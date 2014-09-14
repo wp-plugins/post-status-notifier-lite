@@ -222,7 +222,9 @@ class IfwPsn_Wp_Proxy_Post extends IfwPsn_Wp_Proxy_Abstract
                 $result = wp_get_post_categories($post->ID);
             } else {
                 // on custom post type
-                $result = self::getAllTermIds($post);
+                foreach (self::getAttachedCategories($post) as  $cat) {
+                    array_push($result, (int)$cat->term_id);
+                }
             }
         }
 
@@ -238,10 +240,14 @@ class IfwPsn_Wp_Proxy_Post extends IfwPsn_Wp_Proxy_Abstract
     {
         $result = array();
 
-        foreach (self::getAttachedCategories($post) as $cat) {
-            if (isset($cat->name)) {
-                if ($taxonomy === null or ($taxonomy !== null && $taxonomy == $cat->taxonomy)) {
-                    array_push($result, $cat->name);
+        $categories = self::getAttachedCategories($post);
+
+        if (is_array($categories)) {
+            foreach (self::getAttachedCategories($post) as $cat) {
+                if (isset($cat->name)) {
+                    if ($taxonomy === null or ($taxonomy !== null && $taxonomy == $cat->taxonomy)) {
+                        array_push($result, $cat->name);
+                    }
                 }
             }
         }
@@ -292,12 +298,29 @@ class IfwPsn_Wp_Proxy_Post extends IfwPsn_Wp_Proxy_Abstract
      */
     public static function getAllTypesCategories()
     {
-        $categories = array();
+        $result = array();
 
-        $categories = array_merge($categories, array('post' => self::getAllCategories()));
-        $categories = array_merge($categories, self::getCustomPostTypesCategories());
+        foreach ( IfwPsn_Wp_Proxy_Post::getAllTypesWithLabels() as $posttype => $params) {
 
-        return $categories;
+            $categories = IfwPsn_Wp_Proxy_Categories::getByPosttype($posttype);
+
+            if (!empty($categories)) {
+                if (!isset($result[$posttype])) {
+                    $result[$posttype] = array();
+                }
+                foreach ($categories as $cat) {
+                    array_push($result[$posttype], array(
+                        'id' => (int)$cat->term_id,
+                        'name' => $cat->name,
+                    ));
+                }
+            }
+        }
+
+//        $result = array_merge($result, array('post' => self::getAllCategories()));
+//        $result = array_merge($result, self::getCustomPostTypesCategories());
+
+        return $result;
     }
 
     /**
@@ -336,6 +359,7 @@ class IfwPsn_Wp_Proxy_Post extends IfwPsn_Wp_Proxy_Abstract
         $args = array(
 //            'public' => false,
             '_builtin' => false,
+            'hierarchical' => 1,
             'object_type' => array($posttype)
         );
 
@@ -369,14 +393,63 @@ class IfwPsn_Wp_Proxy_Post extends IfwPsn_Wp_Proxy_Abstract
     }
 
     /**
+     * Retrieves tags of one given custom post types
+     *
+     * @param $posttype
+     * @return array
+     */
+    public static function getCustomPostTypeTags($posttype)
+    {
+        $terms = array();
+
+        $args = array(
+//            'public' => false,
+            '_builtin' => false,
+            'hierarchical' => null,
+            'object_type' => array($posttype)
+        );
+
+        $taxonomies = get_taxonomies( $args, 'names', 'and' );
+
+        if ( $taxonomies ) {
+            foreach ( $taxonomies  as $taxonomy ) {
+                foreach(get_terms($taxonomy, 'hide_empty=0') as $term) {
+                    array_push($terms, array('id' => (int)$term->term_id, 'name' => $term->name));
+                }
+            }
+        }
+
+        return $terms;
+    }
+
+    /**
+     * Retrieves tags ids of one given custom post type
+     *
+     * @param $posttype
+     * @return array
+     */
+    public static function getCustomPostTypeTagIds($posttype)
+    {
+        $result = array();
+        $tags = self::getCustomPostTypeTags($posttype);
+        foreach($tags as $tag) {
+            array_push($result, $tag['id']);
+        }
+        return array_unique($result);
+    }
+
+    /**
      * Retrieves post type of a given post
      *
      * @param $post
-     * @return bool|string
+     * @return false|string
      */
     public static function getType($post)
     {
-        return get_post_type($post);
+        if ($post instanceof WP_Post) {
+            return $post->post_type;
+        }
+        return false;
     }
 
     /**
@@ -385,7 +458,7 @@ class IfwPsn_Wp_Proxy_Post extends IfwPsn_Wp_Proxy_Abstract
      */
     public static function isDefaultType($post)
     {
-        return self::getType($post) == 'post';
+        return $post instanceof WP_Post && $post->post_type == 'post';
     }
 
     /**
@@ -397,7 +470,8 @@ class IfwPsn_Wp_Proxy_Post extends IfwPsn_Wp_Proxy_Abstract
      */
     public static function getTaxonomies($post, $output = 'names')
     {
-        return get_object_taxonomies(self::getType($post), $output);
+        return get_object_taxonomies($post, $output);
+//        return get_object_taxonomies(self::getType($post), $output);
     }
 
     /**
@@ -444,7 +518,7 @@ class IfwPsn_Wp_Proxy_Post extends IfwPsn_Wp_Proxy_Abstract
 
         if (self::getType($post) == 'post') {
             // default post
-            $result = get_the_terms($post->id, $taxonomy);
+            $result = get_the_terms($post->ID, $taxonomy);
         } else {
             // custom post type
             $taxonomies = self::getTaxonomiesObjects($post);
@@ -459,7 +533,7 @@ class IfwPsn_Wp_Proxy_Post extends IfwPsn_Wp_Proxy_Abstract
                     if (($taxonomy == 'category' && $object->hierarchical == true) ||
                         ($taxonomy == 'post_tag' && $object->hierarchical == false)) {
 
-                        $tmpTerms = get_the_terms($post->id, $name);
+                        $tmpTerms = get_the_terms($post->ID, $name);
                         if (is_array($tmpTerms)) {
                             $result = array_merge($result, $tmpTerms);
                         }
@@ -479,6 +553,7 @@ class IfwPsn_Wp_Proxy_Post extends IfwPsn_Wp_Proxy_Abstract
      *
      * @param $post
      * @return array
+     * @deprecated
      */
     public static function getAllTermIds($post)
     {
@@ -539,10 +614,14 @@ class IfwPsn_Wp_Proxy_Post extends IfwPsn_Wp_Proxy_Abstract
     {
         $result = array();
 
-        foreach (self::getAttachedTags($post) as $tag) {
-            if (isset($tag->name)) {
-                if ($taxonomy === null or ($taxonomy !== null && $taxonomy == $tag->taxonomy)) {
-                    array_push($result, $tag->name);
+        $tags = self::getAttachedTags($post);
+
+        if (is_array($tags)) {
+            foreach (self::getAttachedTags($post) as $tag) {
+                if (isset($tag->name)) {
+                    if ($taxonomy === null or ($taxonomy !== null && $taxonomy == $tag->taxonomy)) {
+                        array_push($result, $tag->name);
+                    }
                 }
             }
         }
@@ -644,15 +723,13 @@ class IfwPsn_Wp_Proxy_Post extends IfwPsn_Wp_Proxy_Abstract
      */
     public static function getCustomKeysAndValues($post)
     {
-        if (self::$_customFieldsAndValues == null) {
-            self::$_customFieldsAndValues = array();
+        $result = array();
 
-            foreach (self::getCustomKeys($post) as $key) {
-                self::$_customFieldsAndValues[$key] = self::getCustomKeyValue($key, $post);
-            }
+        foreach (self::getCustomKeys($post) as $key) {
+            $result[$key] = self::getCustomKeyValue($key, $post);
         }
 
-        return self::$_customFieldsAndValues;
+        return $result;
     }
 
     /**

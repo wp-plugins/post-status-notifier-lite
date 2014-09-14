@@ -39,11 +39,7 @@ include_path: {{ php_include_path }}
 open_basedir: {{ php_open_basedir }}
 autoload functions:
 {% for function in php_autoload_functions %}
-{% if function is iterable %}
-  - {{ function.0 }}::{{ function.1 }}
-{% else %}
   - {{ function }}
-{% endif %}
 {% endfor %}
 
 Extensions:

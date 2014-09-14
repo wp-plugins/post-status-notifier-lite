@@ -39,6 +39,16 @@ class Psn_Notification_Manager
      */
     protected $_replacerInstances = array();
 
+    /**
+     * @var bool
+     */
+    protected $_deferredExecution = false;
+
+    /**
+     * @var Psn_Notification_Deferred_Handler
+     */
+    protected $_deferredHandler;
+
 
 
     /**
@@ -102,6 +112,10 @@ class Psn_Notification_Manager
             $activeRules = array_slice($activeRules, 0, Psn_Model_Rule::getMax());
         }
 
+        if ($this->isDeferredExecution()) {
+            $this->_deferredHandler = new Psn_Notification_Deferred_Handler();
+        }
+
         /**
          * @var $rule Psn_Model_Rule
          */
@@ -115,34 +129,32 @@ class Psn_Notification_Manager
 
                 // rule matches
 
-                // set the replacer
-                $rule->setReplacer($this->getReplacer($post));
-
                 /**
                  * Execute all registered notification services
                  *
                  * @var $service Psn_Notification_Service_Interface
                  */
                 foreach($this->getServices() as $service) {
-                    $service->execute($rule, $post);
+                    if ($this->isDeferredExecution()) {
+
+                        // prepare for deferred execution
+                        $deferredContainer = new Psn_Notification_Deferred_Container();
+                        $deferredContainer->setService($service)->setRule($rule)->setPost($post);
+                        $this->_deferredHandler->addCotainer($deferredContainer);
+
+                    } else {
+                        // execute directly
+
+                        // set the replacer
+                        $rule->setReplacer(Psn_Notification_Placeholders::getInstance($post));
+
+                        $service->execute($rule, $post);
+                    }
                 }
             }
         }
 
         $this->_pm->getErrorHandler()->disableErrorReporting();
-    }
-
-    /**
-     * @param $post
-     * @return Psn_Notification_Placeholders
-     */
-    public function getReplacer($post)
-    {
-        if (!isset($this->_replacerInstances[$post->ID])) {
-            $this->_replacerInstances[$post->ID] = new Psn_Notification_Placeholders($post);
-        }
-
-        return $this->_replacerInstances[$post->ID];
     }
 
     /**
@@ -277,4 +289,31 @@ class Psn_Notification_Manager
 
         return false;
     }
+
+    /**
+     * @param boolean $deferredExecution
+     */
+    public function setDeferredExecution($deferredExecution = true)
+    {
+        if (is_bool($deferredExecution)) {
+            $this->_deferredExecution = $deferredExecution;
+        }
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isDeferredExecution()
+    {
+        return $this->_deferredExecution === true;
+    }
+
+    /**
+     * @return \Psn_Notification_Deferred_Handler
+     */
+    public function getDeferredHandler()
+    {
+        return $this->_deferredHandler;
+    }
+
 }

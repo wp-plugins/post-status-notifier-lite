@@ -360,4 +360,30 @@ class IfwPsn_Wp_Proxy_Action
     {
         return self::add('update_wpmu_options', $function_to_add, $priority, $accepted_args);
     }
+
+    /**
+     * Shortcut for add_action( 'save_post', 'function_name' )
+     *
+     * @param $function_to_add
+     * @param int $priority
+     * @param int $accepted_args
+     * @return bool|void
+     */
+    public static function addSavePost($function_to_add, $priority = 10, $accepted_args = 3)
+    {
+        return self::add('save_post', $function_to_add, $priority, $accepted_args);
+    }
+
+    /**
+     * Shortcut for add_action( 'wp_insert_post', 'function_name' )
+     *
+     * @param $function_to_add
+     * @param int $priority
+     * @param int $accepted_args
+     * @return bool|void
+     */
+    public static function addWpInsertPost($function_to_add, $priority = 10, $accepted_args = 3)
+    {
+        return self::add('wp_insert_post', $function_to_add, $priority, $accepted_args);
+    }
 }

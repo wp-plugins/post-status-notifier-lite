@@ -87,6 +87,7 @@ class PsnRulesController extends PsnApplicationController
         $this->_pm->getLogger()->logPrefixed('Executing '. get_class($this) . ':indexAction()');
 
         IfwPsn_Wp_Proxy_Script::loadAdmin('psn_rules', $this->_pm->getEnv()->getUrlAdminJs() . 'rules.js', array(), $this->_pm->getEnv()->getVersion());
+        IfwPsn_Wp_Proxy_Style::loadAdmin('hint', $this->_pm->getEnv()->getUrlAdminCss() . 'hint.min.css');
 
         // set up contextual help
         require_once $this->_pm->getPathinfo()->getRootLib() . 'IfwPsn/Wp/Plugin/Menu/Help.php';

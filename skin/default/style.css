@@ -180,6 +180,14 @@
     background: url(icons/tool.png) left top no-repeat;
     padding: 0 0 0 20px;
 }
+.ifw-wp-icon-log {
+    background: url(icons/log.png) left top no-repeat;
+    padding: 0 0 0 20px;
+}
+.ifw-wp-icon-filter {
+    background: url(icons/filter.png) left top no-repeat;
+    padding: 0 0 0 20px;
+}
 
 /* metabox tables */
 .meta-box-sortables .ifw-metabox-table {
@@ -249,4 +257,3 @@
     background: url(icons/cross.png) left top no-repeat;
     padding: 8px 0 8px 40px;
 }
-

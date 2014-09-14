@@ -266,4 +266,31 @@ class IfwPsn_Wp_Access
     {
         return isset($_REQUEST['action']) && strpos(strtolower($_REQUEST['action']), '-'.$this->_pm->getAbbrLower().'-') !== false;
     }
+
+    /**
+     * @return string|null
+     */
+    public function getController()
+    {
+        $key = $this->_pm->getConfig()->application->controller->key;
+        return isset($_GET[$key]) ? $_GET[$key] : null;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getAction()
+    {
+        $key = $this->_pm->getConfig()->application->action->key;
+        return isset($_GET[$key]) ? $_GET[$key] : null;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getModule()
+    {
+        $key = 'module';
+        return isset($_GET[$key]) ? $_GET[$key] : null;
+    }
 }

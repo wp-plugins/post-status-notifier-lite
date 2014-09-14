@@ -37,24 +37,11 @@ class IfwPsn_Wp_Plugin_Loader_Default extends IfwPsn_Wp_Plugin_Loader_Abstract
      */
     public function load()
     {
-//        $this->loadIncludePath();
         $this->loadConfig();
         $this->loadEnv();
         $this->loadORM();
         $this->loadPluginManager();
     }
-
-//    public function loadIncludePath()
-//    {
-//        $result = set_include_path(get_include_path() . PATH_SEPARATOR . $this->_pluginPathinfo->getRootLib());
-//        if (!$result) {
-//            trigger_error('
-//                Post Status Notifier could not extend the <b>PHP include_path</b> on this server, which is required for this plugin to work.
-//                This is a <b>known issue</b> and no bug. Probably the PHP include_path was set with php_admin_value.<br>
-//                The include_path is fixed to "'. get_include_path() .'"<br>
-//                Please contact your server support.<br> Exiting activation.<br><br>', E_USER_ERROR);
-//        }
-//    }
 
     public function loadConfig()
     {
@@ -80,7 +67,10 @@ class IfwPsn_Wp_Plugin_Loader_Default extends IfwPsn_Wp_Plugin_Loader_Abstract
     public function loadPluginManager()
     {
         require_once IFW_PSN_LIB_ROOT . '/IfwPsn/Wp/Plugin/Manager.php';
-        $this->_pm = IfwPsn_Wp_Plugin_Manager::init($this->_pluginPathinfo);
+
+        $customAbbr = isset($this->_config->plugin->customAbbr) ? $this->_config->plugin->customAbbr : null;
+
+        $this->_pm = IfwPsn_Wp_Plugin_Manager::init($this->_pluginPathinfo, $customAbbr);
         $this->_pm->getLogger()->log($this->_pm->getAbbr() . ': Pluginmanager loaded.');
     }
 

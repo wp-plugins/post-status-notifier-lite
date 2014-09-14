@@ -17,16 +17,19 @@ if (!function_exists('ifw_debug')) {
      * @param $var
      * @param bool $backtrace
      */
-    function ifw_debug ($var, $backtrace = false) {
+    function ifw_debug ($var, $backtrace = false, $verbose = true) {
 
         if (WP_DEBUG === true) {
 
             $bt = debug_backtrace();
             $pathinfo = pathinfo($bt[0]['file']);
 
-            $output = __FUNCTION__ . ' in ';
-            $output .= $pathinfo['dirname'] . DIRECTORY_SEPARATOR . $pathinfo['basename'] . ':' . $bt[0]['line'] . ':' .
-                ' ('. gettype($var) . ') ';
+            $output = '';
+            if ($verbose) {
+                $output .= __FUNCTION__ . ' in ';
+                $output .= $pathinfo['dirname'] . DIRECTORY_SEPARATOR . $pathinfo['basename'] . ':' . $bt[0]['line'] . ':' .
+                    ' ('. gettype($var) . ') ';
+            }
 
             if (is_array($var) || is_object($var)) {
                 $output .= print_r($var, true);

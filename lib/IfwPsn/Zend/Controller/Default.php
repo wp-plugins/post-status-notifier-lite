@@ -67,7 +67,6 @@ class IfwPsn_Zend_Controller_Default extends IfwPsn_Vendor_Zend_Controller_Actio
 
         $this->_request = $this->getRequest();
 
-
         $this->_helper->layout()->setLayout('layout');
 
         $this->_pageHook = 'page-'. $this->_pm->getPathinfo()->getDirname() . '-' . $this->getRequest()->getControllerName() . '-' . $this->getRequest()->getActionName();

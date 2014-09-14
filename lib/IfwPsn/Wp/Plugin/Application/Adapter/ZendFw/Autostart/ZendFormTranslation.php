@@ -12,6 +12,10 @@ require_once dirname(__FILE__) . '/Abstract.php';
 
 class IfwPsn_Wp_Plugin_Application_Adapter_ZendFw_Autostart_ZendFormTranslation extends IfwPsn_Wp_Plugin_Application_Adapter_ZendFw_Autostart_Abstract
 {
+    protected $_supportedLanguages = array(
+        'en_US', 'de_DE'
+    );
+
     public function execute()
     {
         require_once IFW_PSN_LIB_ROOT . 'IfwPsn/Vendor/Zend/Translate/Adapter/Array.php';
@@ -20,7 +24,7 @@ class IfwPsn_Wp_Plugin_Application_Adapter_ZendFw_Autostart_ZendFormTranslation 
         try {
             // check if the WP locale is valid otherwise set it to default
             $locale = IfwPsn_Wp_Proxy_Blog::getLanguage();
-            if (!IfwPsn_Vendor_Zend_Locale::isLocale($locale)) {
+            if (!in_array($locale, $this->_supportedLanguages)) {
                 $locale = 'en_US';
             }
 

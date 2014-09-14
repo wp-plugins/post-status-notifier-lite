@@ -124,6 +124,10 @@ class IfwPsn_Wp_CustomPostType
      */
     public function _register()
     {
+        if (post_type_exists($this->getId())) {
+            return;
+        }
+
         foreach ($this->_taxonomies as $id => $args) {
             if (!empty($args)) {
                 register_taxonomy($id, $this->getId(), $args);
