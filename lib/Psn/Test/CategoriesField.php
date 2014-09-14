@@ -7,7 +7,7 @@
  * @version   $Id$
  * @package   
  */ 
-class Psn_Test_CategoriesField implements Ifw_Wp_Plugin_Selftest_Interface
+class Psn_Test_CategoriesField implements IfwPsn_Wp_Plugin_Selftest_Interface
 {
     private $_result = false;
 
@@ -33,12 +33,12 @@ class Psn_Test_CategoriesField implements Ifw_Wp_Plugin_Selftest_Interface
 
     /**
      * Runs the test
-     * @param Ifw_Wp_Plugin_Manager $pm
+     * @param IfwPsn_Wp_Plugin_Manager $pm
      * @return mixed
      */
-    public function execute(Ifw_Wp_Plugin_Manager $pm)
+    public function execute(IfwPsn_Wp_Plugin_Manager $pm)
     {
-        if (Ifw_Wp_Proxy_Db::columnExists('psn_rules', 'categories')) {
+        if (IfwPsn_Wp_Proxy_Db::columnExists('psn_rules', 'categories')) {
             $this->_result = true;
         }
     }
@@ -71,10 +71,10 @@ class Psn_Test_CategoriesField implements Ifw_Wp_Plugin_Selftest_Interface
 
     /**
      * Handles an error, should provide a solution for an unsuccessful test
-     * @param Ifw_Wp_Plugin_Manager $pm
+     * @param IfwPsn_Wp_Plugin_Manager $pm
      * @return mixed
      */
-    public function handleError(Ifw_Wp_Plugin_Manager $pm)
+    public function handleError(IfwPsn_Wp_Plugin_Manager $pm)
     {
         $patcher = new Psn_Patch_Database();
         $patcher->createRulesFieldCategories();

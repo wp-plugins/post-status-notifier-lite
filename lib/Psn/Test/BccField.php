@@ -7,11 +7,21 @@
  * @version   $Id$
  * @package   
  */ 
-class Psn_Test_BccField implements Ifw_Wp_Plugin_Selftest_Interface
+class Psn_Test_BccField implements IfwPsn_Wp_Plugin_Selftest_Interface
 {
     private $_result = false;
 
+    /**
+     * @var Psn_Patch_Database
+     */
+    private $_dbPatcher;
 
+
+
+    public function __construct()
+    {
+        $this->_dbPatcher = new Psn_Patch_Database();
+    }
 
     /**
      * Gets the test name
@@ -33,12 +43,12 @@ class Psn_Test_BccField implements Ifw_Wp_Plugin_Selftest_Interface
 
     /**
      * Runs the test
-     * @param Ifw_Wp_Plugin_Manager $pm
+     * @param IfwPsn_Wp_Plugin_Manager $pm
      * @return mixed
      */
-    public function execute(Ifw_Wp_Plugin_Manager $pm)
+    public function execute(IfwPsn_Wp_Plugin_Manager $pm)
     {
-        if (Ifw_Wp_Proxy_Db::columnExists('psn_rules', 'bcc')) {
+        if ($this->_dbPatcher->isFieldBcc()) {
             $this->_result = true;
         }
     }
@@ -71,13 +81,12 @@ class Psn_Test_BccField implements Ifw_Wp_Plugin_Selftest_Interface
 
     /**
      * Handles an error, should provide a solution for an unsuccessful test
-     * @param Ifw_Wp_Plugin_Manager $pm
+     * @param IfwPsn_Wp_Plugin_Manager $pm
      * @return mixed
      */
-    public function handleError(Ifw_Wp_Plugin_Manager $pm)
+    public function handleError(IfwPsn_Wp_Plugin_Manager $pm)
     {
-        $patcher = new Psn_Patch_Database();
-        $patcher->createRulesFieldBcc();
+        $this->_dbPatcher->createRulesFieldBcc();
 
         return __('Trying to create the field...', 'psn');
     }

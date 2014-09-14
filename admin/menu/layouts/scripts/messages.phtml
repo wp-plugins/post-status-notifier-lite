@@ -1,4 +1,9 @@
-<?php $flashMessenger = IfwZend_Controller_Action_HelperBroker::getStaticHelper('FlashMessenger'); ?>
+<?php
+if (session_id() != '' || defined('SID')) {
+    IfwPsn_Vendor_Zend_Session::setStarted(true);
+}
+$flashMessenger = IfwPsn_Vendor_Zend_Controller_Action_HelperBroker::getStaticHelper('FlashMessenger');
+?>
 
 <?php if ($flashMessenger->setNamespace('default')->hasMessages() || $flashMessenger->setNamespace('success')->hasMessages()): ?>
     <div id="message" class="updated">

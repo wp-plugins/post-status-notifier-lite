@@ -10,16 +10,18 @@
  * @version   $Id$
  * @package   
  */ 
-class Psn_Patch_Database implements Ifw_Wp_Plugin_Update_Patch_Interface
+class Psn_Patch_Database implements IfwPsn_Wp_Plugin_Update_Patch_Interface
 {
     /**
-     * @param Ifw_Util_Version $presentVersion
-     * @param Ifw_Wp_Plugin_Manager $pm
-     * @throws Ifw_Wp_Plugin_Update_Patch_Exception
+     * @param IfwPsn_Util_Version $presentVersion
+     * @param IfwPsn_Wp_Plugin_Manager $pm
+     * @throws IfwPsn_Wp_Plugin_Update_Patch_Exception
      */
-    public function execute(Ifw_Util_Version $presentVersion, Ifw_Wp_Plugin_Manager $pm)
+    public function execute(IfwPsn_Util_Version $presentVersion, IfwPsn_Wp_Plugin_Manager $pm)
     {
         $this->updateRulesTable();
+
+        IfwPsn_Wp_Proxy_Action::doAction('psn_patch_db');
     }
 
     /**
@@ -47,6 +49,25 @@ class Psn_Patch_Database implements Ifw_Wp_Plugin_Update_Patch_Interface
         if (!$this->isFieldFrom()) {
             $this->createRulesFieldFrom();
         }
+
+        // Updates for version 1.5
+        if (!$this->isFieldMailTpl()) {
+            $this->createRulesFieldMailTpl();
+        }
+        if (!$this->isFieldCcSelect()) {
+            $this->createRulesFieldCcSelect();
+        }
+        if (!$this->isFieldBccSelect()) {
+            $this->createRulesFieldBccSelect();
+        }
+        if (!$this->isFieldEditorRestriction()) {
+            $this->createRulesFieldEditorRestriction();
+        }
+
+        // Updates for version 1.5.1
+        if (!$this->isFieldToLoop()) {
+            $this->createRulesFieldToLoop();
+        }
     }
 
     /**
@@ -64,7 +85,9 @@ class Psn_Patch_Database implements Ifw_Wp_Plugin_Update_Patch_Interface
             'notification_body',
             'recipient',
             'cc',
+            'cc_select',
             'bcc',
+            'bcc_select',
             'active',
             'service_email',
             'service_log',
@@ -72,8 +95,8 @@ class Psn_Patch_Database implements Ifw_Wp_Plugin_Update_Patch_Interface
         );
 
         $diff = array_diff(
-            Ifw_Wp_Proxy_Filter::apply('psn_db_patcher_rule_fields', $ruleFields),
-            Ifw_Wp_Proxy_Db::getTableFieldNames('psn_rules')
+            IfwPsn_Wp_Proxy_Filter::apply('psn_db_patcher_rule_fields', $ruleFields),
+            IfwPsn_Wp_Proxy_Db::getTableFieldNames('psn_rules')
         );
 
         return empty($diff);
@@ -84,7 +107,7 @@ class Psn_Patch_Database implements Ifw_Wp_Plugin_Update_Patch_Interface
      */
     public function isFieldBcc()
     {
-        return Ifw_Wp_Proxy_Db::columnExists('psn_rules', 'bcc');
+        return IfwPsn_Wp_Proxy_Db::columnExists('psn_rules', 'bcc');
     }
 
     /**
@@ -92,7 +115,7 @@ class Psn_Patch_Database implements Ifw_Wp_Plugin_Update_Patch_Interface
      */
     public function isFieldCategories()
     {
-        return Ifw_Wp_Proxy_Db::columnExists('psn_rules', 'categories');
+        return IfwPsn_Wp_Proxy_Db::columnExists('psn_rules', 'categories');
     }
 
     /**
@@ -100,7 +123,7 @@ class Psn_Patch_Database implements Ifw_Wp_Plugin_Update_Patch_Interface
      */
     public function isFieldTo()
     {
-        return Ifw_Wp_Proxy_Db::columnExists('psn_rules', 'to');
+        return IfwPsn_Wp_Proxy_Db::columnExists('psn_rules', 'to');
     }
 
     /**
@@ -108,7 +131,47 @@ class Psn_Patch_Database implements Ifw_Wp_Plugin_Update_Patch_Interface
      */
     public function isFieldFrom()
     {
-        return Ifw_Wp_Proxy_Db::columnExists('psn_rules', 'from');
+        return IfwPsn_Wp_Proxy_Db::columnExists('psn_rules', 'from');
+    }
+
+    /**
+     * @return bool
+     */
+    public function isFieldMailTpl()
+    {
+        return IfwPsn_Wp_Proxy_Db::columnExists('psn_rules', 'mail_tpl');
+    }
+
+    /**
+     * @return bool
+     */
+    public function isFieldCcSelect()
+    {
+        return IfwPsn_Wp_Proxy_Db::columnExists('psn_rules', 'cc_select');
+    }
+
+    /**
+     * @return bool
+     */
+    public function isFieldBccSelect()
+    {
+        return IfwPsn_Wp_Proxy_Db::columnExists('psn_rules', 'bcc_select');
+    }
+
+    /**
+     * @return bool
+     */
+    public function isFieldEditorRestriction()
+    {
+        return IfwPsn_Wp_Proxy_Db::columnExists('psn_rules', 'editor_restriction');
+    }
+
+    /**
+     * @return bool
+     */
+    public function isFieldToLoop()
+    {
+        return IfwPsn_Wp_Proxy_Db::columnExists('psn_rules', 'to_loop');
     }
 
     /**
@@ -117,8 +180,8 @@ class Psn_Patch_Database implements Ifw_Wp_Plugin_Update_Patch_Interface
      */
     public function createRulesFieldBcc()
     {
-        $query = sprintf('ALTER TABLE `%s` ADD `bcc` TEXT NULL AFTER `cc`', Ifw_Wp_Proxy_Db::getTableName('psn_rules'));
-        Ifw_Wp_Proxy_Db::getObject()->query($query);
+        $query = sprintf('ALTER TABLE `%s` ADD `bcc` TEXT NULL AFTER `cc`', IfwPsn_Wp_Proxy_Db::getTableName('psn_rules'));
+        IfwPsn_Wp_Proxy_Db::getObject()->query($query);
     }
 
     /**
@@ -127,8 +190,8 @@ class Psn_Patch_Database implements Ifw_Wp_Plugin_Update_Patch_Interface
      */
     public function createRulesFieldCategories()
     {
-        $query = sprintf('ALTER TABLE `%s` ADD `categories` TEXT NULL', Ifw_Wp_Proxy_Db::getTableName('psn_rules'));
-        Ifw_Wp_Proxy_Db::getObject()->query($query);
+        $query = sprintf('ALTER TABLE `%s` ADD `categories` TEXT NULL', IfwPsn_Wp_Proxy_Db::getTableName('psn_rules'));
+        IfwPsn_Wp_Proxy_Db::getObject()->query($query);
     }
 
     /**
@@ -138,8 +201,8 @@ class Psn_Patch_Database implements Ifw_Wp_Plugin_Update_Patch_Interface
     public function createRulesFieldTo()
     {
         // ALTER TABLE  `wp_psn_rules` ADD  `to` VARCHAR( 255 ) NULL AFTER  `recipient`
-        $query = sprintf('ALTER TABLE `%s` ADD `to` VARCHAR( 255 ) NULL AFTER  `recipient`', Ifw_Wp_Proxy_Db::getTableName('psn_rules'));
-        Ifw_Wp_Proxy_Db::getObject()->query($query);
+        $query = sprintf('ALTER TABLE `%s` ADD `to` VARCHAR( 255 ) NULL AFTER `recipient`', IfwPsn_Wp_Proxy_Db::getTableName('psn_rules'));
+        IfwPsn_Wp_Proxy_Db::getObject()->query($query);
     }
 
     /**
@@ -149,8 +212,63 @@ class Psn_Patch_Database implements Ifw_Wp_Plugin_Update_Patch_Interface
     public function createRulesFieldFrom()
     {
         // ALTER TABLE  `wp_psn_rules` ADD  `from` VARCHAR( 255 ) NULL AFTER  `recipient`
-        $query = sprintf('ALTER TABLE `%s` ADD `from` VARCHAR( 255 ) NULL ', Ifw_Wp_Proxy_Db::getTableName('psn_rules'));
-        Ifw_Wp_Proxy_Db::getObject()->query($query);
+        $query = sprintf('ALTER TABLE `%s` ADD `from` VARCHAR( 255 ) NULL ', IfwPsn_Wp_Proxy_Db::getTableName('psn_rules'));
+        IfwPsn_Wp_Proxy_Db::getObject()->query($query);
+    }
+
+    /**
+     * Create field "mail_tpl" on psn_rules table
+     * @since 1.5
+     */
+    public function createRulesFieldMailTpl()
+    {
+        // ALTER TABLE  `wp_psn_rules` ADD  `mail_tpl` INT( 11 ) NULL AFTER  `recipient`
+        $query = sprintf('ALTER TABLE `%s` ADD `mail_tpl` INT( 11 ) NULL ', IfwPsn_Wp_Proxy_Db::getTableName('psn_rules'));
+        IfwPsn_Wp_Proxy_Db::getObject()->query($query);
+    }
+
+    /**
+     * Create field "cc_select" on psn_rules table
+     * @since 1.5
+     */
+    public function createRulesFieldCcSelect()
+    {
+        // ALTER TABLE `wp_psn_rules` ADD `cc_select` TEXT NULL AFTER `to`;
+        $query = sprintf('ALTER TABLE `%s` ADD `cc_select` TEXT NULL AFTER `to`', IfwPsn_Wp_Proxy_Db::getTableName('psn_rules'));
+        IfwPsn_Wp_Proxy_Db::getObject()->query($query);
+    }
+
+    /**
+     * Create field "bcc_select" on psn_rules table
+     * @since 1.5
+     */
+    public function createRulesFieldBccSelect()
+    {
+        // ALTER TABLE `wp_psn_rules` ADD `bcc_select` TEXT NULL AFTER `cc`;
+        $query = sprintf('ALTER TABLE `%s` ADD `bcc_select` TEXT NULL AFTER `cc`', IfwPsn_Wp_Proxy_Db::getTableName('psn_rules'));
+        IfwPsn_Wp_Proxy_Db::getObject()->query($query);
+    }
+
+    /**
+     * Create field "bcc_select" on psn_rules table
+     * @since 1.5
+     */
+    public function createRulesFieldEditorRestriction()
+    {
+        // ALTER TABLE `wp_psn_rules` ADD `editor_restriction` TEXT NULL DEFAULT NULL ;
+        $query = sprintf('ALTER TABLE `%s` ADD `editor_restriction` TEXT NULL DEFAULT NULL', IfwPsn_Wp_Proxy_Db::getTableName('psn_rules'));
+        IfwPsn_Wp_Proxy_Db::getObject()->query($query);
+    }
+
+    /**
+     * Create field "to_loop" on psn_rules table
+     * @since 1.5.1
+     */
+    public function createRulesFieldToLoop()
+    {
+        // ALTER TABLE `wp_psn_rules` ADD `editor_restriction` TEXT NULL DEFAULT NULL ;
+        $query = sprintf('ALTER TABLE `%s` ADD `to_loop` TINYINT(1) DEFAULT 0', IfwPsn_Wp_Proxy_Db::getTableName('psn_rules'));
+        IfwPsn_Wp_Proxy_Db::getObject()->query($query);
     }
 
     /**

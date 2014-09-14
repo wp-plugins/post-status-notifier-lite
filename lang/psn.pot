@@ -93,8 +93,7 @@ msgid "Subject"
 msgstr ""
 
 msgid ""
-"Open the help menu in the upper right corner to see a list of all supported "
-"placeholders."
+"Open the help menu in the upper right corner to see a list of all <a %s>supported placeholders</a>."
 msgstr ""
 
 msgid "Text"
@@ -166,7 +165,7 @@ msgstr ""
 msgid "Lets you create individual notification rules to be informed about all post status transitions of your blog. Features custom email texts with many placeholders and custom post types."
 msgstr ""
 
-msgid "Add additional recipient emails. Comma separated. Supports placeholders [author_email], [blog_admin_email] and [current_user_email]."
+msgid "Add additional recipient emails. Comma separated. Supports placeholders like [author_email], [blog_admin_email], [current_user_email] or the dynamic [recipient_*] placeholders. Check the <a %s>placeholders help</a>."
 msgstr ""
 
 msgid "Limited to 1. Get the Premium version for unlimited Cc emails."
@@ -205,7 +204,7 @@ msgstr ""
 msgid "[blog_name]: New post is waiting for review"
 msgstr ""
 
-msgid "Howdy admin,\nthere is a new post by [author_display_name] waiting for review:\n\"[post_title]\".\n\nHere is the permalink: [post_permalink]\n\nThe author\'s email address is [author_email]\n\n[blog_wpurl]"
+msgid "Howdy admin,\nthere is a new post by [author_display_name] waiting for review:\n\"[post_title]\".\n\nHere is the permalink: [post_permalink]\n\nHere is the backend edit link: [post_editlink]\n\nThe author\'s email address is [author_email]\n\n[blog_wpurl]"
 msgstr ""
 
 msgid "Your post on [blog_name] got published!"
@@ -250,7 +249,7 @@ msgstr ""
 msgid "Trying to create the table..."
 msgstr ""
 
-msgid "Add bcc recipient emails. Comma separated. Supports placeholders [author_email], [blog_admin_email] and [current_user_email]."
+msgid "Add bcc recipient emails. Comma separated. Supports placeholders like [author_email], [blog_admin_email], [current_user_email] or the dynamic [recipient_*] placeholders. Check the <a %s>placeholders help</a>."
 msgstr ""
 
 msgid "Activate SMTP"
@@ -274,7 +273,7 @@ msgstr ""
 msgid "To select multiple categories hold down the control button (ctrl) on Windows or command button (cmd) on Mac.<br>If nothing is selected, all categories get included.<br>Exclude is dominant. See the <a href=\"%s\" target=\"_blank\">docs</a> for more details."
 msgstr ""
 
-msgid "Include categories"
+msgid "Include only these categories"
 msgstr ""
 
 msgid "Exclude categories"
@@ -325,7 +324,7 @@ msgstr ""
 msgid "These placeholders are unique to this WordPress installation. They use the names of custom categories and tags."
 msgstr ""
 
-msgid "The * stands for the name of the custom field.<br>Example: If you have a custom post field "actors" you should call your placeholder <b>[post_custom_field-actors]</b>"
+msgid "The * stands for the name of the custom field.<br>Example: If you have a custom post field \"actors\" you should call your placeholder <b>[post_custom_field-actors]</b>"
 msgstr ""
 
 msgid "Duplicate"
@@ -373,7 +372,7 @@ msgstr ""
 msgid "Import file"
 msgstr ""
 
-msgid "Please select a .xml export file created by PSN."
+msgid "Please select a valid .xml export file created by this plugin."
 msgstr ""
 
 msgid "Please select a valid import file."
@@ -385,7 +384,7 @@ msgstr ""
 msgid "Import prefix"
 msgstr ""
 
-msgid "Prepend this text to imported rule names to identify them."
+msgid "Prepend this text to imported item names to identify them."
 msgstr ""
 
 msgid "Deactivate imported rules."
@@ -423,3 +422,163 @@ msgstr ""
 
 msgid "Show details"
 msgstr ""
+
+msgid "None"
+msgstr ""
+
+msgid "To select multiple recipients hold down the control button (ctrl) on Windows or command button (cmd) on Mac."
+msgstr ""
+
+msgid "To select multiple cc recipients hold down the control button (ctrl) on Windows or command button (cmd) on Mac."
+msgstr ""
+
+msgid "To select multiple bcc recipients hold down the control button (ctrl) on Windows or command button (cmd) on Mac."
+msgstr ""
+
+msgid "To select multiple recipients hold down the control button (ctrl) on Windows or command button (cmd) on Mac."
+msgstr ""
+
+msgid "To select multiple cc recipients hold down the control button (ctrl) on Windows or command button (cmd) on Mac."
+msgstr ""
+
+msgid "To select multiple bcc recipients hold down the control button (ctrl) on Windows or command button (cmd) on Mac."
+msgstr ""
+
+msgid "Not private"
+msgstr ""
+
+msgid "Bcc multi selection field"
+msgstr ""
+
+msgid "Not pending"
+msgstr ""
+
+msgid "Test Email"
+msgstr ""
+
+msgid "Send a test email to check the general email functionality of your WordPress installation. Settings in the options section will be considered (e.g. SMTP)."
+msgstr ""
+
+msgid "Server environment"
+msgstr ""
+
+msgid "Check the <a href=\"%s\" target=\"_blank\">FAQ</a>"
+msgstr ""
+
+msgid "HTML emails"
+msgstr ""
+
+msgid "Send test email"
+msgstr ""
+
+msgid "Test Email from %s"
+msgstr ""
+
+msgid "Send test email"
+msgstr ""
+
+msgid "Test Email from %s"
+msgstr ""
+
+msgid "For more examples visit the <a href=\"%s\" class=\"%s\" target=\"_blank\">PSN resources website</a>."
+msgstr ""
+
+msgid "Check out the <a href=\"%s\" target=\"_blank\">Premium version</a> and all its features on CodeCanyon."
+msgstr ""
+
+msgid "The Lite version of this plugin is still activated. Please deactivate it! Refer to the <a href=\"%s\">Upgrade Howto</a>."
+msgstr ""
+
+msgid "<b>Subject</b> and <b>text</b> support conditions, loops, functions and placeholder filters. This makes it possible to create dynamic texts."
+msgstr ""
+
+msgid "This is an <b>example if-condition</b> to display the excerpt only if it is not empty"
+msgstr ""
+
+msgid "With placeholder filters and functions you can get the most unlikely values out of the placeholders attached to a post. This example retrieves the currency key out a multidimensional serialized PHP array"
+msgstr ""
+
+msgid "To learn more about conditions, loops, functions and filters please <a href=\"%s\" target=\"_blank\">check the documentation</a>."
+msgstr ""
+
+msgid "Documentation"
+msgstr ""
+
+msgid "Supports <a %s>conditions</a> (if activated in the options)."
+msgstr ""
+
+msgid "Array placeholders"
+msgstr ""
+
+msgid "These placeholders contain PHP arrays. They can be used with filters and functions (see <a %s>Conditions</a>) to retrieve the data."
+msgstr ""
+
+msgid "Block notifications Post Status Notifier could generate for this post."
+msgstr ""
+
+msgid "Block notifications"
+msgstr ""
+
+msgid "Disable it completely"
+msgstr ""
+
+msgid "Disable the \"Block notifications\" feature in the Post submit box."
+msgstr ""
+
+msgid "For admins only"
+msgstr ""
+
+msgid "Enable the \"Block notifications\" feature for admins only."
+msgstr ""
+
+msgid "Invalid recipient"
+msgstr ""
+
+msgid "Custom CC"
+msgstr ""
+
+msgid "Custom BCC"
+msgstr ""
+
+msgid "Not trash"
+msgstr ""
+
+msgid "Not trash"
+msgstr ""
+
+msgid "Be careful with user placeholders if your blog has very much users (several hundrets or even thousands) like <b>[recipient_all_users]</b> or <b>[recipient_role_*]</b> if the role has very much members. These could cause server load!"
+msgstr ""
+
+msgid "Be careful with user placeholders if your blog has very much users (several hundrets or even thousands) like <b>[recipient_all_users_array]</b> or <b>[recipient_role_*_array]</b> if the role has very much members. These could cause server load!"
+msgstr ""
+
+msgid "If you want to use <b>PSN's conditions syntax</b> in your notification texts, you can activate this feature here. Check the <a href=\"%s\" target=\"_blank\">Conditions manual</a> to learn more about it."
+msgstr ""
+
+msgid "Options for the \"Block notifications\" feature in the post submit box."
+msgstr ""
+
+msgid "License"
+msgstr ""
+
+msgid "For more details please check the <a href=\"%s\" target=\"_blank\">placeholders help</a>."
+msgstr ""
+
+msgid "Conditional template syntax"
+msgstr ""
+
+msgid "Block notifications feature on Post submit post"
+msgstr ""
+
+msgid "One email per TO recipient"
+msgstr ""
+
+msgid "Extensible"
+msgstr ""
+
+msgid "Services"
+msgstr ""
+
+msgid "Filter"
+msgstr ""
+
