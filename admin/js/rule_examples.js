@@ -4,7 +4,7 @@ jQuery(document).ready( function($) {
         $('#name').val(PsnExampleRule.ThePendingPost);
 
         $('#posttype').val('post');
-        $('#status_before').val('draft');
+        $('#status_before').val('not_pending');
         $('#status_after').val('pending');
 
         $('#notification_subject').val(PsnExampleRule.ThePendingPostSubject);

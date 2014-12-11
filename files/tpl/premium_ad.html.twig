@@ -4,14 +4,20 @@
     </a>
 </p>
 
+<p>{% autoescape false %}{{ text.__('<b>Before upgrading</b>, please consider the <a href="%s" target="_blank">Uprade-HowTo</a>', 'ifw')|replace({'%s': 'http://docs.ifeelweb.de/post-status-notifier/upgrade_howto.html'}) }}{% endautoescape %}</p>
 <p>{{ text.__('Features of the Premium version', 'ifw') }}:</p>
 
 <ul id="premium_features">
+    <li>{{ text.__('HTML emails', 'psn') }}</li>
     <li>{{ text.__('Unlimited notification rules', 'psn') }}</li>
     <li>{{ text.__('Unlimited CC email recipients', 'psn') }}</li>
     <li>{{ text.__('Unlimited Bcc email recipients', 'psn') }}</li>
     <li>{{ text.__('Category filter', 'psn') }}</li>
     <li>{{ text.__('SMTP server support', 'psn') }}</li>
+    <li>{{ text.__('Conditional template syntax', 'psn') }}</li>
+    <li>{{ text.__('One email per TO recipient', 'psn') }}</li>
+    <li>{{ text.__('Mail queue / Deferred sending', 'psn') }}</li>
+    <li>{{ text.__('Block notifications feature on Post submit post', 'psn') }}</li>
     <li>{{ text.__('Extended recipients', 'psn') }}</li>
     <li>{{ text.__('No appendix in sent emails', 'psn') }}</li>
     <li>{{ text.__('Unlimited placeholders filters', 'psn') }}</li>
@@ -20,6 +26,7 @@
     <li>{{ text.__('Custom sender e-mail', 'psn') }}</li>
     <li>{{ text.__('Extensive logging (matching rules, sent mails ...) with dashboard widget', 'psn') }}</li>
     <li>{{ text.__('Premium Support', 'psn') }}</li>
+    <li>{{ text.__('Extensible', 'psn') }}</li>
 </ul>
 
 <p class="ifw-keep-alive">{{ text.__('With your purchase you will keep this plugin alive. Thankyou.', 'ifw') }}</p>
