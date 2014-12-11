@@ -3,7 +3,7 @@ Tags: post, status, notification, notify, change, custom post type, email, log, 
 Contributors: worschtebrot
 Requires at least: 3.3
 Tested up to: 4.0
-Stable tag: 1.6.2
+Stable tag: 1.7
 
 
 Lets you create individual notification rules to be informed about all post status transitions of your blog. Features custom email texts with many placeholders and custom post types.
@@ -41,6 +41,7 @@ Get the [Premium version](http://codecanyon.net/item/post-status-notifier/480942
 * Manipulate placeholders content with **filters** to completely adjust the output to your needs (uses the filters of the famous PHP template engine Twig / limited to one filter in the Lite version)
 * WordPress **multisite compatible**
 * Premium version: HTML emails / mail templates
+* Premium version: Mail queue / deferred sending
 * Premium version: Categories filter: Include or exclude categories (even from custom post types) from notifications
 * Premium version: Supports **SMTP**. You find all necessary SMTP settings to connect your SMTP server in the options section.
 * Premium version: Supports **user roles** (custom roles too) as email recipients
@@ -94,6 +95,20 @@ Here you can find a detailed documentation:
 http://docs.ifeelweb.de/post-status-notifier/
 
 == Change Log ==
+
+= 1.7 =
+
+- New feature: Mail Queue (Deferred sending)
+- Improved logging: Shows detailed email contents now, including HTML mails
+- Bugfix: Placeholder [post_editlink] could not be replaced in case of users without edit rights changed the post status (e.g. if the permission exceeded in the meantime but he still gets emails)
+- Bugfix: Mail template HTML editor produced an JS error when opened in edit mode in Firefox
+
+= 1.6.3 =
+
+- Bugfix: Service section environment info metabox could break in certain cases
+- Bugfix: FROM was empty if no custom FROM was set
+- Improvement: Rule and mail template export could break when other plugins interfered via filters
+- Fix: Rule placeholder help screen showed "post_featured_image_src" which should be "post_featured_image_url"
 
 = 1.6.2 =
 

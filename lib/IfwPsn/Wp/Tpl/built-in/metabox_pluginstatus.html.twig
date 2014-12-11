@@ -1,6 +1,6 @@
 <div>
     <div id="ifw-plugin-test-icon">
-        {% if status == 'true' %}<img src="{{ img_path }}/plugin_status_good.png" />{% elseif status == 'false' %}<img src="{{ img_path }}/plugin_status_bad.png" />{% else %}<img src="{{ img_path }}/plugin_status_unknown.png" />{% endif %}
+        {% if status == 'true' %}<img src="{{ img_path }}plugin_status_good.png" />{% elseif status == 'false' %}<img src="{{ img_path }}plugin_status_bad.png" />{% else %}<img src="{{ img_path }}plugin_status_unknown.png" />{% endif %}
     </div>
     <div id="ifw-plugin-test-result">
         {% if status == 'null' %}<p>{{ text.__('Not tested yet', 'ifw') }}</p>{% else %}

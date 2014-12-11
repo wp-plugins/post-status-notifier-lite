@@ -187,13 +187,33 @@ abstract class IfwPsn_Wp_Module_Bootstrap_Abstract implements IfwPsn_Wp_Module_B
      */
     protected function _initAjax()
     {
-        if (method_exists($this, '_registerAjaxRequests')) {
-            $requests = $this->_registerAjaxRequests();
-            if (!is_array($requests)) {
-                $requests = array($requests);
+        if ($this->_pm->getAccess()->isAdmin() && $this->_pm->getAccess()->isAjax() && !$this->_pm->getAccess()->isHeartbeat() &&
+            method_exists($this, '_registerAdminAjaxRequests')) {
+
+            // register admin ajax request
+            $requests = $this->_registerAdminAjaxRequests();
+            if ($requests !== null) {
+                if (!is_array($requests)) {
+                    $requests = array($requests);
+                }
+                foreach ($requests as $request) {
+                    $this->_pm->getAjaxManager()->registerRequest($request);
+                }
             }
-            foreach ($requests as $request) {
-                $this->_pm->getAjaxManager()->registerRequest($request);
+        }
+
+        if ($this->_pm->getAccess()->isAjax() && !$this->_pm->getAccess()->isHeartbeat() &&
+            method_exists($this, '_registerAjaxRequests')) {
+
+            // register global ajax requests
+            $requests = $this->_registerAjaxRequests();
+            if ($requests !== null) {
+                if (!is_array($requests)) {
+                    $requests = array($requests);
+                }
+                foreach ($requests as $request) {
+                    $this->_pm->getAjaxManager()->registerRequest($request);
+                }
             }
         }
     }

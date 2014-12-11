@@ -96,6 +96,16 @@ class IfwPsn_Wp_Plugin_Logger extends IfwPsn_Vendor_Zend_Log
 
     /**
      * @param IfwPsn_Wp_Plugin_Manager $pm
+     * @param null $name
+     * @return bool
+     */
+    public static function hasInstance(IfwPsn_Wp_Plugin_Manager $pm, $name = null)
+    {
+        return isset(self::$_instances[$pm->getAbbr()][$name]);
+    }
+
+    /**
+     * @param IfwPsn_Wp_Plugin_Manager $pm
      * @param \IfwPsn_Vendor_Zend_Log_FactoryInterface|\IfwPsn_Vendor_Zend_Log_FactoryInterface $writer
      * @param null $name Loggername
      * @return IfwPsn_Wp_Plugin_Logger
@@ -182,35 +192,33 @@ class IfwPsn_Wp_Plugin_Logger extends IfwPsn_Vendor_Zend_Log
     }
 
     /**
-     * @param string $message
+     * @param $message
+     * @param null $extras
      * @param bool $append_backtrace
-     * @internal param null $priority
-     * @internal param null $extras
-     * @see IfwPsn_Vendor_Zend_Log::log()
+     * @throws IfwPsn_Vendor_Zend_Log_Exception
      */
-    public function error($message, $append_backtrace = true)
+    public function error($message, $extras = null, $append_backtrace = false)
     {
         if ($append_backtrace) {
             $message = $this->_appendBacktrace($message);
         }
 
-        parent::log($message, IfwPsn_Vendor_Zend_Log::ERR);
+        parent::log($message, IfwPsn_Vendor_Zend_Log::ERR, $extras);
     }
 
     /**
-     * @param string $message
+     * @param $message
+     * @param null $extras
      * @param bool $append_backtrace
-     * @internal param null $priority
-     * @internal param null $extras
-     * @see IfwPsn_Vendor_Zend_Log::log()
+     * @throws IfwPsn_Vendor_Zend_Log_Exception
      */
-    public function debug($message, $append_backtrace = true)
+    public function debug($message, $extras = null, $append_backtrace = false)
     {
         if ($append_backtrace) {
             $message = $this->_appendBacktrace($message);
         }
 
-        parent::log($message, IfwPsn_Vendor_Zend_Log::DEBUG);
+        parent::log($message, IfwPsn_Vendor_Zend_Log::DEBUG, $extras);
     }
 
     /**

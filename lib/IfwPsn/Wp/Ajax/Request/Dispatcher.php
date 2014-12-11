@@ -66,6 +66,9 @@ class IfwPsn_Wp_Ajax_Request_Dispatcher
     {
         $this->_callback = $request->getCallback();
         IfwPsn_Wp_Proxy_Action::add($request->getAction(), array($this, 'execute'));
+        if ($request instanceof IfwPsn_Wp_Ajax_Request_Public) {
+            IfwPsn_Wp_Proxy_Action::add('wp_ajax_' . $request->getId(), array($this, 'execute'));
+        }
     }
     
     /**

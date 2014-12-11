@@ -112,6 +112,14 @@ class IfwPsn_Zend_Controller_Router_Route_RequestVars implements IfwPsn_Vendor_Z
                 $url = IfwPsn_Wp_Proxy_Admin::getAdminPageBaseUrl();
                 $querydata['page'] = $data['adminpage'];
                 unset($data['adminpage']);
+            } elseif (isset($data['editpage'])) {
+                $url = 'edit.php';
+                if (isset($data['posttype'])) {
+                    $querydata['post_type'] = $data['posttype'];
+                    unset($data['posttype']);
+                }
+                $querydata['page'] = $data['editpage'];
+                unset($data['editpage']);
             }
             if (isset($data['module'])) {
                 $querydata['mod'] = $data['module'];

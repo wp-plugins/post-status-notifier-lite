@@ -22,7 +22,13 @@ class IfwPsn_Wp_Options_Field_Checkbox extends IfwPsn_Wp_Options_Field
         $id = $options->getOptionRealId($this->_id);
         $name = $options->getPageId() . '['. $id .']';
 
-        $html = '<input type="checkbox" id="'. $id .'" name="'. $name .'" value="1" ' . checked(1, $options->getOption($this->_id), false) . '/>';
+        if (isset($this->_params['non_permanent'])) {
+            $checked = '';
+        } else {
+            $checked = checked(1, $options->getOption($this->_id), false);
+        }
+
+        $html = '<input type="checkbox" id="'. $id .'" name="'. $name .'" value="1" ' . $checked . '/>';
         if (!empty($this->_description)) {
             $html .= '<label for="'. $id .'"> '  . $this->_description . '</label>';
         }

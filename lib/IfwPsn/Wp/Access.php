@@ -214,6 +214,20 @@ class IfwPsn_Wp_Access
     }
 
     /**
+     * Checks for admin edit page access
+     * @return bool
+     */
+    public function isAdminEdit()
+    {
+        $requestInfo = pathinfo($this->_requestUri);
+
+        if ($this->isAdmin() && $requestInfo['filename'] == 'edit') {
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * @param $page
      * @return bool
      */

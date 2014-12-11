@@ -230,6 +230,7 @@ class IfwPsn_Wp_ORM_ORM extends IfwPsn_Wp_ORM_Idiorm
 
     /**
      * @param $query
+     * @param $values
      * @return mixed
      */
     protected function _prepareWpdbQuery($query, $values)

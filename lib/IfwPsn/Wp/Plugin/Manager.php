@@ -255,6 +255,18 @@ class IfwPsn_Wp_Plugin_Manager
     }
 
     /**
+     * Checks if a logger exists
+     *
+     * @param string|null $name
+     * @return bool
+     */
+    public function hasLogger($name = null)
+    {
+        require_once $this->getPathinfo()->getRootLib() . '/IfwPsn/Wp/Plugin/Logger.php';
+        return IfwPsn_Wp_Plugin_Logger::hasInstance($this, $name);
+    }
+
+    /**
      * @return IfwPsn_Wp_Ajax_Manager
      */
     public function getAjaxManager()
@@ -329,7 +341,16 @@ class IfwPsn_Wp_Plugin_Manager
     {
         return $this->getBootstrap()->getOptions()->getOption($id);
     }
-    
+
+    /**
+     * @param $id
+     * @return null
+     */
+    public function isEmptyOption($id)
+    {
+        return $this->getBootstrap()->getOptions()->isEmptyOption($id);
+    }
+
     /**
      * 
      * @param Exception $e
@@ -384,5 +405,14 @@ class IfwPsn_Wp_Plugin_Manager
     public function isPremium()
     {
         return IfwPsn_Wp_Proxy_Filter::apply($this->getAbbrLower() . '_is_premium', false);
+    }
+
+    /**
+     * Shortcut for getEnv()->isProduction()
+     * @return bool
+     */
+    public function isProduction()
+    {
+        return $this->getEnv()->isProduction();
     }
 }

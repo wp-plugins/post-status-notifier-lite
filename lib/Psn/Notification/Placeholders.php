@@ -189,7 +189,7 @@ class Psn_Notification_Placeholders extends IfwPsn_Util_Replacements
                 $result['post_featured_image_height'] = $featuredImgData[2];
             }
         } else {
-            $result['post_featured_image_src'] = '';
+            $result['post_featured_image_url'] = '';
             $result['post_featured_image_width'] = '';
             $result['post_featured_image_height'] = '';
         }

@@ -31,7 +31,7 @@ class Psn_Notification_Deferred_Handler
      * @param $post
      * @param $update
      */
-    public function execute($post_ID, $post, $update)
+    public function execute($post_ID, $post, $update = null)
     {
         /**
          * @var Psn_Notification_Deferred_Container $container

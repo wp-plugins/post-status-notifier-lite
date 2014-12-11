@@ -49,7 +49,7 @@ class IfwPsn_Zend_Controller_Dispatcher_Wp extends IfwPsn_Vendor_Zend_Controller
         $this->setResponse($response);
 
         if (!($this->_controller instanceof IfwPsn_Vendor_Zend_Controller_Action_Interface) or
-            !strpos(strtolower($request->getControllerName()), $request->get('controller'))) {
+            !strpos(strtolower($request->getControllerName()), strtolower($request->get('controller')))) {
 
             // if controller is not initialized by initController already or on error/excption
 

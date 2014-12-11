@@ -130,6 +130,10 @@ class IfwPsn_Wp_ORM_Model extends IfwPsn_Wp_ORM_ModelParis
      */
     public static function export($modelName, $itemList, $options = array())
     {
+        global $wp_filter, $merged_filters;
+        $wp_filter = array();
+        $merged_filters = array();
+
         if (!is_array($itemList)) {
             $itemList = array($itemList);
         }

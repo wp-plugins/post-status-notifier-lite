@@ -85,16 +85,27 @@ abstract class IfwPsn_Wp_Plugin_Menu_Page_Main implements IfwPsn_Wp_Plugin_Menu_
 
             IfwPsn_Wp_Proxy_Action::doPlugin($this->_pm, 'before_load_submenu_page', $subPage);
 
-            $subPageHook = add_submenu_page(
-                $this->getSlug(),
-                $subPage->getPageTitle(),
-                $subPage->getMenuTitle(),
-                $subPage->getCapability(),
-                $subPage->getSlug(),
-                array($subPage, 'handle')
-            );
+            if ($subPage->isHidden()) {
 
-            $subPage->setPageHook($subPageHook);
+                global $_registered_pages;
+                $hookname = get_plugin_page_hookname( plugin_basename($subPage->getSlug()), $subPage->getSlug());
+                add_action( $hookname, array($subPage, 'handle') );
+                $subPage->setPageHook($hookname);
+                $_registered_pages[$hookname] = true;
+
+            } else {
+
+                $subPageHook = add_submenu_page(
+                    $this->getSlug(),
+                    $subPage->getPageTitle(),
+                    $subPage->getMenuTitle(),
+                    $subPage->getCapability(),
+                    $subPage->getSlug(),
+                    array($subPage, 'handle')
+                );
+
+                $subPage->setPageHook($subPageHook);
+            }
 
             IfwPsn_Wp_Proxy_Action::doPlugin($this->_pm, 'after_load_submenu_page', $subPage);
             if ($this->_pm->getAccess()->getPage() == $subPage->getSlug()) {

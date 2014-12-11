@@ -32,13 +32,4 @@ class PsnApplicationController extends IfwPsn_Zend_Controller_Default
 
         $this->_navigation = $nav->getNavigation();
     }
-
-    /**
-     * @param $msg
-     */
-    protected function _addErrorMessage($msg)
-    {
-        $this->getMessenger()->setNamespace('error')->addMessage($msg);
-    }
-
 }

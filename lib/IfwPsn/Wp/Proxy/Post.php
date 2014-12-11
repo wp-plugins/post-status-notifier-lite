@@ -679,10 +679,16 @@ class IfwPsn_Wp_Proxy_Post extends IfwPsn_Wp_Proxy_Abstract
      */
     public static function getEditLink($id, $context = '')
     {
+        $result = '';
+
         if (function_exists('get_edit_post_link')) {
-            return get_edit_post_link($id, $context);
+            $link = get_edit_post_link($id, $context);
+            if (!empty($link)) {
+                $result = $link;
+            }
         }
-        return '';
+
+        return $result;
     }
 
     /**

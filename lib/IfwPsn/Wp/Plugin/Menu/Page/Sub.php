@@ -39,6 +39,8 @@ abstract class IfwPsn_Wp_Plugin_Menu_Page_Sub implements IfwPsn_Wp_Plugin_Menu_P
 
     protected $_pageHook;
 
+    protected $_hidden = false;
+
 
 
     /**
@@ -210,6 +212,24 @@ abstract class IfwPsn_Wp_Plugin_Menu_Page_Sub implements IfwPsn_Wp_Plugin_Menu_P
     public function getPageHook()
     {
         return $this->_pageHook;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isHidden()
+    {
+        return $this->_hidden;
+    }
+
+    /**
+     * @param boolean $hidden
+     * @return $this
+     */
+    public function setHidden($hidden)
+    {
+        $this->_hidden = $hidden;
+        return $this;
     }
 
 }

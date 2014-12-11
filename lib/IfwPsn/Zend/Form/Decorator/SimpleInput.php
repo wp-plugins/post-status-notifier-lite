@@ -8,6 +8,7 @@ class IfwPsn_Zend_Form_Decorator_SimpleInput extends IfwPsn_Vendor_Zend_Form_Dec
     protected $_formatAceEditor = '<label for="%s">%s</label><textarea name="%s" autocomplete="off" style="display: none;">%s</textarea><div id="%s"></div>';
     protected $_formatSelect = '<label for="%s">%s</label><select id="%s" name="%s" />%s</select>';
     protected $_formatMultiselect = '<label for="%s">%s</label><select id="%s" name="%s" size="%s" multiple />%s</select>';
+    protected $_formatMulticheckbox = '<label>%s</label>%s';
     protected $_formatCheckbox = '<label for="%s">%s</label><input id="%s" name="%s" type="checkbox" value="%s" %s />';
     protected $_formatRadio = '<label for="%s"><input id="%s" name="%s" type="radio" value="%s" %s />%s</label>';
 
@@ -73,6 +74,20 @@ class IfwPsn_Zend_Form_Decorator_SimpleInput extends IfwPsn_Vendor_Zend_Form_Dec
                 $markup = sprintf($this->_formatMultiselect, $id, $label, $id, $name, $element->getAttrib('size'), $options);
                 break;
 
+            case 'IfwPsn_Vendor_Zend_Form_Element_MultiCheckbox':
+
+                $options = '';
+                foreach($element->getAttrib('options') as $k => $v) {
+                    $options .= sprintf('<label><input type="checkbox" name="%s" value="%s">%s</label>',
+                        $name,
+                        $k,
+                        $v);
+                }
+
+                $markup = sprintf($this->_formatMulticheckbox, $label, $options);
+
+                break;
+
             case 'IfwPsn_Vendor_Zend_Form_Element_Checkbox':
 
                 $value = $element->getCheckedValue();
@@ -98,6 +113,10 @@ class IfwPsn_Zend_Form_Decorator_SimpleInput extends IfwPsn_Vendor_Zend_Form_Dec
                 if ($element->getAttrib('maxlength') != null) {
                     $additionalParams .= sprintf('maxlength="%s"', $element->getAttrib('maxlength'));
                 }
+                if ($element->getAttrib('class') != null) {
+                    $additionalParams .= sprintf('class="%s"', htmlspecialchars($element->getAttrib('class')));
+                }
+
                 $markup  = sprintf($this->_formatPassword, $id, $label, $id, $name, $value, $additionalParams);
                 break;
 
@@ -109,6 +128,9 @@ class IfwPsn_Zend_Form_Decorator_SimpleInput extends IfwPsn_Vendor_Zend_Form_Dec
                 }
                 if ($element->getAttrib('placeholder') != null) {
                     $additionalParams .= sprintf('placeholder="%s"', htmlspecialchars($element->getAttrib('placeholder')));
+                }
+                if ($element->getAttrib('class') != null) {
+                    $additionalParams .= sprintf('class="%s"', htmlspecialchars($element->getAttrib('class')));
                 }
                 $markup  = sprintf($this->_formatText, $id, $label, $id, $name, $value, $additionalParams);
                 break;

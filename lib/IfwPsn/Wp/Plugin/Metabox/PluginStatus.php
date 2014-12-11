@@ -10,6 +10,21 @@ require_once dirname(__FILE__) . '/Ajax.php';
 
 class IfwPsn_Wp_Plugin_Metabox_PluginStatus extends IfwPsn_Wp_Plugin_Metabox_Ajax
 {
+    protected $_iframeSrc;
+
+    /**
+     * @param IfwPsn_Wp_Plugin_Manager $pm
+     * @param null $iframeSrc
+     */
+    public function __construct (IfwPsn_Wp_Plugin_Manager $pm, $iframeSrc = null)
+    {
+        parent::__construct($pm);
+
+        if ($iframeSrc !== null) {
+            $this->_iframeSrc = $iframeSrc;
+        }
+    }
+
     /**
      * (non-PHPdoc)
      * @see IfwPsn_Wp_Plugin_Admin_Menu_Metabox_Abstract::init()
@@ -54,9 +69,15 @@ class IfwPsn_Wp_Plugin_Metabox_PluginStatus extends IfwPsn_Wp_Plugin_Metabox_Aja
     {
         $tpl = IfwPsn_Wp_Tpl::getInstance($this->_pm);
 
+        if ($this->_iframeSrc !== null) {
+            $iframeSrc = $this->_iframeSrc;
+        } else {
+            $iframeSrc = IfwPsn_Wp_Proxy_Admin::getUrl() . IfwPsn_Wp_Proxy_Admin::getMenuUrl($this->_pm, 'selftest');
+        }
+
         $context = array(
             'ajax' => $this->getAjaxRequest(),
-            'iframe_src' => IfwPsn_Wp_Proxy_Admin::getUrl() . IfwPsn_Wp_Proxy_Admin::getMenuUrl($this->_pm, 'selftest'),
+            'iframe_src' => $iframeSrc,
             'img_path' => $this->_pm->getEnv()->getUrlAdminImg()
         );
 

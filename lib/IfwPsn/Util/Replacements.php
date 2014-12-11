@@ -341,7 +341,7 @@ class IfwPsn_Util_Replacements
         $lazyReplacements = array();
 
         foreach ($usedPlaceholders as $placeholder) {
-            if (isset($registeredReplacements[$placeholder])) {
+            if (array_key_exists($placeholder, $registeredReplacements)) {
                 // found a used placeholder in the registered placeholders
                 if (!empty($registeredReplacements[$placeholder])) {
                     // placeholder is preloaded with cheap value

@@ -377,7 +377,15 @@ class IfwPsn_Wp_Proxy_Blog
                 if (is_string($function)) {
                     array_push($phpAutoloadFunctions, $function);
                 } elseif (is_array($function) && count($function) == 2) {
-                    array_push($phpAutoloadFunctions, $function[0] . '::' . $function[1]);
+                    $autoloadObject = $function[0];
+                    if (is_object($autoloadObject)) {
+                        $autoloadObject = get_class($autoloadObject);
+                    }
+                    $autoloadMethod = $function[1];
+                    if (!is_scalar($autoloadMethod)) {
+                        $autoloadMethod = var_export($autoloadMethod, true);
+                    }
+                    array_push($phpAutoloadFunctions, $autoloadObject . '::' . $autoloadMethod);
                 } elseif (is_object($function)) {
                     array_push($phpAutoloadFunctions, get_class($function));
                 }

@@ -23,6 +23,16 @@ class IfwPsn_Zend_Navigation_Page_WpMvc extends IfwPsn_Vendor_Zend_Navigation_Pa
      */
     protected $_adminpage;
 
+    /**
+     * @var string
+     */
+    protected $_editpage;
+
+    /**
+     * @var string
+     */
+    protected $_posttype;
+
 
 
     /**
@@ -64,6 +74,14 @@ class IfwPsn_Zend_Navigation_Page_WpMvc extends IfwPsn_Vendor_Zend_Navigation_Pa
 
         if ($param = $this->getAdminpage()) {
             $params['adminpage'] = $param;
+        }
+
+        if ($param = $this->getEditpage()) {
+            $params['editpage'] = $param;
+        }
+
+        if ($param = $this->getPosttype()) {
+            $params['posttype'] = $param;
         }
 
         $url = self::$_urlHelper->url($params,
@@ -192,6 +210,38 @@ class IfwPsn_Zend_Navigation_Page_WpMvc extends IfwPsn_Vendor_Zend_Navigation_Pa
     public function getAdminpage()
     {
         return $this->_adminpage;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEditpage()
+    {
+        return $this->_editpage;
+    }
+
+    /**
+     * @param string $editpage
+     */
+    public function setEditpage($editpage)
+    {
+        $this->_editpage = $editpage;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPosttype()
+    {
+        return $this->_posttype;
+    }
+
+    /**
+     * @param string $posttype
+     */
+    public function setPosttype($posttype)
+    {
+        $this->_posttype = $posttype;
     }
 
 }

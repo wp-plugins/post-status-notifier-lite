@@ -227,6 +227,16 @@ class IfwPsn_Wp_Options
 
     /**
      * @param $id
+     * @return bool
+     */
+    public function isEmptyOption($id)
+    {
+        $result = $this->getOption($id);
+        return empty($result);
+    }
+
+    /**
+     * @param $id
      * @return string
      */
     public function getOptionRealId($id)

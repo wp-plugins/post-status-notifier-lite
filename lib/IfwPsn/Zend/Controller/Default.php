@@ -211,7 +211,11 @@ class IfwPsn_Zend_Controller_Default extends IfwPsn_Vendor_Zend_Controller_Actio
 
     protected function _gotoIndex()
     {
-        $this->_gotoRoute($this->_request->get('controller'));
+        if (strstr($_SERVER['SCRIPT_NAME'], 'admin.php')) {
+            $this->_redirector->gotoRoute(array('adminpage' => $this->_request->get('page')), 'requestVars');
+        } else {
+            $this->_gotoRoute($this->_request->get('controller'));
+        }
     }
 
     /**
@@ -240,6 +244,14 @@ class IfwPsn_Zend_Controller_Default extends IfwPsn_Vendor_Zend_Controller_Actio
     {
         $this->_initSession();
         return IfwPsn_Vendor_Zend_Controller_Action_HelperBroker::getStaticHelper('flashMessenger');
+    }
+
+    /**
+     * @param $msg
+     */
+    protected function _addErrorMessage($msg)
+    {
+        $this->getMessenger()->setNamespace('error')->addMessage($msg);
     }
 
     /**

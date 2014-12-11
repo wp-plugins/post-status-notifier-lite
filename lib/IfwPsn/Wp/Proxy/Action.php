@@ -376,6 +376,8 @@ class IfwPsn_Wp_Proxy_Action
 
     /**
      * Shortcut for add_action( 'wp_insert_post', 'function_name' )
+     * Passes 3 params $post_ID, $post, $update
+     * Set $update = null as it may not be used
      *
      * @param $function_to_add
      * @param int $priority

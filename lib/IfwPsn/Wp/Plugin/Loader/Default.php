@@ -79,7 +79,10 @@ class IfwPsn_Wp_Plugin_Loader_Default extends IfwPsn_Wp_Plugin_Loader_Abstract
      */
     public function getLogger()
     {
-        return $this->_pm->getLogger();
+        if ($this->_pm instanceof IfwPsn_Wp_Plugin_Manager) {
+            return $this->_pm->getLogger();
+        }
+        return null;
     }
 
     /**

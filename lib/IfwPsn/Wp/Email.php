@@ -10,6 +10,7 @@
  */ 
 class IfwPsn_Wp_Email
 {
+    protected $_identifier;
     protected $_uniqueId;
     protected $_to;
     protected $_cc;
@@ -20,7 +21,9 @@ class IfwPsn_Wp_Email
     protected $_altbody;
     protected $_attachments = array();
     protected $_headers = array();
+    protected $_adjustedHeaders;
     protected $_isHTML = false;
+    protected $_time_limit;
 
     /**
      * If true, sends one mail per To disregarding Cc and Bcc
@@ -28,14 +31,40 @@ class IfwPsn_Wp_Email
      */
     protected $_sendLoopTo = false;
 
-    protected $_time_limit;
+    /**
+     * Custom options storage
+     * @var array
+     */
+    protected $_options = array();
 
 
 
-
-    public function __construct()
+    /**
+     * @param null $identifier
+     */
+    public function __construct($identifier = null)
     {
         $this->_uniqueId = uniqid('ifw_email_');
+
+        if (!empty($identifier)) {
+            $this->setIdentifier($identifier);
+        }
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getIdentifier()
+    {
+        return $this->_identifier;
+    }
+
+    /**
+     * @param mixed $identifier
+     */
+    public function setIdentifier($identifier)
+    {
+        $this->_identifier = $identifier;
     }
 
     /**
@@ -82,17 +111,31 @@ class IfwPsn_Wp_Email
     /**
      * @return array
      */
-    protected function _getAdjustedHeaders()
+    public function getAdjustedHeaders()
     {
-        if ($this->getFrom() == null) {
-            //$this->setFrom(sprintf('%s <%s>', $this->_getFilteredBlogName(), IfwPsn_Wp_Proxy_Blog::getAdminEmail()));
+        if ($this->_adjustedHeaders === null) {
+            if ($this->getFrom() == null) {
+                //$this->setFrom(sprintf('%s <%s>', $this->_getFilteredBlogName(), IfwPsn_Wp_Proxy_Blog::getAdminEmail()));
+            }
+
+            $adjustedHeaders = array();
+            foreach ($this->getHeaders() as $k => $v) {
+                array_push($adjustedHeaders, $k . ':' . $v);
+            }
+            $this->_adjustedHeaders = $adjustedHeaders;
         }
 
-        $adjustedHeaders = array();
-        foreach($this->getHeaders() as $k => $v) {
-            array_push($adjustedHeaders, $k . ':' . $v);
+        return $this->_adjustedHeaders;
+    }
+
+    /**
+     * @param array $adjustedHeaders
+     */
+    public function setAdjustedHeaders(array $adjustedHeaders)
+    {
+        if (is_array($adjustedHeaders)) {
+            $this->_adjustedHeaders = $adjustedHeaders;
         }
-        return $adjustedHeaders;
     }
 
     /**
@@ -352,7 +395,7 @@ class IfwPsn_Wp_Email
      */
     protected function _sendDefault()
     {
-        return IfwPsn_Wp_Proxy::mail($this->getTo(), $this->getSubject(), $this->getMessage(), $this->_getAdjustedHeaders(), $this->getAttachments());
+        return $this->_processEmail($this->getTo(), $this->getSubject(), $this->getMessage(), $this->getAdjustedHeaders(), $this->getAttachments());
     }
 
     /**
@@ -374,9 +417,40 @@ class IfwPsn_Wp_Email
 
         foreach ($toStack as $to) {
             IfwPsn_Wp_Proxy_Action::doAction('ifwpsn_callback_email_loop_to', $to, $this);
-            if (!IfwPsn_Wp_Proxy::mail(trim($to), $this->getSubject(), $this->getMessage(), $this->_getAdjustedHeaders(), $this->getAttachments())) {
+            if (!$this->_processEmail(trim($to), $this->getSubject(), $this->getMessage(), $this->getAdjustedHeaders(), $this->getAttachments())) {
                 $result = false;
             }
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param $to
+     * @param $subject
+     * @param $message
+     * @param $headers
+     * @param $attachments
+     * @return bool
+     */
+    protected function _processEmail($to, $subject, $message, $headers, $attachments)
+    {
+        $result = true;
+        $emailParams = array(
+            'to' => $to,
+            'subject' => $subject,
+            'message' => $message,
+            'headers' => $headers,
+            'attachments' => $attachments
+        );
+
+        // pass the email params to the filter which can decide if the sending process should be executed directly
+        $process = IfwPsn_Wp_Proxy_Filter::apply('ifwpsn_callback_email_process', true, $emailParams, $this);
+
+        if ($process) {
+            IfwPsn_Wp_Proxy_Action::doAction('ifwpsn_callback_before_email_send', $emailParams, $this);
+            $result = IfwPsn_Wp_Proxy::mail($to, $subject, $message, $headers, $attachments);
+            IfwPsn_Wp_Proxy_Action::doAction('ifwpsn_callback_after_email_send', $result, $emailParams, $this);
         }
 
         return $result;
@@ -412,5 +486,51 @@ class IfwPsn_Wp_Email
             $phpmailer->AltBody = $this->_altbody;
         }
         $phpmailer->IsHTML(true);
+    }
+
+    /**
+     * @param $key
+     * @param $value
+     */
+    public function setOption($key, $value)
+    {
+        $this->_options[$key] = $value;
+    }
+
+    /**
+     * @param array $options
+     */
+    public function setOptions(array $options)
+    {
+        $this->_options = $options;
+    }
+
+    /**
+     * @param $key
+     * @return bool
+     */
+    public function hasOption($key)
+    {
+        return array_key_exists($key, $this->_options);
+    }
+
+    /**
+     * @param $key
+     * @return mixed|null
+     */
+    public function getOption($key)
+    {
+        if (isset($this->_options[$key])) {
+            return $this->_options[$key];
+        }
+        return null;
+    }
+
+    /**
+     * @return array
+     */
+    public function getOptions()
+    {
+        return $this->_options;
     }
 }

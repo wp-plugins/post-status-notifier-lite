@@ -70,7 +70,7 @@ class Psn_Notification_Service_Email implements Psn_Notification_Service_Interfa
         $this->_post = $post;
 
         // create email object
-        $this->_email = new IfwPsn_Wp_Email();
+        $this->_email = new IfwPsn_Wp_Email('psn_email_service');
 
         // prepare recipients
         $this->_prepareRecipients($rule, $post);
@@ -90,15 +90,15 @@ class Psn_Notification_Service_Email implements Psn_Notification_Service_Interfa
                 $this->_email->setBcc($this->getFormattedEmails($this->_bcc));
             }
 
-            IfwPsn_Wp_Proxy_Action::doAction('psn_before_notification_email_send', $this);
-            
-            if ($this->_email->send()) {
-                // mail sent successfully
-                IfwPsn_Wp_Proxy_Action::doAction('psn_notification_email_sent', $this);
+            if ((int)$this->_rule->get('service_log') === 1) {
+                $this->_email->setOption('service_log', true);
             } else {
-                // email could not be sent
-                IfwPsn_Wp_Proxy_Action::doAction('psn_notification_email_send_error', $this);
+                $this->_email->setOption('service_log', false);
             }
+
+            IfwPsn_Wp_Proxy_Action::doAction('psn_before_notification_email_send', $this);
+
+            $this->_email->send();
 
             IfwPsn_Wp_Proxy_Action::doAction('psn_after_notification_email_send', $this);
         }

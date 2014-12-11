@@ -97,6 +97,7 @@ class IfwPsn_Wp_Tpl
         $tpl->addGlobal('text', new IfwPsn_Wp_Tpl_Text());
         $tpl->addExtension(new IfwPsn_Wp_Tpl_Extension_DateLocale());
         $tpl->addExtension(new IfwPsn_Wp_Tpl_Extension_Text());
+        $tpl->addExtension(new IfwPsn_Wp_Tpl_Extension_PrintR());
         $tpl->addExtension(new IfwPsn_Vendor_Twig_Extension_Debug());
 
         return $tpl;

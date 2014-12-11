@@ -26,8 +26,17 @@ class IfwPsn_Wp_Options_Field_Text extends IfwPsn_Wp_Options_Field
         if (isset($this->_params['placeholder'])) {
             $extra .= sprintf('placeholder="%s" ', htmlentities($this->_params['placeholder']));
         }
+        if (isset($this->_params['length'])) {
+            $extra .= sprintf('length="%s" ', (int)$this->_params['length']);
+        }
+        if (isset($this->_params['maxlength'])) {
+            $extra .= sprintf('maxlength="%s" ', (int)$this->_params['maxlength']);
+        }
 
         $html = '<input type="text" autocomplete="off" id="'. $id .'" name="'. $name .'" value="'. $options->getOption($this->_id) .'" '. $extra .' />';
+        if (!empty($this->_params['error'])) {
+            $html .= '<br><p class="error"> '  . $this->_params['error'] . '</p>';
+        }
         if (!empty($this->_description)) {
             $html .= '<br><p class="description"> '  . $this->_description . '</p>';
         }

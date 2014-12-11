@@ -112,11 +112,19 @@ class IfwPsn_Wp_Env_Plugin extends IfwPsn_Wp_Env_Abstract
     }
 
     /**
-     * @return string string
+     * @return string
      */
     public function getEnvironmet()
     {
         return $this->_environment;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isProduction()
+    {
+        return $this->getEnvironmet() == 'production';
     }
 
     /**

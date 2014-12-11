@@ -39,7 +39,7 @@ abstract class IfwPsn_Wp_Shortcode implements IfwPsn_Wp_Interface_Loggable
      */
     protected function _init(array $options)
     {
-        add_shortcode($this->_shortcode, array($this, 'handle'));
+        $this->initShortcode();
         
         // add default filters
         IfwPsn_Wp_Proxy_Filter::addWidgetText('do_shortcode');
@@ -56,6 +56,11 @@ abstract class IfwPsn_Wp_Shortcode implements IfwPsn_Wp_Interface_Loggable
             }
         }
     }
+
+    public function initShortcode()
+    {
+        add_shortcode($this->_shortcode, array($this, 'handle'));
+    }
     
     /**
      * 
@@ -71,6 +76,15 @@ abstract class IfwPsn_Wp_Shortcode implements IfwPsn_Wp_Interface_Loggable
         $replacement = $this->_applyFilters($replacement, $options);
         
         return $replacement;
+    }
+
+    /**
+     * @param $string
+     * @return bool
+     */
+    public function containsShortcode($string)
+    {
+        return strpos($string, $this->_shortcode) !== false;
     }
 
     /**
@@ -115,5 +129,13 @@ abstract class IfwPsn_Wp_Shortcode implements IfwPsn_Wp_Interface_Loggable
     public function getLogger()
     {
         return $this->_logger;
+    }
+
+    /**
+     * @return string
+     */
+    public function getShortcode()
+    {
+        return $this->_shortcode;
     }
 }
