@@ -19,7 +19,7 @@ class PsnRulesController extends PsnApplicationController
     protected $_itemPostId = 'rule';
 
     /**
-     * @var IfwPsn_Vendor_Zend_Form
+     * @var IfwPsn_Zend_Form
      */
     protected $_form;
 
@@ -121,16 +121,26 @@ class PsnRulesController extends PsnApplicationController
         $this->_initFormView();
 
         if ($this->_request->isPost()) {
-            if ($this->_form->isValid($this->_request->getPost())) {
+
+            if (!$this->_form->isValidNonce()) {
+
+                $this->getAdminNotices()->persistError(__('Invalid access.', 'psn'));
+                $this->_gotoRoute('rules');
+
+            } elseif ($this->_form->isValid($this->_request->getPost())) {
 
                 // request is valid, save the rule
                 $rule = IfwPsn_Wp_ORM_Model::factory(self::MODEL)->create($this->_getFormValues());
                 $rule->save();
 
-                $this->getMessenger()->addMessage(
+                $this->getAdminNotices()->persistUpdated(
                     sprintf(__('Rule <b>%s</b> has been saved successfully.', 'psn'), $rule->get('name')));
 
-                $this->_gotoRoute('rules');
+                if ($this->_form->getValue('submit_and_stay')) {
+                    $this->_gotoRoute('rules', 'edit', null, array('id' => $rule->get('id')));
+                } else {
+                    $this->_gotoRoute('rules');
+                }
             }
         }
 
@@ -162,20 +172,32 @@ class PsnRulesController extends PsnApplicationController
         $defaults['bcc_select'] = $rule->getBccSelect();
         $defaults['editor_restriction'] = $rule->getEditorRestriction();
 
-        $this->_form->setDefaults($defaults);
+        $this->_form->setDefaults(IfwPsn_Wp_Proxy_Filter::apply('psn_rule_form_defaults', $defaults));
 
         if ($this->_request->isPost()) {
-            if ($this->_form->isValid($this->_request->getPost())) {
+
+            // handle post request
+
+            if (!$this->_form->isValidNonce()) {
+
+                $this->getAdminNotices()->persistError(__('Invalid access.', 'psn'));
+                $this->_gotoRoute('rules');
+
+            } elseif ($this->_form->isValid($this->_request->getPost())) {
 
                 // request is valid, save the changes
                 $rule->hydrate($this->_getFormValues());
                 $rule->id = $id;
                 $rule->save();
 
-                $this->getMessenger()->addMessage(
+                $this->getAdminNotices()->persistUpdated(
                     sprintf(__('Rule <b>%s</b> has been updated successfully.', 'psn'), $ruleNameBefore));
 
-                $this->_gotoRoute('rules');
+                if ($this->_form->getValue('submit_and_stay')) {
+                    $this->_gotoRoute('rules', 'edit', null, array('id' => $id));
+                } else {
+                    $this->_gotoRoute('rules');
+                }
             }
         }
 
@@ -188,7 +210,7 @@ class PsnRulesController extends PsnApplicationController
      */
     protected function _getFormValues()
     {
-        $values = $this->_form->getValues();
+        $values = $this->_form->removeNonceAndGetValues();
         $posttype = $values['posttype'];
 
 
@@ -242,7 +264,11 @@ class PsnRulesController extends PsnApplicationController
             $values['editor_restriction'] = serialize($values['editor_restriction']);
         }
 
-        return $values;
+        if (isset($values['limit_count']) && empty($values['limit_count'])) {
+            $values['limit_count'] = null;
+        }
+
+        return IfwPsn_Wp_Proxy_Filter::apply('psn_rule_save_form_values', $values);
     }
 
     /**
@@ -326,10 +352,14 @@ class PsnRulesController extends PsnApplicationController
             $this->view->langExamplesRuleTheHappyAuthorDesc = __('This rule sends an email to the author of a post when it got published.', 'psn');
             $this->view->langExamplesRuleThePedanticAdmin = __('The pedantic admin', 'psn');
             $this->view->langExamplesRuleThePedanticAdminDesc = __('This rule is for blog admins who want to be informed about every single post status change.', 'psn');
+            $this->view->langExamplesRuleDebug = __('Debug rule', 'psn');
+            $this->view->langExamplesRuleDebugDesc = __('This rule is just for creating log entries to monitor all available values when the rule matched. Remember to activate option Logger / Log rule matches.', 'psn') .
+                ' ' . sprintf('<a href="%s" target="_blank">' . __('More details', 'psn') . '</a>', $this->_pm->getConfig()->plugin->docUrl . 'rules.html#debug-rule');
 
         } else {
             $this->view->langHeadline = __('Edit notification rule', 'psn');
             $this->_form->getElement('submit')->setLabel(__('Update', 'psn'));
+            $this->_form->getElement('submit_and_stay')->setLabel(__('Update and stay on page', 'psn'));
         }
 
         $this->view->actionName = $this->_request->getActionName();
@@ -359,6 +389,11 @@ class PsnRulesController extends PsnApplicationController
      */
     public function deleteAction()
     {
+        if (!wp_verify_nonce($this->_request->get('nonce'), 'rule-delete-' . $this->_request->get('id'))) {
+            $this->getAdminNotices()->persistError(__('Invalid access.', 'psn'));
+            $this->_gotoIndex();
+        }
+
         IfwPsn_Wp_ORM_Model::factory(self::MODEL)->find_one((int)$this->_request->get('id'))->delete();
 
         $this->_gotoIndex();

@@ -63,7 +63,7 @@ class IfwPsn_Wp_Access
     }
 
     /**
-     * Checks if it is an general WP admin access
+     * Checks if it is a WP admin access
      *
      * @return bool
      */
@@ -71,6 +71,19 @@ class IfwPsn_Wp_Access
     {
         if (!$this->isHeartbeat() && function_exists('is_admin')) {
             return is_admin();
+        }
+        return false;
+    }
+
+    /**
+     * Checks if it is a WP network admin access
+     *
+     * @return bool
+     */
+    public function isNetworkAdmin()
+    {
+        if (!$this->isHeartbeat() && function_exists('is_network_admin')) {
+            return is_network_admin();
         }
         return false;
     }
@@ -233,7 +246,7 @@ class IfwPsn_Wp_Access
      */
     public function isPage($page)
     {
-        return $_GET['page'] == $page;
+        return isset($_GET['page']) && $_GET['page'] == $page;
     }
 
     /**
@@ -251,6 +264,15 @@ class IfwPsn_Wp_Access
     public function getPage()
     {
         return isset($_GET['page']) ? $_GET['page'] : null;
+    }
+
+    /**
+     * @param $postType
+     * @return bool
+     */
+    public function isPostType($postType)
+    {
+        return isset($_GET['post_type']) && $_GET['post_type'] == $postType;
     }
 
     /**
@@ -307,4 +329,31 @@ class IfwPsn_Wp_Access
         $key = 'module';
         return isset($_GET[$key]) ? $_GET[$key] : null;
     }
+
+    /**
+     * @return boolean
+     */
+    public function isDeactivation()
+    {
+        $requestInfo = parse_url($this->_requestUri);
+
+        if (strstr($requestInfo['path'], 'plugins.php') !== false && $_GET['action'] == 'deactivate' && $_GET['plugin'] == $this->_pm->getSlugFilenamePath()) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isActivation()
+    {
+        $requestInfo = parse_url($this->_requestUri);
+
+        if (strstr($requestInfo['path'], 'plugins.php') !== false && $_GET['action'] == 'activate' && $_GET['plugin'] == $this->_pm->getSlugFilenamePath()) {
+            return true;
+        }
+        return false;
+    }
+
 }

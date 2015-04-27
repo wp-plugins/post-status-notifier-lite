@@ -72,6 +72,9 @@
 .ifw_wp_plugininfo_icon_premium {
     background-image: url(icons/premium.png);
 }
+.ifw_wp_plugininfo_icon_connect {
+    background-image: url(icons/connect.png);
+}
 
 .ifw_wp_metabox_loading {
     background: url(icons/ajax-loader.gif) 50% 50% no-repeat;
@@ -221,9 +224,16 @@
     padding: 10px !important;
 }
 
-.ifw-dialog-loading-bar {
+.ifw-dialog-loading-default {
     width: 100%;
     background: url(icons/ajax-loader.gif) 50% 50% no-repeat !important;
+    height: 50px;
+}
+.ifw-dialog-loading-bar {
+    width: inherit;
+    background-image: url(icons/ajax-loader-bar.gif) !important;
+    background-position: 50% 50% !important;
+    background-repeat: no-repeat !important;
     height: 50px;
 }
 .ifw-dialog-success {
@@ -262,9 +272,13 @@
 table.form-table p.error {
     color: red;
 }
-
-
-
+/* buttons */
+.button.button-dashicons {
+    padding-left: 5px !important;
+}
+.button.button-dashicons span.dashicons {
+    margin-top: 3px;
+}
 
 
 

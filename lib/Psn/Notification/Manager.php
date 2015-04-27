@@ -44,11 +44,6 @@ class Psn_Notification_Manager
      */
     protected $_deferredExecution = false;
 
-    /**
-     * @var Psn_Notification_Deferred_Handler
-     */
-    protected $_deferredHandler;
-
 
 
     /**
@@ -113,7 +108,7 @@ class Psn_Notification_Manager
         }
 
         if ($this->isDeferredExecution()) {
-            $this->_deferredHandler = new Psn_Notification_Deferred_Handler();
+            $deferredHandler = new Psn_Notification_Deferred_Handler();
         }
 
         /**
@@ -125,7 +120,19 @@ class Psn_Notification_Manager
                 $rule->setIgnoreInherit(true);
             }
 
-            if ($rule->matches($post, $statusBefore, $statusAfter)) {
+            // to skip a rulematch return false
+            $doMatch = IfwPsn_Wp_Proxy_Filter::apply('psn_do_match', true, array(
+                'rule' => $rule,
+                'post' => $post,
+                'status_before' => $statusBefore,
+                'status_after' => $statusAfter
+            ));
+            if (!is_bool($doMatch)) {
+                // for safety:
+                $doMatch = true;
+            }
+
+            if ($doMatch && $rule->matches($post, $statusBefore, $statusAfter)) {
 
                 // rule matches
 
@@ -140,7 +147,7 @@ class Psn_Notification_Manager
                         // prepare for deferred execution
                         $deferredContainer = new Psn_Notification_Deferred_Container();
                         $deferredContainer->setService($service)->setRule($rule)->setPost($post);
-                        $this->_deferredHandler->addCotainer($deferredContainer);
+                        $deferredHandler->addCotainer($deferredContainer);
 
                     } else {
                         // execute directly
@@ -306,14 +313,6 @@ class Psn_Notification_Manager
     public function isDeferredExecution()
     {
         return $this->_deferredExecution === true;
-    }
-
-    /**
-     * @return \Psn_Notification_Deferred_Handler
-     */
-    public function getDeferredHandler()
-    {
-        return $this->_deferredHandler;
     }
 
 }

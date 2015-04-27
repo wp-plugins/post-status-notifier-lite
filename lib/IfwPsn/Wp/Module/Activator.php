@@ -54,10 +54,6 @@ class IfwPsn_Wp_Module_Activator
         $this->_optionName = $this->_pm->getAbbrLower() . '-custom-modules';
         // init custom modules activation storage
         $this->_pm->getBootstrap()->getOptionsManager()->registerExternalOption($this->_optionName);
-
-        if (!$this->_inStorage('test2')) {
-            $this->_addStorage('test2');
-        }
     }
 
     /**

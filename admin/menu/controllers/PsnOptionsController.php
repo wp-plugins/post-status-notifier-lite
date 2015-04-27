@@ -6,6 +6,16 @@
  */ 
 class PsnOptionsController extends PsnApplicationController
 {
+    public function onBootstrap()
+    {
+        $this->_pm->getBootstrap()->getOptions()->setRenderer(new IfwPsn_Wp_Options_Renderer_Pills($this->_pm));
+
+        $optionsRenderer = $this->_pm->getBootstrap()->getOptions()->getRenderer();
+        if ($optionsRenderer instanceof IfwPsn_Wp_Options_Renderer_Interface) {
+            $optionsRenderer->init();
+        }
+    }
+
     /**
      *
      */

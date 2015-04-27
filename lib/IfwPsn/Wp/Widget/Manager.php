@@ -112,7 +112,6 @@ class IfwPsn_Wp_Widget_Manager
      *
      * @param $widget_classname
      * @return bool|void
-     * @internal param string $widget_class_name
      */
     public function register($widget_classname)
     {

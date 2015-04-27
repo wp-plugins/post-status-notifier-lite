@@ -26,8 +26,8 @@ class IfwPsn_Wp_Plugin_Update_Request extends IfwPsn_Wp_Http_Request
         parent::_init();
 
         $this->setUrl($this->_pm->getConfig()->plugin->updateServer);
-
         $this->addData('api-key', md5(IfwPsn_Wp_Proxy_Blog::getUrl()));
+
     }
 
     /**

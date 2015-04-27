@@ -267,7 +267,11 @@ class IfwPsn_Wp_Proxy_Action
      */
     public static function addAdminFooterCurrentScreen($function_to_add, $priority = 10, $accepted_args = 1)
     {
-        return self::add('admin_footer-'. IfwPsn_Wp_Proxy_Screen::getCurrent()->id, $function_to_add, $priority, $accepted_args);
+        $current = IfwPsn_Wp_Proxy_Screen::getCurrent();
+        if ($current instanceof WP_Screen) {
+            return self::add('admin_footer-' . IfwPsn_Wp_Proxy_Screen::getCurrent()->id, $function_to_add, $priority, $accepted_args);
+        }
+        return false;
     }
 
     /**

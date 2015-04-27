@@ -16,8 +16,11 @@ class PsnApplicationController extends IfwPsn_Zend_Controller_Default
     public function onAdminInit()
     {
         if ($this->_pm->isPremium() && IfwPsn_Wp_Proxy_Blog::isPluginActive('post-status-notifier-lite/post-status-notifier-lite.php')) {
+
             // Lite version still activated
-            $this->_addErrorMessage(sprintf(__('The Lite version of this plugin is still activated. Please deactivate it! Refer to the <a href="%s">Upgrade Howto</a>.', 'psn'), 'http://docs.ifeelweb.de/post-status-notifier/upgrade_howto.html'));
+            $this->getAdminNotices()->addError(sprintf(
+                __('The Lite version of this plugin is still activated. Please deactivate it! Refer to the <a href="%s">Upgrade Howto</a>.', 'psn'),
+                'http://docs.ifeelweb.de/post-status-notifier/upgrade_howto.html'));
         }
     }
 

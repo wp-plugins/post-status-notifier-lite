@@ -68,6 +68,7 @@ class IfwPsn_Wp_Plugin_Installer
     protected function _initActivation()
     {
         $this->registerActivation();
+
         // add default activation commands
         require_once $this->_pm->getPathinfo()->getRootLib() . 'IfwPsn/Wp/Plugin/Installer/Command/ActivationPresentVersion.php';
 
@@ -83,12 +84,15 @@ class IfwPsn_Wp_Plugin_Installer
     {
         self::$_uninstall[$this->_pm->getPathinfo()->getFilenamePath()] = array();
         $this->registerUninstall();
+
         // add default uninstall commands
         require_once $this->_pm->getPathinfo()->getRootLib() . 'IfwPsn/Wp/Plugin/Installer/Command/UninstallDeleteLog.php';
         require_once $this->_pm->getPathinfo()->getRootLib() . 'IfwPsn/Wp/Plugin/Installer/Command/UninstallResetOptions.php';
+        require_once $this->_pm->getPathinfo()->getRootLib() . 'IfwPsn/Wp/Plugin/Installer/Command/UninstallRemoveHooks.php';
 
         $this->addUninstall(new IfwPsn_Wp_Plugin_Installer_Command_UninstallDeleteLog());
         $this->addUninstall(new IfwPsn_Wp_Plugin_Installer_Command_UninstallResetOptions());
+        $this->addUninstall(new IfwPsn_Wp_Plugin_Installer_Command_UninstallRemoveHooks());
     }
 
     /**

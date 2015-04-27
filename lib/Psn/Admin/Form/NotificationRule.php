@@ -275,18 +275,58 @@ class Psn_Admin_Form_NotificationRule extends IfwPsn_Zend_Form
         ;
         $this->addElement($email);
 
+        if (isset($_REQUEST['id'])) {
+            $this->addElement('hidden', 'id', array(
+                'value' => $_REQUEST['id'],
+                'decorators' => array('ViewHelper')
+            ));
+        }
+
+        $this->setNonce('psn-form-rule');
+
+        $this->addElement('note', 'p', array(
+            'label' => '-',
+            'value' => '&nbsp;',
+            'decorators' => array(
+                'ViewHelper',
+                array('HtmlTag', array('tag' => 'p')),
+            ),
+            'order' => 999
+        ));
+
         /**
          * Submit button
          */
         $this->addElement('submit', 'submit', array(
             'ignore'   => true,
-            'label'    => __('Add rule', 'psn'),
+            'label'    => __('Save', 'psn'),
             'class'    => 'button-primary',
             'decorators' => array(
                 'ViewHelper',
-                array('HtmlTag', array('tag' => 'li')),
+                array('HtmlTag', array('tag' => 'span')),
             ),
-            'order' => 120
+            'order' => 1000
+        ));
+
+        $this->addElement('note', 'divider', array(
+            'label' => '-',
+            'value' => '&nbsp;&mdash;&nbsp;',
+            'decorators' => array(
+                'ViewHelper',
+                array('HtmlTag', array('tag' => 'span')),
+            ),
+            'order' => 1001
+        ));
+
+        $this->addElement('submit', 'submit_and_stay', array(
+            'ignore'   => true,
+            'label'    => __('Save and stay on page', 'psn'),
+            'class'    => 'button',
+            'decorators' => array(
+                'ViewHelper',
+                array('HtmlTag', array('tag' => 'span')),
+            ),
+            'order' => 1002
         ));
 
     }

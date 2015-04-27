@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: Post Status Notifier 1.0\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/tag/post-status-notifier\n"
 "POT-Creation-Date: 2013-04-17 20:01:32+00:00\n"
-"PO-Revision-Date: 2014-09-13 23:44+0100\n"
+"PO-Revision-Date: 2015-04-24 19:07+0100\n"
 "Last-Translator: Timo Reith <timo@hhesse.de>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -610,7 +610,7 @@ msgid "Show details"
 msgstr "Details anzeigen"
 
 msgid "None"
-msgstr "Keins"
+msgstr "Nichts"
 
 msgid ""
 "To select multiple recipients hold down the control button (ctrl) on Windows "
@@ -839,3 +839,9 @@ msgstr "Dienste"
 
 msgid "Filter"
 msgstr "Filter"
+
+msgid "Rule"
+msgstr "Regel"
+
+msgid "More details"
+msgstr "Mehr Details"

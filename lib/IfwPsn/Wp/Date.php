@@ -17,11 +17,39 @@ class IfwPsn_Wp_Date
      *
      * @param $time expects date format YYYY-MM-DD HH:MM:SS
      * @param $format the output format, blog default will be used if empty
+     * @param $offset int
      * @return string the formatted date
      */
-    public static function format($time, $format = null)
+    public static function format($time, $format = null, $offset = null)
     {
         $dt = new DateTime($time, new DateTimeZone('UTC'));
+
+        if (empty($format)) {
+            $format = IfwPsn_Wp_Proxy_Blog::getDateFormat() .' '. IfwPsn_Wp_Proxy_Blog::getTimeFormat();
+        }
+
+        if ($offset === null) {
+            $offset = IfwPsn_Wp_Proxy_Blog::getGmtOffset();
+        }
+        if (empty($offset)) {
+            $offset = 0;
+        }
+
+        return date($format, $dt->format('U') + ($offset * 3600));
+    }
+
+    /**
+     * Formats a timestamp
+     *
+     * @param $ts
+     * @param $format the output format, blog default will be used if empty
+     * @internal param timestamp $time
+     * @return string the formatted date
+     */
+    public static function formatTs($ts, $format = null)
+    {
+        $dt = new DateTime();
+        $dt->setTimestamp($ts);
 
         if (empty($format)) {
             $format = IfwPsn_Wp_Proxy_Blog::getDateFormat() .' '. IfwPsn_Wp_Proxy_Blog::getTimeFormat();
@@ -31,7 +59,7 @@ class IfwPsn_Wp_Date
         if (empty($offset)) {
             $offset = 0;
         }
-        
+
         return date($format, $dt->format('U') + ($offset * 3600));
     }
 

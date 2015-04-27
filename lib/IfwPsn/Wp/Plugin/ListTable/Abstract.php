@@ -316,6 +316,17 @@ abstract class IfwPsn_Wp_Plugin_ListTable_Abstract extends WP_List_Table
                 <!-- if request has page value submit it for returning to current plugin page -->
                 <input type="hidden" name="page" value="<?php echo $_REQUEST['page'] ?>" />
             <?php endif; ?>
+            <?php if (isset($_REQUEST['appaction'])): ?>
+                <!-- if request has appaction value submit it for returning to current plugin page -->
+                <input type="hidden" name="appaction" value="<?php echo $_REQUEST['appaction'] ?>" />
+            <?php endif; ?>
+            <?php if (isset($this->_options['hidden_fields'])):
+                foreach ($this->_options['hidden_fields'] as $field): ?>
+                    <input type="hidden" name="<?php echo $field['name'] ?>" value="<?php echo $field['value'] ?>" />
+                <?php
+                endforeach;
+                endif;
+                ?>
             <?php
             IfwPsn_Wp_Proxy::doAction($this->_wpActionPrefix . 'before_display', $this);
             echo parent::display();
@@ -583,6 +594,37 @@ abstract class IfwPsn_Wp_Plugin_ListTable_Abstract extends WP_List_Table
     public function isAjax()
     {
         return $this->_ajax === true;
+    }
+
+    /**
+     * @return bool|string|void
+     */
+    public function getBulkAction()
+    {
+        if (isset($_POST['action']) && $_POST['action'] != '-1') {
+            $action = esc_attr($_POST['action']);
+        } elseif (isset($_POST['action2']) && $_POST['action2'] != '-1') {
+            $action = esc_attr($_POST['action2']);
+        } else {
+            $action = false;
+        }
+        return $action;
+    }
+
+    /**
+     * @return false|int
+     */
+    public function verifyBulk()
+    {
+        return wp_verify_nonce($_REQUEST['_wpnonce'], 'bulk-' . $this->_args['plural']);
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasValidBulkRequest()
+    {
+        return $this->getBulkAction() !== false && $this->verifyBulk() !== false;
     }
 
 }

@@ -11,8 +11,8 @@
     margin-top: 10px;
 }
 form#psn_form_rule #submit {
-    display: block;
-    margin: 20px 0 0 200px;
+    /*display: block;*/
+    /*margin: 20px 0 0 200px;*/
 }
 
 form#psn_form_rule input[type="text"] {
@@ -36,6 +36,12 @@ form#psn_form_rule #recipient, form#psn_form_rule #cc_select, form#psn_form_rule
     width: 500px;
     overflow-y: scroll;
 }
+.psn_options_description {
+    padding: 10px;
+    border: 1px solid #ccc;
+    background: #fff;
+    margin-bottom: 10px;
+}
 #psn_option_placeholders_filters {
     width: 95%;
     height: 200px;
@@ -45,7 +51,7 @@ form#psn_form_rule #recipient, form#psn_form_rule #cc_select, form#psn_form_rule
     height: 200px;
     border: 1px solid #ddd;
 }
-#psn_option_psn_default_from, #psn_option_license_code {
+#psn_option_psn_default_from {
     width: 400px;
 }
 .import_items_container_toggle {

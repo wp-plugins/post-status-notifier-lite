@@ -228,7 +228,8 @@ class Psn_Admin_ListTable_Rules extends IfwPsn_Wp_Plugin_ListTable_Abstract
             //Build row actions
             $actions = array();
             $actions['edit'] = sprintf('<a href="?page=%s&controller=rules&appaction=edit&id=%s">'. __('Edit', 'psn') .'</a>', $_REQUEST['page'], $item['id']);
-            $actions['delete'] = sprintf('<a href="?page=%s&controller=rules&appaction=delete&id=%s" class="delConfirm">'. __('Delete', 'psn') .'</a>', $_REQUEST['page'], $item['id']);
+            $actions['delete'] = sprintf('<a href="?page=%s&controller=rules&appaction=delete&id=%s&nonce=%s" class="delConfirm">'. __('Delete', 'psn') .'</a>',
+                $_REQUEST['page'], $item['id'], wp_create_nonce('rule-delete-' . $item['id']));
 
             $actionsFilter = IfwPsn_Wp_Proxy_Filter::apply('psn_rules_col_name_actions', array('actions' => $actions, 'item' => $item));
 

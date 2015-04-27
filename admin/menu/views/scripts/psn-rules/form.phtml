@@ -44,6 +44,11 @@
             <dd><?php echo $this->langExamplesRuleThePedanticAdminDesc; ?></dd>
         </dl>
 
+        <?php if ($this->pm->isPremium()): ?><dl class="example">
+            <dt><a href="javascript:void(0);" class="example_button" id="example_debug"><?php echo $this->langExamplesRuleDebug; ?></a></dt>
+            <dd><?php echo $this->langExamplesRuleDebugDesc; ?></dd>
+        </dl><?php endif; ?>
+
         <p><?php printf( __('For more examples visit the <a href="%s" class="%s" target="_blank">PSN resources website</a>.'), 'http://www.ifeelweb.de/post-status-notifier-psn-resources/', 'ifw-external-link' ); ?></p>
         <?php endif; ?>
 

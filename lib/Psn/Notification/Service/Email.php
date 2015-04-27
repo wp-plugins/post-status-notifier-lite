@@ -11,6 +11,8 @@ require_once dirname(__FILE__) . '/Interface.php';
 
 class Psn_Notification_Service_Email implements Psn_Notification_Service_Interface
 {
+    const EMAIL_IDENTIFIER = 'psn_email_service';
+
     /**
      * @var Psn_Model_Rule
      */
@@ -70,7 +72,7 @@ class Psn_Notification_Service_Email implements Psn_Notification_Service_Interfa
         $this->_post = $post;
 
         // create email object
-        $this->_email = new IfwPsn_Wp_Email('psn_email_service');
+        $this->_email = new IfwPsn_Wp_Email(self::EMAIL_IDENTIFIER);
 
         // prepare recipients
         $this->_prepareRecipients($rule, $post);

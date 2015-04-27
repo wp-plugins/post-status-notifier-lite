@@ -25,7 +25,6 @@ class IfwPsn_Wp_Plugin_Config extends IfwPsn_Vendor_Zend_Config_Ini
      * Retrieves singleton IfwPsn_Wp_Plugin_Config object
      *
      * @param \IfwPsn_Wp_Pathinfo_Plugin|\IfwPsn_Wp_Plugin_Pathinfo $pluginPathinfo
-     * @internal param $string
      * @return IfwPsn_Wp_Plugin_Config
      */
     public static function getInstance(IfwPsn_Wp_Pathinfo_Plugin $pluginPathinfo)

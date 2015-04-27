@@ -45,6 +45,11 @@ class IfwPsn_Wp_Options
      */
     protected $_addedFields = 0;
 
+    /**
+     * @var IfwPsn_Wp_Options_Renderer_Interface
+     */
+    protected $_renderer;
+
 
     /**
      * Retrieves singleton object
@@ -62,12 +67,17 @@ class IfwPsn_Wp_Options
     /**
      * @param IfwPsn_Wp_Plugin_Manager $pm
      */
-    public function __construct(IfwPsn_Wp_Plugin_Manager $pm)
+    public function __construct(IfwPsn_Wp_Plugin_Manager $pm, $renderer = null)
     {
         $this->_pm = $pm;
         $this->_pageId = $pm->getAbbrLower() . '_options';
         $this->_sectionPrefix = $pm->getAbbrLower() . '_options_section_';
         $this->_fieldPrefix = $pm->getAbbrLower() . '_option_';
+        if ($renderer !== null && $renderer instanceof IfwPsn_Wp_Options_Renderer_Interface) {
+            $this->_renderer = $renderer;
+        } else {
+            $this->_renderer = new IfwPsn_Wp_Options_Renderer_Default();
+        }
     }
 
     public function init()
@@ -84,7 +94,7 @@ class IfwPsn_Wp_Options
         if ($this->_pm->getAccess()->isPlugin() ||
             (isset($_POST['option_page']) && $_POST['option_page'] == $this->_pageId)) {
             // init the option objects only if it is a exact plugin admin page access or save request
-            $generalOptions = new IfwPsn_Wp_Options_Section('general', __('General Options', 'ifw'));
+            $generalOptions = new IfwPsn_Wp_Options_Section('general', __('General', 'ifw'));
             IfwPsn_Wp_Proxy_Action::doAction($this->_pm->getAbbrLower() . '_general_options_init', $generalOptions);
             $this->addSection($generalOptions);
 
@@ -158,20 +168,7 @@ class IfwPsn_Wp_Options
      */
     public function render($pageId = null)
     {
-        if ($this->_addedFields === 0):
-            echo '<p>' . __('No options available.', 'ifw') . '</p>';
-        else:
-            if ($pageId == null) {
-                $pageId = $this->_pageId;
-            }
-        ?>
-        <form method="post" action="options.php">
-            <?php settings_fields($pageId); ?>
-            <?php do_settings_sections($pageId); ?>
-            <?php submit_button(); ?>
-        </form>
-        <?php
-        endif;
+        $this->_renderer->render($this, $pageId);
     }
 
     /**
@@ -259,4 +256,37 @@ class IfwPsn_Wp_Options
     {
         IfwPsn_Wp_Proxy::deleteOption($this->_pageId);
     }
+
+    /**
+     * @return IfwPsn_Wp_Options_Renderer_Interface
+     */
+    public function getRenderer()
+    {
+        return $this->_renderer;
+    }
+
+    /**
+     * @param IfwPsn_Wp_Options_Renderer_Interface $renderer
+     */
+    public function setRenderer($renderer)
+    {
+        $this->_renderer = $renderer;
+    }
+
+    /**
+     * @return int
+     */
+    public function getAddedFields()
+    {
+        return $this->_addedFields;
+    }
+
+    /**
+     * @return array
+     */
+    public function getSections()
+    {
+        return $this->_sections;
+    }
+
 }

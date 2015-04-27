@@ -146,7 +146,6 @@ class IfwPsn_Wp_Proxy_Filter
      * @param IfwPsn_Wp_Plugin_Manager $pm
      * @param $function_to_add
      * @param int $priority
-     * @internal param int $accepted_args
      * @return bool|void
      */
     public static function addPluginActionLinks(IfwPsn_Wp_Plugin_Manager $pm, $function_to_add, $priority = 10)

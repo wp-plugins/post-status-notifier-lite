@@ -54,9 +54,6 @@ class IfwPsn_Wp_Http_Request
      */
     protected function _init()
     {
-        $this->setUserAgent('WordPress/' . IfwPsn_Wp_Proxy_Blog::getVersion() . '; ' . IfwPsn_Wp_Proxy_Blog::getUrl());
-        $this->addData('referrer', IfwPsn_Wp_Proxy_Blog::getUrl());
-        $this->addData('browser_user_agent', $_SERVER['HTTP_USER_AGENT']);
     }
 
     /**
@@ -64,15 +61,24 @@ class IfwPsn_Wp_Http_Request
      */
     public function send()
     {
-        $args = array(
-            'body' => $this->getData(),
-            'user-agent' => $this->getUserAgent()
-        );
+        $args = array();
+
+        if ($this->getUserAgent() !== null) {
+            $args['user-agent'] = $this->getUserAgent();
+        }
 
         if ($this->getSendMethod() == 'post') {
+
+            $args['body'] = $this->getData();
+
             $response = wp_remote_post($this->getUrl(), $args);
+
         } elseif ($this->getSendMethod() == 'get') {
-            $response = wp_remote_get($this->getUrl(), $args);
+
+            $url = add_query_arg($this->getData(), $this->getUrl());
+            $url = esc_url_raw($url);
+
+            $response = wp_remote_get($url, $args);
         }
 
         if (isset($response)) {

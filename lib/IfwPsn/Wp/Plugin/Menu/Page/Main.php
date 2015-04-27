@@ -31,19 +31,50 @@ abstract class IfwPsn_Wp_Plugin_Menu_Page_Main implements IfwPsn_Wp_Plugin_Menu_
      */
     protected $_pageTitle;
 
+    /**
+     * @var string
+     */
     protected $_capability;
 
+    /**
+     * @var string
+     */
     protected $_slug;
 
+    /**
+     * @var string|callable
+     */
     protected $_callback = '';
 
+    /**
+     * @var string
+     */
     protected $_iconUrl = '';
 
+    /**
+     * @var int|null
+     */
     protected $_position;
 
+    /**
+     * @var string
+     */
     protected $_pageHook;
 
+    /**
+     * @var array
+     */
     protected $_subPages = array();
+
+    /**
+     * @var null|array
+     */
+    protected $_subPagesSorted;
+
+    /**
+     * @var bool
+     */
+    protected $_isMultisite = false;
 
 
     /**
@@ -53,12 +84,19 @@ abstract class IfwPsn_Wp_Plugin_Menu_Page_Main implements IfwPsn_Wp_Plugin_Menu_
     {
         $this->_pm = $pm;
 
-        $this->init();
+        if (method_exists($this, '_init')) {
+            $this->_init();
+        }
     }
 
-    public function init()
+    public function load()
     {
-        IfwPsn_Wp_Proxy_Action::addAdminMenu(array($this, '_load'));
+        if ($this->isIsMultisite()) {
+            IfwPsn_Wp_Proxy_Action::addNetworkAdminMenu(array($this, '_load'));
+
+        } else {
+            IfwPsn_Wp_Proxy_Action::addAdminMenu(array($this, '_load'));
+        }
     }
 
     /**
@@ -66,7 +104,11 @@ abstract class IfwPsn_Wp_Plugin_Menu_Page_Main implements IfwPsn_Wp_Plugin_Menu_
      */
     public function _load()
     {
-        IfwPsn_Wp_Proxy_Action::doPlugin($this->_pm, 'before_load_menu_page', $this);
+        if ($this->isIsMultisite()) {
+            IfwPsn_Wp_Proxy_Action::doPlugin($this->_pm, 'before_load_multisite_menu_page', $this);
+        } else {
+            IfwPsn_Wp_Proxy_Action::doPlugin($this->_pm, 'before_load_menu_page', $this);
+        }
 
         $this->_pageHook = add_menu_page(
             $this->getPageTitle(),
@@ -81,9 +123,9 @@ abstract class IfwPsn_Wp_Plugin_Menu_Page_Main implements IfwPsn_Wp_Plugin_Menu_
         /**
          * @var IfwPsn_Wp_Plugin_Menu_Page_Sub $subPage
          */
-        foreach($this->getSubPages() as $subPage) {
+        foreach($this->getSubPagesSorted() as $subPage) {
 
-            IfwPsn_Wp_Proxy_Action::doPlugin($this->_pm, 'before_load_submenu_page', $subPage);
+            $this->_triggerAction('before_load_submenu_page');
 
             if ($subPage->isHidden()) {
 
@@ -107,16 +149,33 @@ abstract class IfwPsn_Wp_Plugin_Menu_Page_Main implements IfwPsn_Wp_Plugin_Menu_
                 $subPage->setPageHook($subPageHook);
             }
 
-            IfwPsn_Wp_Proxy_Action::doPlugin($this->_pm, 'after_load_submenu_page', $subPage);
+            $this->_triggerAction('after_load_submenu_page');
+
             if ($this->_pm->getAccess()->getPage() == $subPage->getSlug()) {
                 $subPage->onLoad();
             }
         }
 
-        IfwPsn_Wp_Proxy_Action::doPlugin($this->_pm, 'after_load_menu_page', $this);
+        $this->_triggerAction('after_load_menu_page');
+
         if ($this->_pm->getAccess()->getPage() == $this->getSlug()) {
             $this->onLoad();
         }
+    }
+
+    /**
+     * @param $action
+     */
+    protected function _triggerAction($action)
+    {
+        if ($this->isIsMultisite()) {
+            $action = strtr($action, array(
+                'menu' => 'multisite_menu',
+                'submenu' => 'multisite_submenu',
+            ));
+        }
+
+        IfwPsn_Wp_Proxy_Action::doPlugin($this->_pm, $action, $this);
     }
 
     /**
@@ -283,6 +342,50 @@ abstract class IfwPsn_Wp_Plugin_Menu_Page_Main implements IfwPsn_Wp_Plugin_Menu_
     }
 
     /**
+     * @return array
+     */
+    public function getSubPagesSorted()
+    {
+        if ($this->_subPagesSorted === null) {
+            $this->_subPagesSorted = array();
+
+            /**
+             * @var IfwPsn_Wp_Plugin_Menu_Page_Sub $subPage
+             */
+            foreach ($this->_subPages as $subPage) {
+                $this->_subPagesSorted[] = array(
+                    'subpage' => $subPage,
+                    'priority' => $subPage->getPriority()
+                );
+            }
+
+            uasort($this->_subPagesSorted, array($this, 'subPageCompare'));
+            $this->_subPagesSorted = array_map(array($this, 'subPageCompareReduce'), $this->_subPagesSorted);
+        }
+
+        return $this->_subPagesSorted;
+    }
+
+    /**
+     * @param $a
+     * @param $b
+     * @return mixed
+     */
+    public function subPageCompare($a, $b)
+    {
+        return $a['priority'] - $b['priority'];
+    }
+
+    /**
+     * @param $i
+     * @return mixed
+     */
+    public function subPageCompareReduce($i)
+    {
+        return $i['subpage'];
+    }
+
+    /**
      * @var IfwPsn_Wp_Plugin_Menu_Page_Sub $subPage
      * @return $this
      */
@@ -293,5 +396,21 @@ abstract class IfwPsn_Wp_Plugin_Menu_Page_Main implements IfwPsn_Wp_Plugin_Menu_
         return $this;
     }
 
+    /**
+     * @return boolean
+     */
+    public function isIsMultisite()
+    {
+        return $this->_isMultisite;
+    }
 
+    /**
+     * @param boolean $isMultisite
+     */
+    public function setIsMultisite($isMultisite)
+    {
+        if (is_bool($isMultisite)) {
+            $this->_isMultisite = $isMultisite;
+        }
+    }
 }

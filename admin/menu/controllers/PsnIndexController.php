@@ -27,7 +27,7 @@ class PsnIndexController extends PsnApplicationController
             $pointer->setHeader(__('Manage rules', 'psn'))
                 ->setContent(sprintf(__('In the "Rules" section you can manage your post status notification rules.<br>Just try it and <a href="%s">create a new rule</a>.', 'psn'), IfwPsn_Wp_Proxy_Admin::getMenuUrl($this->_pm, 'rules', 'create')))
                 ->setEdge('top')->setAlign('left')
-                ->renderTo('nav-rules');
+                ->renderTo('#nav-rules');
 
             if ($this->_pm->isPremium()) {
                 // license input notice
@@ -37,7 +37,7 @@ class PsnIndexController extends PsnApplicationController
                     $pointer->setHeader(__('Enter license code', 'ifw'))
                         ->setContent(sprintf(__('Please enter the plugin license code in the <a href="%s">options panel</a> to be able to receive <b>auto-updates</b> via the WordPress backend.', 'ifw'), IfwPsn_Wp_Proxy_Admin::getMenuUrl($this->_pm, 'options')))
                         ->setEdge('top')->setAlign('left')
-                        ->renderTo('nav-options');
+                        ->renderTo('#nav-options');
                 }
             }
         }

@@ -212,3 +212,59 @@ if (!function_exists('ifw_xml_to_array')) {
         return $result;
     }
 }
+
+if (!function_exists('ifw_log_rotate')) {
+    /**
+     * @param $text
+     * @param $filepath
+     * @param string|null $type options: daily
+     * @param int $maxsize in MB
+     * @return bool
+     */
+    function ifw_log_rotate($text, $filepath, $type = null, $maxsize = 20, $prefix = null)
+    {
+
+        if ($type == 'daily') {
+            $filename = $filepath . DIRECTORY_SEPARATOR . date('Y-m-d') . '.log';
+        } else {
+            $filename = $filepath;
+        }
+
+        // size check / rotation
+        if (file_exists($filename) && filesize($filename) > $maxsize * 1024 * 1024) {
+
+            $iteration = 1;
+            while (file_exists($filename . '.' . $iteration)) {
+                $iteration++;
+            }
+            rename($filename, $filename . '.' . $iteration);
+        }
+
+        if (!file_exists($filename)) {
+            touch($filename);
+            chmod($filename, 0666);
+        }
+
+        if (!is_writable($filename)) {
+            return false;
+        }
+        if (!$handle = fopen($filename, 'a')) {
+            return false;
+        }
+
+        if ($prefix == null) {
+
+            $prefix = date('Y/m/d H:i:s') . ': ';
+
+        }
+
+        $output = $prefix . $text . PHP_EOL;
+
+        if (fwrite($handle, $output) === FALSE) {
+            return false;
+        }
+        fclose($handle);
+
+        return true;
+    }
+}

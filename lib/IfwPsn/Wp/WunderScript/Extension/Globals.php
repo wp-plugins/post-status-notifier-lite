@@ -14,8 +14,10 @@ class IfwPsn_Wp_WunderScript_Extension_Globals implements IfwPsn_Wp_WunderScript
     public function load(IfwPsn_Vendor_Twig_Environment $env)
     {
         require_once dirname(__FILE__) . '/Global/Wp.php';
+        require_once dirname(__FILE__) . '/Global/Db.php';
 
         $env->addGlobal( 'wp', new IfwPsn_Wp_WunderScript_Extension_Global_Wp() );
+        $env->addGlobal( 'db', new IfwPsn_Wp_WunderScript_Extension_Global_Db() );
     }
 }
  

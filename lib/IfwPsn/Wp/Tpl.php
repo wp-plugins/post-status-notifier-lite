@@ -18,9 +18,9 @@ class IfwPsn_Wp_Tpl
 
     /**
      * 
-     * @var unknown_type
+     * @var array
      */
-    protected static $_stringLoaderInstance;
+    protected static $_stringLoaderInstances = array();
 
 
 
@@ -29,7 +29,6 @@ class IfwPsn_Wp_Tpl
      *
      * @param IfwPsn_Wp_Plugin_Manager $pm
      * @param array $options
-     * @internal param string $loader
      * @return IfwPsn_Vendor_Twig_Environment
      */
     public static function getInstance(IfwPsn_Wp_Plugin_Manager $pm, $options=array())
@@ -41,9 +40,6 @@ class IfwPsn_Wp_Tpl
      *
      * @param array $options
      * @throws IfwPsn_Wp_Exception
-     * @internal param \IfwPsn_Wp_Plugin_Manager $pm
-     * @internal param string $loader
-     * @internal param array $twigOptions
      * @return IfwPsn_Vendor_Twig_Environment
      */
     public static function factory($options=array())
@@ -63,7 +59,10 @@ class IfwPsn_Wp_Tpl
             
             case 'String':
                 require_once dirname(__FILE__) . '/../Vendor/Twig/Loader/String.php';
+                require_once dirname(__FILE__) . '/../Vendor/Twig/Extension/StringLoader.php';
+
                 $tpl = new IfwPsn_Vendor_Twig_Environment(new IfwPsn_Vendor_Twig_Loader_String(), $twigOptions);
+                $tpl->addExtension(new IfwPsn_Vendor_Twig_Extension_StringLoader());
                 break;
                 
             case 'Filesystem':
@@ -110,26 +109,32 @@ class IfwPsn_Wp_Tpl
      * @param array $twigOptions
      * @return IfwPsn_Vendor_Twig_Environment
      */
-    public static function getStringLoaderInstance($twigOptions=array())
+    public static function getStringLoaderInstance($twigOptions=array(), $instanceToken = null)
     {
-        if (self::$_stringLoaderInstance === null) {
-            $options = array('twig_loader' => 'String');
-            if (!empty($twigOptions) && is_array($twigOptions)) {
-                $options['twig_options'] = $twigOptions;
-            }
-            self::$_stringLoaderInstance = self::factory($options);
+        $options = array('twig_loader' => 'String');
+        if (!empty($twigOptions) && is_array($twigOptions)) {
+            $options['twig_options'] = $twigOptions;
         }
-        return self::$_stringLoaderInstance;
+        if (is_null($instanceToken)) {
+            $instanceToken = $options['twig_loader'];
+        }
+
+        if (!isset(self::$_stringLoaderInstances[$instanceToken])) {
+            self::$_stringLoaderInstances[$instanceToken] = self::factory($options);
+        }
+        return self::$_stringLoaderInstances[$instanceToken];
     }
 
     /**
      * Retrieves a Twig environment with filesystem loader
-     * 
+     *
      * @param IfwPsn_Wp_Plugin_Manager $pm
-     * @param array twig options
+     * @param array $twigOptions
+     * @param null $instanceToken
      * @return IfwPsn_Vendor_Twig_Environment
-     */    
-    public static function getFilesytemInstance(IfwPsn_Wp_Plugin_Manager $pm, $twigOptions=array())
+     * @throws IfwPsn_Wp_Exception
+     */
+    public static function getFilesytemInstance(IfwPsn_Wp_Plugin_Manager $pm, $twigOptions=array(), $instanceToken = null)
     {
         $options = array(
             'twig_loader' => 'Filesystem',
@@ -138,12 +143,15 @@ class IfwPsn_Wp_Tpl
         if (!empty($twigOptions) && is_array($twigOptions)) {
             $options['twig_options'] = $twigOptions;
         }
-         
-        if (!isset(self::$_instances[$pm->getAbbr()][$options['twig_loader']])) {
-            self::$_instances[$pm->getAbbr()][$options['twig_loader']] = self::factory($options);
+
+        if (is_null($instanceToken)) {
+            $instanceToken = $options['twig_loader'];
+        }
+        if (!isset(self::$_instances[$pm->getAbbr()][$instanceToken])) {
+            self::$_instances[$pm->getAbbr()][$instanceToken] = self::factory($options);
         }
         
-        return self::$_instances[$pm->getAbbr()][$options['twig_loader']];
+        return self::$_instances[$pm->getAbbr()][$instanceToken];
     }
     
     /**

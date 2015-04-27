@@ -101,13 +101,13 @@ msgstr ""
 msgid "Premium"
 msgstr ""
 
-msgid "You are using the Premium version of this plugin."
+msgid "You are using the premium version of this plugin."
 msgstr ""
 
-msgid "Visit the <a href=\"%s\" target=\"_blank\">Premium homepage</a> for the latest news."
+msgid "Visit the <a href=\"%s\" target=\"_blank\">premium homepage</a> for the latest news."
 msgstr ""
 
-msgid "Features of the Premium version"
+msgid "Features of the premium version"
 msgstr ""
 
 msgid "More information"
@@ -273,4 +273,7 @@ msgid "Delete"
 msgstr ""
 
 msgid "Learn how to extend %s"
+msgstr ""
+
+msgid "General"
 msgstr ""

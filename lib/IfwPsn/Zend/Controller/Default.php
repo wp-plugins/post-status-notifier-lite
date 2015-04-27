@@ -43,6 +43,11 @@ class IfwPsn_Zend_Controller_Default extends IfwPsn_Vendor_Zend_Controller_Actio
      */
     protected $_request;
 
+    /**
+     * @var IfwPsn_Wp_Admin_Notices
+     */
+    protected $_adminNotices;
+
 
 
     /**
@@ -60,8 +65,9 @@ class IfwPsn_Zend_Controller_Default extends IfwPsn_Vendor_Zend_Controller_Actio
 
         $this->_pm->getLogger()->logPrefixed('Init default controller.');
 
-
-        $this->_initSession();
+        $this->_adminNotices = new IfwPsn_Wp_Admin_Notices($this->_pm->getAbbrLower());
+//        $this->_adminNotices->setAutoShow(true);
+        $this->view->adminNotices = $this->_adminNotices;
 
         $this->_redirector = $this->_helper->getHelper('Redirector');
 
@@ -83,23 +89,6 @@ class IfwPsn_Zend_Controller_Default extends IfwPsn_Vendor_Zend_Controller_Actio
 
         // Do action on controller init
         IfwPsn_Wp_Proxy_Action::doAction(get_class($this) . '_init', $this);
-    }
-
-    /**
-     * Prepare the use of Zend_Session for Flash_Messenger
-     */
-    protected function _initSession()
-    {
-        $this->_pm->getLogger()->logPrefixed('Init session.');
-
-        if (session_id() != '' || defined('SID')) {
-            // session already started, use the Zend_Session hack for use in WordPress context and set it to started
-            require_once $this->_pm->getPathinfo()->getRootLib() . 'IfwPsn/Vendor/Zend/Session/Abstract.php';
-            require_once $this->_pm->getPathinfo()->getRootLib() . 'IfwPsn/Vendor/Zend/Session/Namespace.php';
-            require_once $this->_pm->getPathinfo()->getRootLib() . 'IfwPsn/Vendor/Zend/Session/Exception.php';
-            require_once $this->_pm->getPathinfo()->getRootLib() . 'IfwPsn/Vendor/Zend/Session.php';
-            IfwPsn_Vendor_Zend_Session::setStarted(true);
-        }
     }
 
     /**
@@ -231,27 +220,50 @@ class IfwPsn_Zend_Controller_Default extends IfwPsn_Vendor_Zend_Controller_Actio
             $location .= '&'. $this->_pm->getConfig()->getActionKey() . '=' . $action;
         }
         if (!empty($extra)) {
-            $location .= $extra;
+            if (is_array($extra)) {
+                $location .= '&' . http_build_query($extra);
+            } else {
+                $location .= $extra;
+            }
         }
 
         header('Location: '. $location);
+        exit;
     }
 
     /**
-     * @return IfwPsn_Vendor_Zend_Controller_Action_Helper_FlashMessenger
+     * @return IfwPsn_Wp_Admin_Notices
+     * @deprecated
      */
     public function getMessenger()
     {
-        $this->_initSession();
-        return IfwPsn_Vendor_Zend_Controller_Action_HelperBroker::getStaticHelper('flashMessenger');
+        return $this->_adminNotices;
+    }
+
+    /**
+     * @return IfwPsn_Wp_Admin_Notices
+     */
+    public function getAdminNotices()
+    {
+        return $this->_adminNotices;
     }
 
     /**
      * @param $msg
+     * @deprecated
      */
     protected function _addErrorMessage($msg)
     {
-        $this->getMessenger()->setNamespace('error')->addMessage($msg);
+        $this->_adminNotices->addError($msg);
+    }
+
+    /**
+     * @param $msg
+     * @deprecated
+     */
+    public function addErrorMessage($msg)
+    {
+        $this->_adminNotices->addError($msg);
     }
 
     /**

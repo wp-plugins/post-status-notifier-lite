@@ -150,10 +150,10 @@ abstract class IfwPsn_Wp_Plugin_Cli_Command_Abstract
     
         if (count($usageParamsDescription) > 0) {
             $usage .= PHP_EOL . PHP_EOL . 'Options:' . PHP_EOL;
-            $usage .= implode(PHP_EOL . PHP_EOL, $usageParamsDescription);
+            $usage .= implode(PHP_EOL, $usageParamsDescription);
         }
     
-        return $usage;
+        return $usage . PHP_EOL;
     }
     
     /**
@@ -189,24 +189,52 @@ abstract class IfwPsn_Wp_Plugin_Cli_Command_Abstract
     {
         return $this->_getDefaultUsage();
     }
-    
+
     /**
      * @param $output
+     * @param null $foreground
+     * @param null $background
+     * @param bool $linebreak
+     * @return $this
      */
-    public function output($output)
+    public function output($output, $foreground = null, $background = null, $linebreak = true)
     {
-        echo $output;
-        echo PHP_EOL;
+        if ($linebreak) {
+            IfwPsn_Wp_Plugin_Cli_Outputter::outputWithLineBreak($output, $foreground, $background);
+        } else {
+            IfwPsn_Wp_Plugin_Cli_Outputter::output($output, $foreground, $background);
+        }
+        return $this;
     }
-    
+
     /**
      * @param $output
+     * @param null $foreground
+     * @param null $background
+     * @return $this
      */
-    public function outputInline($output)
+    public function outputInline($output, $foreground = null, $background = null)
     {
-        echo $output;
+        $this->output($output, $foreground, $background, false);
+        return $this;
     }
-    
+
+    /**
+     * @param string $status
+     */
+    public function outputStatusSuccess($status = 'OK')
+    {
+        $this->outputInline('Status: ')->output($status, 'green');
+    }
+
+    /**
+     * @param string $status
+     */
+    public function outputStatusError($status = 'Error')
+    {
+        $this->outputInline('Status: ')->output($status, 'red');
+    }
+
     /**
      * Prepares command line parameters for use
      * @param array $params
@@ -215,11 +243,19 @@ abstract class IfwPsn_Wp_Plugin_Cli_Command_Abstract
     protected function _prepareParams($params)
     {
         $newparams = array();
-    
+
         foreach ($params as $param) {
     
             if (!strstr($param, '=')) {
-                $newparams[] = $param;
+
+                if (stripos($param, '--') === 0) {
+                    $param = substr($param, 2);
+                } elseif (stripos($param, '-') === 0) {
+                    $param = substr($param, 1);
+                }
+
+                $newparams[$param] = true;
+
             } else {
                 $p = explode('=', $param);
     
@@ -250,8 +286,75 @@ abstract class IfwPsn_Wp_Plugin_Cli_Command_Abstract
                 }
             }
         }
-    
+
         return $newparams;
+    }
+
+    /**
+     * @param $key
+     * @return bool
+     */
+    public function hasParam($key)
+    {
+        $result = null;
+
+        if (is_array($this->_supportedParams)) {
+
+            foreach ($this->_supportedParams as $param) {
+
+                if ($key == $param['name'] || $key == $param['shortName']) {
+                    if (isset($this->_params[$param['name']]) || array_key_exists($param['name'], $this->_params)) {
+                        $result = true;
+                    } elseif (isset($this->_params[$param['shortName']]) || array_key_exists($param['shortName'], $this->_params)) {
+                        $result = true;
+                    }
+                    break;
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param $key
+     * @return bool
+     */
+    public function isEmptyParam($key)
+    {
+        if (!$this->hasParam($key)) {
+            return true;
+        }
+
+        $value = $this->getParam($key);
+
+        return empty($value);
+    }
+
+    /**
+     * @param $key
+     * @return mixed|null
+     */
+    public function getParam($key)
+    {
+        $result = null;
+
+        if (is_array($this->_supportedParams)) {
+
+            foreach ($this->_supportedParams as $param) {
+
+                if ($key == $param['name'] || $key == $param['shortName']) {
+                    if (isset($this->_params[$param['name']])) {
+                        $result = $this->_params[$param['name']];
+                    } elseif (isset($this->_params[$param['shortName']])) {
+                        $result = $this->_params[$param['shortName']];
+                    }
+                    break;
+                }
+            }
+        }
+
+        return $result;
     }
 
     /**

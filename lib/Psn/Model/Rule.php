@@ -35,6 +35,11 @@ class Psn_Model_Rule extends IfwPsn_Wp_ORM_Model
     protected $_recipient;
 
     /**
+     * @var string
+     */
+    protected $_dynamicRecipient;
+
+    /**
      * @var null|array
      */
     protected $_ccSelect;
@@ -221,6 +226,17 @@ class Psn_Model_Rule extends IfwPsn_Wp_ORM_Model
         }
 
         return $this->_recipient;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDynamicRecipient()
+    {
+        if ($this->_dynamicRecipient === null) {
+            $this->_dynamicRecipient = $this->get('to_dyn');
+        }
+        return $this->_dynamicRecipient;
     }
 
     /**
@@ -572,7 +588,6 @@ class Psn_Model_Rule extends IfwPsn_Wp_ORM_Model
     /**
      * @param $key
      * @param $value
-     * @internal param array $data
      */
     public function setData($key, $value)
     {

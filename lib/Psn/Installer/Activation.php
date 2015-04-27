@@ -66,6 +66,7 @@ class Psn_Installer_Activation implements IfwPsn_Wp_Plugin_Installer_ActivationI
               `notification_body` text COLLATE utf8_unicode_ci NOT NULL,
               `recipient` varchar(200) COLLATE utf8_unicode_ci NOT NULL,
               `to` varchar(255) COLLATE utf8_unicode_ci NULL,
+              `to_dyn` text COLLATE utf8_unicode_ci,
               `cc_select` text COLLATE utf8_unicode_ci,
               `cc` text COLLATE utf8_unicode_ci,
               `bcc_select` text COLLATE utf8_unicode_ci,
@@ -78,6 +79,8 @@ class Psn_Installer_Activation implements IfwPsn_Wp_Plugin_Installer_ActivationI
               `mail_tpl` int(11) NULL,
               `editor_restriction` text COLLATE utf8_unicode_ci,
               `to_loop` tinyint(1) NOT NULL DEFAULT "0",
+              `limit_type` tinyint(1) NULL,
+              `limit_count` int(11) NULL,
               PRIMARY KEY (`id`)
             ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT="Plugin: Post Status Notifier";
         ');

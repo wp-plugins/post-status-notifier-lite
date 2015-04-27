@@ -43,13 +43,15 @@ class IfwPsn_Wp_Plugin_Update_Manager
     {
         if ($this->_pm->getConfig()->plugin->autoupdate == 1) {
 
+            $updateApi = IfwPsn_Wp_Plugin_Update_Api_Factory::get($this->_pm);
+
             // check for custom update message
-            IfwPsn_Wp_Proxy_Action::add('in_plugin_update_message-' . $this->_pm->getPathinfo()->getFilenamePath(), array($this, 'onPluginUpdateMessage'), 10, 3);
-            IfwPsn_Wp_Proxy_Filter::add('pre_set_site_transient_update_plugins', array($this, 'checkForPremiumUpdate'));
+            IfwPsn_Wp_Proxy_Action::add('in_plugin_update_message-' . $this->_pm->getPathinfo()->getFilenamePath(), array($updateApi, 'getUpdateInlineMessage'), 10, 3);
+            IfwPsn_Wp_Proxy_Filter::add('pre_set_site_transient_update_plugins', array($updateApi, 'getUpdateData'));
 
             if ($this->_pm->isPremium()) {
                 // check for premium get update info
-                IfwPsn_Wp_Proxy_Filter::add('plugins_api', array($this, 'getPluginInfo'), 10, 3);
+                IfwPsn_Wp_Proxy_Filter::add('plugins_api', array($updateApi, 'getPluginInformation'), 10, 3);
             }
         }
 

@@ -63,15 +63,42 @@ class IfwPsn_Wp_ORM_Model extends IfwPsn_Wp_ORM_ModelParis
             $values = call_user_func($options['values_callback'], $values);
         }
 
-        $count = self::factory($modelName)->where_like($nameCol, sprintf($newNameFormat, $values[$nameCol], __('Duplicate', 'ifw'), '%') . '%')->count();
+        $values[$nameCol] = self::getUniqueName($modelName, $values[$nameCol], $nameCol, sprintf($newNameFormat, '%s', __('Duplicate', 'ifw'), '%s'), 1);
 
-        $copyCount = '';
-        if ($count > 0) {
-            $copyCount = $count + 1;
+        $model = IfwPsn_Wp_ORM_Model::factory($modelName);
+        $result = $model->create($values)->save();
+
+        if (isset($options['save_callback']) && is_callable($options['save_callback'])) {
+            call_user_func($options['save_callback'], $item, $model);
         }
-        $values[$nameCol] = sprintf($newNameFormat, $values[$nameCol], __('Duplicate', 'ifw'), $copyCount);
 
-        return IfwPsn_Wp_ORM_Model::factory($modelName)->create($values)->save();
+        return $result;
+    }
+
+    /**
+     * Checks if a model with the given name already exists and if so returns a new unique name
+     * @param $modelName
+     * @param $name
+     * @return string
+     */
+    public static function getUniqueName($modelName, $name, $nameCol = 'name', $newNameFormat = '%s [%s]', $counterStart = 2)
+    {
+        $count = self::factory($modelName)->where($nameCol, $name)->count();
+
+        if ($count == 0) {
+            // no model with the given name exists
+            return $name;
+        }
+
+        $counter = $counterStart;
+        $newName = sprintf($newNameFormat, $name, $counter);
+
+        while (self::factory($modelName)->where($nameCol, $newName)->count() > 0) {
+            $counter++;
+            $newName = sprintf($newNameFormat, $name, $counter);
+        }
+
+        return $newName;
     }
 
     /**
@@ -101,10 +128,19 @@ class IfwPsn_Wp_ORM_Model extends IfwPsn_Wp_ORM_ModelParis
         if (isset($options['prefix'])) {
             $prefix = $options['prefix'];
         }
+        if (isset($options['skip_col'])) {
+            $skip_col = $options['skip_col'];
+            if (!is_array($skip_col)) {
+                $skip_col = array($skip_col);
+            }
+        } else {
+            $skip_col = null;
+        }
 
         // create imported items
         foreach ($items as $item) {
 
+            // unset the primary key
             unset($item[$idCol]);
 
             if (!empty($prefix)) {
@@ -115,8 +151,21 @@ class IfwPsn_Wp_ORM_Model extends IfwPsn_Wp_ORM_ModelParis
                 $item = call_user_func($options['item_callback'], $item);
             }
 
-            if (IfwPsn_Wp_ORM_Model::factory($modelName)->create($item)->save() != false) {
+            $params = array();
+
+            foreach ($item as $k => $v) {
+                if (!empty($k) && ($skip_col === null || !in_array($k, $skip_col))) {
+                    $params[$k] = $v;
+                }
+            }
+
+            $obj = IfwPsn_Wp_ORM_Model::factory($modelName)->create($params);
+
+            if ($obj->save() != false) {
                 $counter++;
+                if (isset($options['item_callback_saved']) && is_callable($options['item_callback_saved'])) {
+                    call_user_func($options['item_callback_saved'], $obj, $item);
+                }
             }
         }
 
@@ -175,6 +224,9 @@ class IfwPsn_Wp_ORM_Model extends IfwPsn_Wp_ORM_ModelParis
                 }
 
                 $result .= "\t" . '<column name="'. $field .'">'. $value .'</column>' . "\n";
+            }
+            if (isset($options['item_result_callback']) && is_callable($options['item_result_callback'])) {
+                $result .= call_user_func($options['item_result_callback'], $item);
             }
             $result .= "</$itemNameSingular>\n";
         }

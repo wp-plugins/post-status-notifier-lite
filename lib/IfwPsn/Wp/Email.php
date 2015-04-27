@@ -49,6 +49,7 @@ class IfwPsn_Wp_Email
         if (!empty($identifier)) {
             $this->setIdentifier($identifier);
         }
+        $this->addHeader('charset', 'UTF-8');
     }
 
     /**

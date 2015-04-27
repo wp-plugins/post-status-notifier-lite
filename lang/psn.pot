@@ -582,3 +582,11 @@ msgstr ""
 msgid "Filter"
 msgstr ""
 
+msgid "Rule"
+msgstr ""
+
+msgid "For more details please check the <a href=\"%s\" target=\"_blank\">documentation</a>."
+msgstr ""
+
+msgid "More details"
+msgstr ""

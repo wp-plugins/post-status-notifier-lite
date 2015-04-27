@@ -68,6 +68,17 @@ class Psn_Patch_Database implements IfwPsn_Wp_Plugin_Update_Patch_Interface
         if (!$this->isFieldToLoop()) {
             $this->createRulesFieldToLoop();
         }
+
+        // Updates for version 1.8
+        if (!$this->isFieldLimitType()) {
+            $this->createRulesFieldLimitType();
+        }
+        if (!$this->isFieldLimitCount()) {
+            $this->createRulesFieldLimitCount();
+        }
+        if (!$this->isFieldToDyn()) {
+            $this->createRulesFieldToDyn();
+        }
     }
 
     /**
@@ -92,6 +103,7 @@ class Psn_Patch_Database implements IfwPsn_Wp_Plugin_Update_Patch_Interface
             'service_email',
             'service_log',
             'categories',
+            'from',
         );
 
         $diff = array_diff(
@@ -172,6 +184,30 @@ class Psn_Patch_Database implements IfwPsn_Wp_Plugin_Update_Patch_Interface
     public function isFieldToLoop()
     {
         return IfwPsn_Wp_Proxy_Db::columnExists('psn_rules', 'to_loop');
+    }
+
+    /**
+     * @return bool
+     */
+    public function isFieldLimitType()
+    {
+        return IfwPsn_Wp_Proxy_Db::columnExists('psn_rules', 'limit_type');
+    }
+
+    /**
+     * @return bool
+     */
+    public function isFieldLimitCount()
+    {
+        return IfwPsn_Wp_Proxy_Db::columnExists('psn_rules', 'limit_count');
+    }
+
+    /**
+     * @return bool
+     */
+    public function isFieldToDyn()
+    {
+        return IfwPsn_Wp_Proxy_Db::columnExists('psn_rules', 'to_dyn');
     }
 
     /**
@@ -268,6 +304,39 @@ class Psn_Patch_Database implements IfwPsn_Wp_Plugin_Update_Patch_Interface
     {
         // ALTER TABLE `wp_psn_rules` ADD `editor_restriction` TEXT NULL DEFAULT NULL ;
         $query = sprintf('ALTER TABLE `%s` ADD `to_loop` TINYINT(1) DEFAULT 0', IfwPsn_Wp_Proxy_Db::getTableName('psn_rules'));
+        IfwPsn_Wp_Proxy_Db::getObject()->query($query);
+    }
+
+    /**
+     * Create field "limit_type" on psn_rules table
+     * @since 1.8
+     */
+    public function createRulesFieldLimitType()
+    {
+        // ALTER TABLE `wp_psn_rules` ADD `editor_restriction` TEXT NULL DEFAULT NULL ;
+        $query = sprintf('ALTER TABLE `%s` ADD `limit_type` TINYINT(1) NULL', IfwPsn_Wp_Proxy_Db::getTableName('psn_rules'));
+        IfwPsn_Wp_Proxy_Db::getObject()->query($query);
+    }
+
+    /**
+     * Create field "limit_count" on psn_rules table
+     * @since 1.8
+     */
+    public function createRulesFieldLimitCount()
+    {
+        // ALTER TABLE `wp_psn_rules` ADD `editor_restriction` TEXT NULL DEFAULT NULL ;
+        $query = sprintf('ALTER TABLE `%s` ADD `limit_count` INT(11) NULL', IfwPsn_Wp_Proxy_Db::getTableName('psn_rules'));
+        IfwPsn_Wp_Proxy_Db::getObject()->query($query);
+    }
+
+    /**
+     * Create field "to_dyn" on psn_rules table
+     * @since 1.8
+     */
+    public function createRulesFieldToDyn()
+    {
+        // ALTER TABLE `wp_psn_rules` ADD  `to_dyn` TEXT NULL AFTER  `to`;
+        $query = sprintf('ALTER TABLE `%s` ADD `to_dyn` TEXT NULL AFTER  `to`', IfwPsn_Wp_Proxy_Db::getTableName('psn_rules'));
         IfwPsn_Wp_Proxy_Db::getObject()->query($query);
     }
 

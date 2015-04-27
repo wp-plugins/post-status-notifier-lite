@@ -15,7 +15,8 @@ class Psn_Admin_Form_Validate_ToEmail extends IfwPsn_Vendor_Zend_Validate_NotEmp
      */
     public function isValid($value, $context = null)
     {
-        if (isset($context['to']) && $context['to'] != '') {
+        if ((isset($context['to']) && $context['to'] != '') ||
+            (isset($context['to_dyn']) && $context['to_dyn'] != '')) {
             return true;
         }
 

@@ -8,7 +8,7 @@
  * @author   Timo Reith <timo@ifeelweb.de>
  * @version  $Id$
  */
-class IfwPsn_Wp_Http_Response 
+class IfwPsn_Wp_Http_Response
 {
     /**
      * @var
@@ -19,6 +19,12 @@ class IfwPsn_Wp_Http_Response
      * @var int
      */
     protected $_statusCode;
+
+    /**
+     * The response body
+     * @var string|null
+     */
+    protected $_body;
 
     /**
      * @var string
@@ -39,15 +45,31 @@ class IfwPsn_Wp_Http_Response
 
     protected function _init()
     {
-        if (!is_wp_error($this->_response)) {
+        if (is_array($this->_response) && isset($this->_response['response'])) {
 
+            // response is an array
             if (isset($this->_response['response']['code'])) {
                 $this->_statusCode = $this->_response['response']['code'];
             }
+            if (isset($this->_response['body'])) {
+                $this->_body = $this->_response['body'];
+            }
 
+        } elseif (is_wp_error($this->_response)) {
+
+            /**
+             * is WP_Error
+             * @var WP_Error $this->_response
+             */
+            $this->_errorMessage = $this->_response->get_error_message();
+            $this->_statusCode = 404;
+            
         } else {
 
-            $this->_errorMessage = $this->_response->get_error_message();
+            // unknown response
+            // set to error status
+            $this->_errorMessage = 'Invalid response';
+            $this->_statusCode = 404; 
         }
     }
 
@@ -64,7 +86,7 @@ class IfwPsn_Wp_Http_Response
      */
     public function isError()
     {
-        return !$this->isSuccess();
+        return $this->_statusCode == 404;
     }
 
     /**
@@ -76,11 +98,11 @@ class IfwPsn_Wp_Http_Response
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getBody()
     {
-        return $this->_response['body'];
+        return $this->_body;
     }
 
     /**
@@ -99,5 +121,12 @@ class IfwPsn_Wp_Http_Response
         return $this->_statusCode;
     }
 
+    /**
+     * @return array|mixed
+     */
+    public function getArray()
+    {
+        return json_decode($this->getBody(), true);
+    }
 }
  

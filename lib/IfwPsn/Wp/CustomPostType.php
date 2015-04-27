@@ -98,23 +98,18 @@ class IfwPsn_Wp_CustomPostType
 
         if (method_exists($this, 'getCustomColums')) {
             IfwPsn_Wp_Proxy_Action::add('manage_'. $this->getId() .'_posts_columns', array($this, 'getCustomColums'));
-            //add_filter('manage_'. $this->getId() .'_posts_columns', array($this, 'getCustomColums'));
         }
         if (method_exists($this, 'getColumsContent')) {
             IfwPsn_Wp_Proxy_Action::add('manage_'. $this->getId() .'_posts_custom_column', array($this, 'getColumsContent'), 10, 2);
-            //add_action('manage_'. $this->getId() .'_posts_custom_column', array($this, 'getColumsContent'), 10, 2);
         }
         if (method_exists($this, 'getSortableColumns')) {
             IfwPsn_Wp_Proxy_Action::add('manage_edit-'. $this->getId() .'_sortable_columns', array($this, 'getSortableColumns'));
-            //add_filter('manage_edit-'. $this->getId() .'_sortable_columns', array($this, 'getSortableColumns'));
         }
         if (method_exists($this, 'addToFeed')) {
             IfwPsn_Wp_Proxy_Action::add('request', array($this, 'addToFeed'));
-            //add_filter('request', array($this, 'addToFeed'));
         }
         if (method_exists($this, 'restrictManagePosts')) {
             IfwPsn_Wp_Proxy_Action::add('restrict_manage_posts', array($this, 'restrictManagePosts'));
-            //add_filter('restrict_manage_posts', array($this, 'restrictManagePosts'));
         }
 
     }
@@ -124,6 +119,7 @@ class IfwPsn_Wp_CustomPostType
      */
     public function _register()
     {
+
         if (post_type_exists($this->getId())) {
             return;
         }
@@ -133,7 +129,8 @@ class IfwPsn_Wp_CustomPostType
                 register_taxonomy($id, $this->getId(), $args);
             }
         }
-        register_post_type($this->getId(), $this->_getArgs());
+
+        $result = register_post_type($this->getId(), $this->_getArgs());
     }
 
     /**
@@ -144,6 +141,7 @@ class IfwPsn_Wp_CustomPostType
     {
         $args = array(
             'labels' => $this->_getLabels(),
+            'label' => $this->getLabel(),
             'description' => $this->getDescription(),
             'public' => $this->getPublic(),
             'exclude_from_search' => $this->getExcludeFromSearch(),
@@ -1225,7 +1223,6 @@ class IfwPsn_Wp_CustomPostType
     /**
      * @param $id
      * @param $args
-     * @internal param mixed $taxonomies
      * @return $this
      */
     public function addTaxonomy($id, $args)

@@ -175,6 +175,7 @@ abstract class IfwPsn_Wp_Plugin_Bootstrap_Abstract implements IfwPsn_Wp_Plugin_B
         require_once $this->_pm->getPathinfo()->getRootLib() . 'IfwPsn/Wp/Module/Manager.php';
 
         $this->_moduleManager = new IfwPsn_Wp_Module_Manager($this->_pm);
+        IfwPsn_Wp_Proxy_Action::doPlugin($this->_pm, 'before_modules_load', $this->_moduleManager);
 
         $pluginConfig = $this->_pm->getConfig()->plugin;
         if (!isset($pluginConfig->simulateLiteVersion) || empty($pluginConfig->simulateLiteVersion)) {

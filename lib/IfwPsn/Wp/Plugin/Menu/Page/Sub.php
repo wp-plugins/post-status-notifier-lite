@@ -41,6 +41,11 @@ abstract class IfwPsn_Wp_Plugin_Menu_Page_Sub implements IfwPsn_Wp_Plugin_Menu_P
 
     protected $_hidden = false;
 
+    /**
+     * @var int
+     */
+    protected $_priority = 10;
+
 
 
     /**
@@ -230,6 +235,22 @@ abstract class IfwPsn_Wp_Plugin_Menu_Page_Sub implements IfwPsn_Wp_Plugin_Menu_P
     {
         $this->_hidden = $hidden;
         return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPriority()
+    {
+        return $this->_priority;
+    }
+
+    /**
+     * @param int $priority
+     */
+    public function setPriority($priority)
+    {
+        $this->_priority = (int)$priority;
     }
 
 }

@@ -81,10 +81,10 @@ class IfwPsn_Wp_Proxy_Script
      * @param array $deps
      * @param bool $ver
      * @param bool $in_footer
-     * @param bool $localize
+     * @param array $localize
      * @return void
      */
-    public static function load($handle, $src=false, $deps=array(), $ver=false, $in_footer=false, $localize=false)
+    public static function load($handle, $src=false, $deps=array(), $ver=false, $in_footer=false, $localize=array())
     {
         if (!isset(self::$_scripts[$handle])) {
             self::$_scripts[$handle] = array(
@@ -95,7 +95,7 @@ class IfwPsn_Wp_Proxy_Script
             );
         }
 
-        if (is_array($localize)) {
+        if (is_array($localize) && !empty($localize)) {
             self::localize($handle, key($localize), array_values($localize));
         }
 
@@ -106,15 +106,32 @@ class IfwPsn_Wp_Proxy_Script
     }
 
     /**
+     * @param IfwPsn_Wp_Plugin_Manager $pm
+     * @param $handle
+     * @param bool $src
+     * @param array $deps
+     * @param bool $ver
+     * @param bool $in_footer
+     * @param array $localize
+     */
+    public static function loadMinimized(IfwPsn_Wp_Plugin_Manager $pm, $handle, $src=false, $deps=array(), $ver=false, $in_footer=false, $localize=array())
+    {
+        if ($pm->isProduction()) {
+            $src = self::getMinimizedName($src);
+        }
+        self::load($handle, $src, $deps, $ver, $in_footer, $localize);
+    }
+
+    /**
      * @param $handle
      * @param bool $src
      * @param array $deps
      * @param bool|string $ver
      * @param bool $in_footer
-     * @param bool $localize
+     * @param array $localize
      * @return void
      */
-    public static function loadAdmin($handle, $src=false, $deps=array(), $ver=false, $in_footer=false, $localize=false)
+    public static function loadAdmin($handle, $src=false, $deps=array(), $ver=false, $in_footer=false, $localize=array())
     {
         if (!isset(self::$_scriptsAdmin[$handle])) {
             self::$_scriptsAdmin[$handle] = array(
@@ -125,14 +142,39 @@ class IfwPsn_Wp_Proxy_Script
             );
         }
 
-        if (is_array($localize)) {
-            self::localize($handle, key($localize), array_values($localize));
+        if (is_array($localize) && !empty($localize)) {
+            self::localize($handle, key($localize), $localize[key($localize)]);
         }
 
         if (self::$_enqueueAdminSet == false) {
             IfwPsn_Wp_Proxy_Action::addAdminEnqueueScripts(array('IfwPsn_Wp_Proxy_Script', '_enqueueAdminScripts'));
             self::$_enqueueAdminSet = true;
         }
+    }
+
+    /**
+     * @param $handle
+     * @param bool $src
+     * @param array $deps
+     * @param bool $ver
+     * @param bool $in_footer
+     * @param array $localize
+     */
+    public static function loadAdminMinimized(IfwPsn_Wp_Plugin_Manager $pm, $handle, $src=false, $deps=array(), $ver=false, $in_footer=false, $localize=array())
+    {
+        if ($pm->isProduction()) {
+            $src = self::getMinimizedName($src);
+        }
+        self::loadAdmin($handle, $src, $deps, $ver, $in_footer, $localize);
+    }
+
+    /**
+     * @param $name
+     * @return mixed
+     */
+    public static function getMinimizedName($name)
+    {
+        return str_replace('.js', '.min.js', $name);
     }
 
     /**

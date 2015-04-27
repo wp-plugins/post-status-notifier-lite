@@ -26,6 +26,7 @@ class IfwPsn_Wp_Plugin_Metabox_PluginInfo extends IfwPsn_Wp_Plugin_Metabox_Ajax
         if ($this->_pm->hasPremium() && $this->_pm->isPremium()) {
             $this->_addPremiumBlock();
         }
+        $this->_addConnectBlock();
         $this->_addHelpBlock();
     }
     
@@ -44,7 +45,7 @@ class IfwPsn_Wp_Plugin_Metabox_PluginInfo extends IfwPsn_Wp_Plugin_Metabox_Ajax
      */
     protected function _initTitle()
     {
-        return __('Plugin info', 'ifw');
+        return __('Plugin Info', 'ifw');
     }
     
     /**
@@ -80,11 +81,7 @@ class IfwPsn_Wp_Plugin_Metabox_PluginInfo extends IfwPsn_Wp_Plugin_Metabox_Ajax
 
     protected function _addPremiumBlock()
     {
-        $content = __('You are using the Premium version of this plugin.', 'ifw');
-
-        if (!empty($this->_pm->getConfig()->plugin->premiumUrl)) {
-            $content .= '<br>' . sprintf(__('Visit the <a href="%s" target="_blank">Premium homepage</a> for the latest news.', 'ifw'), $this->_pm->getConfig()->plugin->premiumUrl);
-        }
+        $content = __('You are using the premium version of this plugin.', 'ifw');
 
         $content = strtr($content, array(
             'target="_blank"' => 'target="_blank" class="ifw-external-link"',
@@ -92,8 +89,28 @@ class IfwPsn_Wp_Plugin_Metabox_PluginInfo extends IfwPsn_Wp_Plugin_Metabox_Ajax
 
         $this->addBlock('premium',
             __('Premium', 'ifw'),
-            $content,
+            '<br>' . $content,
             'premium');
+    }
+
+    protected function _addConnectBlock()
+    {
+        $homepage = $this->_pm->getEnv()->getHomepage();
+        $premiumUrl = $this->_pm->getConfig()->plugin->premiumUrl;
+
+        $content = '';
+        $content .= sprintf(__('Visit the <a href="%s" target="_blank">plugin homepage</a>', 'ifw'), $homepage);
+
+        if (!empty($premiumUrl) && $premiumUrl != $homepage) {
+            $content .= '<br>' . sprintf(__('Visit the <a href="%s" target="_blank">premium homepage</a> for the latest news.', 'ifw'), $premiumUrl);
+        }
+
+        $content .= '<br><a href="https://twitter.com/ifeelwebde" target="_blank">@ifeelweb ' . __('on Twitter', 'ifw') . '</a>';
+
+        $this->addBlock('connect',
+            __('Connect', 'ifw'),
+            '<br>' . $content,
+            'connect');
     }
 
     protected function _addHelpBlock()
@@ -106,7 +123,6 @@ class IfwPsn_Wp_Plugin_Metabox_PluginInfo extends IfwPsn_Wp_Plugin_Metabox_Ajax
         if (!empty($this->_pm->getConfig()->plugin->faqUrl)) {
             $content .= sprintf(__('Check the <a href="%s" target="_blank">FAQ</a>', 'ifw'), $this->_pm->getConfig()->plugin->faqUrl) . '<br>';
         }
-        $content .= sprintf(__('Visit the <a href="%s" target="_blank">plugin homepage</a>', 'ifw'), $this->_pm->getEnv()->getHomepage());
 
         $content = strtr($content, array(
             'target="_blank"' => 'target="_blank" class="ifw-external-link"',

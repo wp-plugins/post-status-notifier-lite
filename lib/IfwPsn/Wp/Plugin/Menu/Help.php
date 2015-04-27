@@ -127,7 +127,6 @@ class IfwPsn_Wp_Plugin_Menu_Help
     /**
      * @param $sidebar
      * @return \IfwPsn_Wp_Plugin_Menu_Help
-     * @internal param string $_sidebar
      */
     public function setSidebar($sidebar)
     {

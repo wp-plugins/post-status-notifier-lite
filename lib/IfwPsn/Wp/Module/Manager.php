@@ -55,6 +55,11 @@ class IfwPsn_Wp_Module_Manager
      */
     protected $_nameBuffer = array();
 
+    /**
+     * @var array
+     */
+    protected $_whitelist = array();
+
 
 
     /**
@@ -223,9 +228,8 @@ class IfwPsn_Wp_Module_Manager
                     } catch (Exception $e) {
                         $this->_pm->getLogger()->err('Unexpected exception in module "'. $moduleDir .'":'. $e->getMessage());
                     }
-                }
-
-            }
+                } // end inner foreach
+            } // end outer foreach
         }
 
         return $this->_modules;
@@ -305,7 +309,11 @@ class IfwPsn_Wp_Module_Manager
                 continue;
             }
 
-            array_push($result, $fileinfo->getFilename());
+            $filename = $fileinfo->getFilename();
+
+            if (!$this->hasWhitelist() || ($this->hasWhitelist() && $this->isInWhitelist($filename))) {
+                array_push($result, $fileinfo->getFilename());
+            }
         }
 
         return $result;
@@ -315,8 +323,9 @@ class IfwPsn_Wp_Module_Manager
      * @param $module
      * @param $location
      * @param null $locationName
-     * @throws IfwPsn_Wp_Model_Exception
      * @return bool
+     * @throws IfwPsn_Wp_Model_Exception
+     * @throws IfwPsn_Wp_Module_Exception
      */
     protected function _isValidModule($module, $location, $locationName = null)
     {
@@ -391,5 +400,38 @@ class IfwPsn_Wp_Module_Manager
             return $this->_modules[$id];
         }
         return null;
+    }
+
+    /**
+     * @return array
+     */
+    public function getWhitelist()
+    {
+        return $this->_whitelist;
+    }
+
+    /**
+     * @return array
+     */
+    public function hasWhitelist()
+    {
+        return count($this->_whitelist) > 0;
+    }
+
+    /**
+     * @param array $whitelist
+     */
+    public function addWhitelist($whitelist)
+    {
+        array_push($this->_whitelist, $whitelist);
+    }
+
+    /**
+     * @param $value
+     * @return bool
+     */
+    public function isInWhitelist($value)
+    {
+        return in_array($value, $this->_whitelist);
     }
 }

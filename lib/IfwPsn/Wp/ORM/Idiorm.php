@@ -850,6 +850,27 @@
         }
 
         /**
+         * Add a RAW JOIN source to the query
+         */
+        public function raw_join($table, $constraint, $table_alias, $parameters = array()) {
+            // Add table alias if present
+            if (!is_null($table_alias)) {
+                $table_alias = $this->_quote_identifier($table_alias);
+                $table .= " {$table_alias}";
+            }
+            $this->_values = array_merge($this->_values, $parameters);
+            // Build the constraint
+            if (is_array($constraint)) {
+                list($first_column, $operator, $second_column) = $constraint;
+                $first_column = $this->_quote_identifier($first_column);
+                $second_column = $this->_quote_identifier($second_column);
+                $constraint = "{$first_column} {$operator} {$second_column}";
+            }
+            $this->_join_sources[] = "{$table} ON {$constraint}";
+            return $this;
+        }
+
+        /**
          * Add a simple JOIN source to the query
          */
         public function join($table, $constraint, $table_alias=null) {
@@ -962,6 +983,32 @@
         }
 
         /**
+         * Helper method that filters a column/value array returning only those
+         * columns that belong to a compound primary key.
+         *
+         * If the key contains a column that does not exist in the given array,
+         * a null value will be returned for it.
+         */
+        protected function _get_compound_id_column_values($value) {
+            $filtered = array();
+            foreach($this->_get_id_column_name() as $key) {
+                $filtered[$key] = isset($value[$key]) ? $value[$key] : null;
+            }
+            return $filtered;
+        }
+        /**
+         * Helper method that filters an array containing compound column/value
+         * arrays.
+         */
+        protected function _get_compound_id_column_values_array($values) {
+            $filtered = array();
+            foreach($values as $value) {
+                $filtered[] = $this->_get_compound_id_column_values($value);
+            }
+            return $filtered;
+        }
+
+        /**
          * Add a WHERE column = value clause to your query. Each time
          * this is called in the chain, an additional WHERE will be
          * added, and these will be ANDed together when the final query
@@ -991,6 +1038,55 @@
          */
         public function where_id_is($id) {
             return $this->where($this->_get_id_column_name(), $id);
+        }
+
+        /**
+         * Allows adding a WHERE clause that matches any of the conditions
+         * specified in the array. Each element in the associative array will
+         * be a different condition, where the key will be the column name.
+         *
+         * By default, an equal operator will be used against all columns, but
+         * it can be overriden for any or every column using the second parameter.
+         *
+         * Each condition will be ORed together when added to the final query.
+         */
+        public function where_any_is($values, $operator='=') {
+            $data = array();
+            $query = array("((");
+            $first = true;
+            foreach ($values as $item) {
+                if ($first) {
+                    $first = false;
+                } else {
+                    $query[] = ") OR (";
+                }
+                $firstsub = true;
+                foreach($item as $key => $item) {
+                    $op = is_string($operator) ? $operator : (isset($operator[$key]) ? $operator[$key] : '=');
+                    if ($firstsub) {
+                        $firstsub = false;
+                    } else {
+                        $query[] = "AND";
+                    }
+                    $query[] = $this->_quote_identifier($key);
+                    $data[] = $item;
+                    $query[] = $op . " ?";
+                }
+            }
+            $query[] = "))";
+            return $this->where_raw(join($query, ' '), $data);
+        }
+
+        /**
+         * Similar to where_id_is() but allowing multiple primary keys.
+         *
+         * If primary key is compound, only the columns that
+         * belong to they key will be used for the query
+         */
+        public function where_id_in($ids) {
+            return (is_array($this->_get_id_column_name())) ?
+                $this->where_any_is($this->_get_compound_id_column_values_array($ids)) :
+                $this->where_in($this->_get_id_column_name(), $ids);
         }
 
         /**

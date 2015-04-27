@@ -91,11 +91,30 @@ class IfwPsn_Wp_Data_Importer
         }
 
         foreach($xml->{$itemNodeName} as $item) {
+
             $tmpItem = array();
+
+            /**
+             * @var SimpleXMLElement $col
+             */
             foreach($item as $col) {
-                $tmpItem[(string)$col[$itemNameCol]] = (string)$col;
+
+                $attr = $col->attributes();
+
+                if (isset($attr[$itemNameCol])) {
+                    $tmpItem[(string)$col[$itemNameCol]] = (string)$col;
+                } else {
+                    foreach (get_object_vars($col) as $colVar => $colVal) {
+                        if (is_array($colVal) && !empty($colVal)) {
+                            $tmpItem[$colVar] = $colVal;
+                        }
+                    }
+                }
             }
-            array_push($items, $tmpItem);
+
+            if (is_array($tmpItem)) {
+                array_push($items, $tmpItem);
+            }
         }
 
         return $items;

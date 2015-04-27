@@ -13,6 +13,11 @@ require_once dirname(__FILE__) . '/Abstract.php';
 class IfwPsn_Wp_Plugin_Screen_Option_PerPage extends IfwPsn_Wp_Plugin_Screen_Option_Abstract
 {
     /**
+     * @var array
+     */
+    public static $_instances = array();
+
+    /**
      * @var string
      */
     protected $_label;
@@ -46,6 +51,33 @@ class IfwPsn_Wp_Plugin_Screen_Option_PerPage extends IfwPsn_Wp_Plugin_Screen_Opt
         }
 
         parent::__construct($pm);
+    }
+
+    /**
+     * @param IfwPsn_Wp_Plugin_Manager $pm
+     * @param null $label
+     * @param null $optionName
+     * @param null $default
+     * @return mixed
+     */
+    public static function init(IfwPsn_Wp_Plugin_Manager $pm, $label = null, $optionName = null, $default = null)
+    {
+        if (!isset(self::$_instances[$optionName])) {
+            self::$_instances[$optionName] = new self($pm, $label, $optionName, $default);
+        }
+        return self::$_instances[$optionName];
+    }
+
+    /**
+     * @param $optionName
+     * @return IfwPsn_Wp_Plugin_Screen_Option_PerPage|null
+     */
+    public static function getInstance($optionName)
+    {
+        if (isset(self::$_instances[$optionName])) {
+            return self::$_instances[$optionName];
+        }
+        return null;
     }
 
     /**

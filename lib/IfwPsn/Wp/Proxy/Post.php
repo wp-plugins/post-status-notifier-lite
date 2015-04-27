@@ -775,4 +775,28 @@ class IfwPsn_Wp_Proxy_Post extends IfwPsn_Wp_Proxy_Abstract
 
         return $result;
     }
+
+    /**
+     * @return null|string
+     */
+    public static function getCurrentPostType()
+    {
+        global $post, $typenow;
+
+        $posttype = null;
+
+        if ( $post && $post->post_type ) {
+            $posttype = $post->post_type;
+        } elseif ($typenow) {
+            $posttype = $typenow;
+        } elseif (!empty($_GET['post'])) {
+            $post = get_post($_GET['post']);
+            $posttype = $post->post_type;
+        } elseif (!empty($_POST['post_ID'])) {
+            $post = get_post($_POST['post_ID']);
+            $posttype = $post->post_type;
+        }
+
+        return $posttype;
+    }
 }

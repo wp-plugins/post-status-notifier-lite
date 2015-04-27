@@ -38,7 +38,7 @@ class IfwPsn_Wp_Plugin_Logger_Model extends IfwPsn_Wp_ORM_Model
           `timestamp` datetime NOT NULL,
           `extra` longtext COLLATE utf8_unicode_ci NOT NULL,
           PRIMARY KEY (`id`)
-        ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+        );
         ';
 
         if (!$networkwide) {

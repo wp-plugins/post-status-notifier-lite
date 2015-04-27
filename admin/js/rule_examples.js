@@ -47,4 +47,23 @@ jQuery(document).ready( function($) {
         return false;
     });
 
+    $('#example_debug').click(function(link) {
+        $('#name').val('_Debug');
+
+        $('#posttype').val('all');
+        $('#status_before').val('anything');
+        $('#status_after').val('anything');
+
+        $('#notification_subject').val('Debug');
+        $('#notification_body').val('Debug');
+
+        $('#recipient').val('admin');
+        $('#cc').val('');
+        $('#active').attr('checked', true);
+        $('#service_email').removeAttr('checked');
+        $('#service_log').attr('checked', true);
+        $('#posttype').trigger('change');
+        return false;
+    });
+
 });

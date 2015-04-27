@@ -95,8 +95,6 @@ class IfwPsn_Wp_Proxy_Style
      * @param array $deps
      * @param bool $ver
      * @param string $media
-     * @internal param bool $in_footer
-     * @internal param bool $localize
      * @return void
      */
     public static function load($handle, $src=false, $deps=array(), $ver=false, $media='all')
@@ -117,6 +115,22 @@ class IfwPsn_Wp_Proxy_Style
     }
 
     /**
+     * @param IfwPsn_Wp_Plugin_Manager $pm
+     * @param $handle
+     * @param bool $src
+     * @param array $deps
+     * @param bool $ver
+     * @param string $media
+     */
+    public static function loadMinimized(IfwPsn_Wp_Plugin_Manager $pm, $handle, $src=false, $deps=array(), $ver=false, $media='all')
+    {
+        if ($pm->isProduction()) {
+            $src = self::getMinimizedName($src);
+        }
+        self::load($handle, $src, $deps, $ver, $media);
+    }
+
+    /**
      * Registers a style for admin only
      *
      * @param $handle
@@ -124,8 +138,6 @@ class IfwPsn_Wp_Proxy_Style
      * @param array $deps
      * @param bool $ver
      * @param string $media
-     * @internal param bool $in_footer
-     * @internal param bool $localize
      * @return void
      */
     public static function loadAdmin($handle, $src=false, $deps=array(), $ver=false, $media='all')
@@ -144,6 +156,33 @@ class IfwPsn_Wp_Proxy_Style
             IfwPsn_Wp_Proxy_Action::addAdminEnqueueScripts(array('IfwPsn_Wp_Proxy_Style', '_enqueueAdminStyles'));
             self::$_enqueueAdminSet = true;
         }
+    }
+
+    /**
+     * Registers a style for admin only
+     *
+     * @param $handle
+     * @param bool $src
+     * @param array $deps
+     * @param bool $ver
+     * @param string $media
+     * @return void
+     */
+    public static function loadAdminMinimized(IfwPsn_Wp_Plugin_Manager $pm, $handle, $src=false, $deps=array(), $ver=false, $media='all')
+    {
+        if ($pm->isProduction()) {
+            $src = self::getMinimizedName($src);
+        }
+        self::loadAdmin($handle, $src, $deps, $ver, $media);
+    }
+
+    /**
+     * @param $name
+     * @return mixed
+     */
+    public static function getMinimizedName($name)
+    {
+        return str_replace('.css', '.min.css', $name);
     }
 
     /**

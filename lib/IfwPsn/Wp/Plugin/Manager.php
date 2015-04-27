@@ -104,6 +104,17 @@ class IfwPsn_Wp_Plugin_Manager
      */
     public static function getInstanceFromFilenamePath($filenamePath)
     {
+        // check for custom abbreviation
+        $pathinfo = new IfwPsn_Wp_Pathinfo_Plugin($filenamePath);
+        $config = IfwPsn_Wp_Plugin_Config::getInstance($pathinfo);
+        if ($config instanceof IfwPsn_Wp_Plugin_Config) {
+            $customAbbr = isset($config->plugin->customAbbr) ? $config->plugin->customAbbr : null;
+            if ($customAbbr !== null && self::hasInstance($customAbbr)) {
+                return self::getInstance($customAbbr);
+            }
+        }
+
+        // get by default abbreviation
         $filenamePathParts = explode(DIRECTORY_SEPARATOR, $filenamePath);
         $filenameWithExtension = array_pop($filenamePathParts);
 
@@ -166,6 +177,24 @@ class IfwPsn_Wp_Plugin_Manager
     public function getAbbrUpper()
     {
         return strtoupper($this->_abbr);
+    }
+
+    /**
+     * Retrieves the plugin slug based on the dirname: plugin-dir-name
+     * @return string
+     */
+    public function getSlug()
+    {
+        return $this->getPathinfo()->getDirname();
+    }
+
+    /**
+     * Retrieves the plugin slug based on the dirname and filename: plugin-dir-name/plugin-dirname.php
+     * @return string
+     */
+    public function getSlugFilenamePath()
+    {
+        return $this->getPathinfo()->getFilenamePath();
     }
     
     /**

@@ -20,6 +20,11 @@ class IfwPsn_Wp_Plugin_Loader
      */
     public static function load($pathinfo, $loader = null)
     {
+        // Exit if accessed directly
+        if ( ! defined( 'ABSPATH' ) ) {
+            die('Invalid access.');
+        }
+
         if (is_object($loader) && !($loader instanceof IfwPsn_Wp_Plugin_Loader_Abstract)) {
             require_once dirname(__FILE__) . '/Loader/Exception.php';
             throw new IfwPsn_Wp_Plugin_Loader_Exception('Invalid loader object provided. Loader must extend IfwPsn_Wp_Plugin_Loader_Abstract.');
@@ -39,9 +44,13 @@ class IfwPsn_Wp_Plugin_Loader
 
             $pm = $loader->getPluginManager();
 
-            if (!$loader->getEnv()->isCli()) {
+            if ($pm instanceof IfwPsn_Wp_Plugin_Manager) {
                 $pm->getLogger()->logPrefixed('Bootstrapping plugin.');
                 $pm->bootstrap();
+
+                if ($loader->getEnv()->isCli() && defined('IFW_WP_CLI_CMD') && strpos(IFW_WP_CLI_CMD, $pm->getAbbr()) === 0) {
+                    self::_loadCliCommand(IFW_WP_CLI_CMD, $pm);
+                }
             }
 
         } catch (IfwPsn_Wp_Plugin_Loader_Exception $e) {
@@ -55,6 +64,48 @@ class IfwPsn_Wp_Plugin_Loader
         }
 
         return $loader;
+    }
+
+    /**
+     * @param IfwPsn_Wp_Plugin_Manager $pm
+     */
+    protected static function _loadCliCommand($command, IfwPsn_Wp_Plugin_Manager $pm)
+    {
+        $headline = '### %s %s CLI ###' . PHP_EOL . PHP_EOL;
+        printf($headline, $pm->getEnv()->getName(), $pm->getEnv()->getVersion());
+
+        $args = $_SERVER['argv'];
+        $args = array_slice($args, 2);
+        $executable = 'script';
+
+        if ($pm->getEnv()->isWindows()) {
+            $executable .= '.bat';
+        } else {
+            $executable .= '.sh';
+        }
+
+        try {
+            // try to execute a command
+            $cliCommand = IfwPsn_Wp_Plugin_Cli_Factory::getCommand($command, $args, $pm);
+            $cliCommand->setExecutable($executable);
+
+            // load the cli command after WP is completely loaded
+            add_action('wp_loaded', array($cliCommand, 'execute'));
+
+        } catch (IfwPsn_Wp_Plugin_Cli_Factory_Exception $e) {
+
+            echo 'Initialization error: ' . $e->getMessage();
+
+        } catch (IfwPsn_Wp_Plugin_Cli_Command_Exception_MissingOperand $e) {
+            // fetch MissingOperand exception
+            echo $executable . ' ' . $command . ': missing operand';
+            echo PHP_EOL;
+            echo $e->getMessage();
+
+        } catch (IfwPsn_Wp_Plugin_Cli_Exception $e) {
+            // fetch generell cli exception
+            echo $e->getMessage();
+        }
     }
 
     /**

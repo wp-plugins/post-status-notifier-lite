@@ -41,6 +41,11 @@ class IfwPsn_Wp_Plugin_Menu_Pointer
      */
     protected $_target;
 
+    /**
+     * @var
+     */
+    protected $_width;
+
 
 
     /**
@@ -56,6 +61,7 @@ class IfwPsn_Wp_Plugin_Menu_Pointer
      */
     public function renderTo($target)
     {
+
         $this->_target = $target;
 
         if ($this->_isValid()) {
@@ -64,6 +70,8 @@ class IfwPsn_Wp_Plugin_Menu_Pointer
             IfwPsn_Wp_Proxy_Style::loadAdmin('wp-pointer');
 
             IfwPsn_Wp_Proxy_Action::addAdminFooterCurrentScreen(array($this, 'renderScript'));
+            IfwPsn_Wp_Proxy_Action::add('admin_footer-post-new.php', array($this, 'renderScript'));
+            IfwPsn_Wp_Proxy_Action::add('admin_footer-edit.php', array($this, 'renderScript'));
         }
     }
 
@@ -111,9 +119,9 @@ class IfwPsn_Wp_Plugin_Menu_Pointer
         ?>
         <script type="text/javascript">
             jQuery(document).ready( function($) {
-            $('#<?php echo $this->_target; ?>').pointer({
+            $('<?php echo $this->_target; ?>').pointer({
                 pointerClass: 'wp-pointer wp-pointer-<?php echo $this->_id; ?>',
-                target: '#<?php echo $this->_target; ?>',
+                target: '<?php echo $this->_target; ?>',
                 content: '<?php printf('<h3>%s</h3><p>%s</p>', $this->_header, $this->_content); ?>',
                 position: {
                     edge: '<?php echo $this->_edge; ?>',
@@ -125,6 +133,7 @@ class IfwPsn_Wp_Plugin_Menu_Pointer
                         action: 'dismiss-wp-pointer'
                     });
                 }
+                <?php if ($this->_width !== null && is_numeric($this->_width)): ?>, pointerWidth: <?php echo $this->_width; ?><?php endif; ?>
             }).pointer('open');
         });
         </script>
@@ -168,6 +177,16 @@ class IfwPsn_Wp_Plugin_Menu_Pointer
     public function setAlign($align)
     {
         $this->_align = $align;
+        return $this;
+    }
+
+    /**
+     * @param mixed $width
+     * @return $this
+     */
+    public function setWidth($width)
+    {
+        $this->_width = $width;
         return $this;
     }
 

@@ -88,7 +88,7 @@ abstract class IfwPsn_Wp_Shortcode implements IfwPsn_Wp_Interface_Loggable
     }
 
     /**
-     * Must be overwritten by concrete class implementation
+     * Must be overwritten by child class implementation
      *
      * @param array $options
      * @param string $content

@@ -41,7 +41,11 @@ abstract class IfwPsn_Wp_Widget_Abstract extends WP_Widget
         $this->_init();
         $this->_initOptions();
 
-        parent::__construct($this->getIdBase(), $this->getName(), $this->getWidgetOptions(), $this->getControlOptions());
+        $widgetOptions = array_merge(array(
+            'description' => $this->getDescription()
+        ), $this->getWidgetOptions());
+
+        parent::__construct($this->getIdBase(), $this->getName(), $widgetOptions, $this->getControlOptions());
     }
 
     public function load()
@@ -183,7 +187,6 @@ abstract class IfwPsn_Wp_Widget_Abstract extends WP_Widget
     }
     
     /**
-     * Called after initialization of plugin manager
      * Could be overwritten by widget class
      */
     protected function _init()

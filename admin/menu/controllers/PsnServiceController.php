@@ -85,7 +85,7 @@ class PsnServiceController extends PsnApplicationController
         if (empty($recipient)) {
 
             $resultMsg = __('Invalid recipient.', 'psn') . ' ' . __('Test email could not be sent.', 'psn');
-            $msgType = 'error';
+            $this->getAdminNotices()->persistError($resultMsg);
 
         } else {
 
@@ -99,20 +99,20 @@ class PsnServiceController extends PsnApplicationController
             if ($this->_email->send()) {
                 // mail sent successfully
                 $resultMsg = __('Test email has been sent successfully.', 'psn');
-                $msgType = null;
+                $this->getAdminNotices()->persistUpdated($resultMsg);
 
                 IfwPsn_Wp_Proxy_Action::doAction('psn_send_test_mail_success', $this);
 
             } else {
                 // email could not be sent
                 $resultMsg = __('Test email could not be sent.', 'psn');
-                $msgType = 'error';
+                $this->getAdminNotices()->persistError($resultMsg);
 
                 IfwPsn_Wp_Proxy_Action::doAction('psn_send_test_mail_failure', $this);
             }
-        }
 
-        $this->getMessenger()->addMessage($resultMsg, $msgType);
+            IfwPsn_Wp_Proxy_Action::doAction('psn_after_test_email_send', $this->_email);
+        }
 
         $this->_gotoIndex();
     }
