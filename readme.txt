@@ -2,22 +2,24 @@
 Tags: post, status, notification, notify, change, custom post type, email, log, logging, notify, placeholders,  transition
 Contributors: worschtebrot
 Requires at least: 3.3
-Tested up to: 3.8.1
-Stable tag: 1.4.1
+Tested up to: 4.2
+Stable tag: 1.8
 
 
 Lets you create individual notification rules to be informed about all post status transitions of your blog. Features custom email texts with many placeholders and custom post types.
 
 == Description ==
 
-=Notify everything!=
+= Notify everything! =
 
 You want to **be notified** when one of your contributors have submitted a new post for revision or an editor published one? Vice versa you want to **notify your contributors** when their posts got published?
 This is just the beginning of what you can achieve with Post Status Notifier (PSN)!
 
-It works with all kind of **custom post types**, supports all **custom taxonomies** like categories and tags other plugins are using. You can grab all these taxonomy values and custom fields attached to a post and use them as **placeholders** in your custom notification texts. Define as many notification rules as you need with all kind of settings, like custom Cc, Bcc and From emails addresses.
+It works with all kind of **custom post types**, supports all **custom taxonomies** like categories and tags other plugins are using. You can grab all these taxonomy values and custom fields attached to a post and use them as **placeholders** in your custom notification texts. PSN has a powerful **conditional template syntax** featuring many filters and functions to get the most out of the placeholders!
 
-PSN works great with plugins like **WP Job Manager**, **Crowdfunding by Astoundify** or **Advanced Custom Fields**, just to name a few. The possibilities are endless. Want to **automate your publishing workflow** with [Buffer](http://bufferapp.com/)? No problem!
+Define as many notification rules as you need with all kind of settings, like custom **CC**, **BCC** and **FROM** emails addresses. PSN is **extensible**! Build your custom module to implement a new notification service.
+
+PSN works great with plugins like **WP Job Manager** ([read more](http://www.ifeelweb.de/2014/666/notify-wp-job-manager-listings-wordpress-plugin-post-status-notifier/)), Calendarize.it ([read more](http://www.ifeelweb.de/2014/748/notify-calendarize-events-wordpress-plugin-post-status-notifier/)), **Crowdfunding by Astoundify** ([read more](http://www.ifeelweb.de/2014/706/notify-payments-crowdfunding-astoundify-post-status-notifier/)) or **Advanced Custom Fields**, just to name a few. The possibilities are endless. Want to **automate your publishing workflow** with [Buffer](http://bufferapp.com/)? No problem!
 
 Plugin homepage:
 http://www.ifeelweb.de/wp-plugins/post-status-notifier/
@@ -25,7 +27,12 @@ http://www.ifeelweb.de/wp-plugins/post-status-notifier/
 Always up-to-date online documentation:
 http://docs.ifeelweb.de/post-status-notifier/
 
-Features:
+FAQ:
+http://docs.ifeelweb.de/post-status-notifier/faq.html
+
+= Features =
+
+Get the [Premium version](http://codecanyon.net/item/post-status-notifier/4809420?ref=ifeelweb) for all features
 
 * Define **custom notification rules**
 * Support for posts, pages and all **custom post types**
@@ -33,6 +40,8 @@ Features:
 * Create **custom email texts** with support for many placeholders
 * Manipulate placeholders content with **filters** to completely adjust the output to your needs (uses the filters of the famous PHP template engine Twig / limited to one filter in the Lite version)
 * WordPress **multisite compatible**
+* Premium version: [HTML emails / mail templates](http://docs.ifeelweb.de/post-status-notifier/mail_templates.html)
+* Premium version: [Mail queue / deferred sending](http://docs.ifeelweb.de/post-status-notifier/mailqueue.html)
 * Premium version: Categories filter: Include or exclude categories (even from custom post types) from notifications
 * Premium version: Supports **SMTP**. You find all necessary SMTP settings to connect your SMTP server in the options section.
 * Premium version: Supports **user roles** (custom roles too) as email recipients
@@ -40,7 +49,13 @@ Features:
 * Premium version: **Dashboard widget** showing the latest log entries (can be disabled)
 * Premium version: **Import / Export** of your notification rules
 * Premium version: **Copy** rules
+* Premium version: **Conditional template syntax** ([Manual](http://docs.ifeelweb.de/post-status-notifier/conditional_templates.html))
+* Premium version: Extensible ([Manual](http://docs.ifeelweb.de/post-status-notifier/extending_index.html))
 * Premium version: Custom sender e-mail. Define the notification sender (**FROM**) per rule or as a default in the options.
+* Premium version: Mandrill support
+* Premium version: [Dynamic recipients](http://docs.ifeelweb.de/post-status-notifier/dynamic_recipients.html)
+* Premium version: [Late execution](http://docs.ifeelweb.de/post-status-notifier/options.html#late-execution)
+* Premium version: [Rule trigger limitations](http://docs.ifeelweb.de/post-status-notifier/limitations.html)
 * Comprehensive **documentation**
 * Included **translations**: english, german
 * **Support** in english and german via Zendesk: ifeelwebde.zendesk.com
@@ -48,7 +63,6 @@ Features:
 * Built on our ifeelweb.de WordPress Plugin Framework
 * The Lite version features two notification rules and one CC email
 
-* Get the [Premium version](http://codecanyon.net/item/post-status-notifier/4809420?ref=ifeelweb) for unlimited access
 
 = What customers say =
 
@@ -86,9 +100,76 @@ http://docs.ifeelweb.de/post-status-notifier/
 
 == Change Log ==
 
-= 1.4.1 =
+= 1.8 =
 
-Bugfix: Missing translation class (http://codecanyon.net/item/post-status-notifier/4809420/comments?#comment_5883580)
+- New feature: Rule trigger limitations (Premium)
+- New feature: Dynamic recipients (Premium)
+- New feature: Late execution (Premium)
+- New feature: Mandrill support (Premium)
+- Redesigned options page for better overview
+
+= 1.7 =
+
+- New feature: Mail Queue (Deferred sending)
+- Improved logging: Shows detailed email contents now, including HTML mails
+- Bugfix: Placeholder [post_editlink] could not be replaced in case of users without edit rights changed the post status (e.g. if the permission exceeded in the meantime but he still gets emails)
+- Bugfix: Mail template HTML editor produced an JS error when opened in edit mode in Firefox
+
+= 1.6.3 =
+
+- Bugfix: Service section environment info metabox could break in certain cases
+- Bugfix: FROM was empty if no custom FROM was set
+- Improvement: Rule and mail template export could break when other plugins interfered via filters
+- Fix: Rule placeholder help screen showed "post_featured_image_src" which should be "post_featured_image_url"
+
+= 1.6.2 =
+
+- Bugfix in custom tag handling
+
+= 1.6.1 =
+
+- Major improvements for the support of Categories and Tags.
+- Major improvements for the support of Custom Fields
+- Major improvements for the support of Scheduled Posts.
+
+= 1.6 =
+
+- New placeholder: [post_categories_array] Contains an array for easy use with filters
+- New placeholder: [post_tags_array] Contains an array for easy use with filters
+- New placeholder: [post_custom_fields_array] Contains an array for easy use with filters
+- New placeholder: [post_preview_25] Contains the first 25 words of the post content
+- New placeholder: [post_preview_50] Contains the first 50 words of the post content
+- New placeholder: [post_preview_75] Contains the first 75 words of the post content
+- New placeholder: [post_preview_100] Contains the first 100 words of the post content
+- New placeholder: [post_content_strip_tags] The post content without HTML tags
+- New placeholder: [post_featured_image_url] If a post has a featured image, this placeholders contains its URL
+- New placeholder: [post_featured_image_width] The featured image width
+- New placeholder: [post_featured_image_height] The featured image height
+- New placeholder: [recipient_first_name] Only works in "One email per TO recipient" mode. The firstname of the recipient if it is available in the user profile.
+- New placeholder: [recipient_last_name] Only works in "One email per TO recipient" mode. The lastname of the recipient if it is available in the user profile.
+- New custom post status: "Not trash" will match every status but "Trash"
+- New Premium feature: Support for conditions, loops, functions and filters in subject and body texts. Enables to access any kind of data attached to a post. Allows to create dynamic texts.
+- New Premium feature: Block notifications options in Post submit box. Lets you decide to completely block notifications before you update / create a post
+- New Premium feature: One email per TO recipient. Notifications can get send in a loop with one email per TO recipient disregarding CC and BCC recipients. This feature is has Beta status.
+
+= 1.5.1 =
+
+- Improvement: Duplicate recipients get removed
+- Bugfix: Fixed a bug in the Logger module (Sent emails haven't been logged correctly)
+
+= 1.5 =
+
+- New feature: HTML mail support and email templates. Prepare your email templates once and select them for different notification rules.
+- New feature: Auto-update via WordPress backend. Never have to upload the files via FTP again. You have to enter your license code in the plugin's settings.
+- New feature: More flexible To, Cc, Bcc selection. Multiple selections are possible now.
+- New feature: Editor restriction. Select one or more roles the editor of a post must be member of so that the notification will be generated.
+- New feature: Recipients lists. Manage email addresses without the need to create user accounts.
+- New custom post status "Not pending": Matches all post status values except "pending"
+- New custom post status "Not private": Matches all post status values except "private"
+- New placeholder [post_editlink]: Contains the backend edit URL
+- Removed post types "attachement", "nav_menu_item" from rule settings as they are not treated like post types (have no status before/after)
+- Support for placeholders in FROM
+- Refactoring for percormance improvements
 
 = 1.4 = 
 
@@ -161,19 +242,13 @@ If you find any bugs please use the comments on the [plugin's homepage](http://w
 
 == Screenshots ==
 
-1. Use case 1: You host a blog with several authors and you want to be informed when a new post is ready for review.
-2. Use case 2: This rule sends an email to the author of a post when it got published.
-3. Use case 3: This rule is for blog admins who want to be informed about every single post status change.
-4. Overview screen
-5. Form to create a new notification rule
-6. List of placeholders
-7. Buttons to create example rules
-8. Options (Logger is a Premium feature)
-9. Premium: List of log entries 
-10. Premium: Dashboard widget of log entries
-11. Example email generated by the plugin
-12. Extended recipients
-13. Selftest routines
-14. Category filter settings
-15. German translation
+1. Completely customizable notification rules
+2. Just a few use cases
+3. Overview some options panels (available in the premium version)
+4. HTML email (available in the premium version)
+5. Placeholders
+6. Template syntax (available in the premium version)
+7. Logger (available in the premium version)
+8. PSN's selftester
+9. Comprehensive documentation
 

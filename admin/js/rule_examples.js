@@ -4,7 +4,7 @@ jQuery(document).ready( function($) {
         $('#name').val(PsnExampleRule.ThePendingPost);
 
         $('#posttype').val('post');
-        $('#status_before').val('draft');
+        $('#status_before').val('not_pending');
         $('#status_after').val('pending');
 
         $('#notification_subject').val(PsnExampleRule.ThePendingPostSubject);
@@ -43,6 +43,25 @@ jQuery(document).ready( function($) {
 
         $('#recipient').val('admin');
         $('#cc').val('');
+        $('#posttype').trigger('change');
+        return false;
+    });
+
+    $('#example_debug').click(function(link) {
+        $('#name').val('_Debug');
+
+        $('#posttype').val('all');
+        $('#status_before').val('anything');
+        $('#status_after').val('anything');
+
+        $('#notification_subject').val('Debug');
+        $('#notification_body').val('Debug');
+
+        $('#recipient').val('admin');
+        $('#cc').val('');
+        $('#active').attr('checked', true);
+        $('#service_email').removeAttr('checked');
+        $('#service_log').attr('checked', true);
         $('#posttype').trigger('change');
         return false;
     });

@@ -10,7 +10,12 @@
 class Psn_Notification_Manager
 {
     /**
-     * @var Ifw_Wp_Plugin_Manager
+     *
+     */
+    const POST_CUSTOM_FIELD_KEY_BLOCK_NOTIFICATIONS = 'psn-block-notifications';
+
+    /**
+     * @var IfwPsn_Wp_Plugin_Manager
      */
     protected $_pm;
 
@@ -29,12 +34,22 @@ class Psn_Notification_Manager
      */
     protected $_statusAfter;
 
+    /**
+     * @var array
+     */
+    protected $_replacerInstances = array();
+
+    /**
+     * @var bool
+     */
+    protected $_deferredExecution = false;
+
 
 
     /**
-     * @param Ifw_Wp_Plugin_Manager $pm
+     * @param IfwPsn_Wp_Plugin_Manager $pm
      */
-    public function __construct(Ifw_Wp_Plugin_Manager $pm)
+    public function __construct(IfwPsn_Wp_Plugin_Manager $pm)
     {
         $this->_pm = $pm;
         $this->_init();
@@ -42,9 +57,18 @@ class Psn_Notification_Manager
 
     protected function _init()
     {
-        Ifw_Wp_Proxy_Filter::add('transition_post_status', array($this, 'handlePostStatusTransition'), 10, 3);
-        Ifw_Wp_Proxy_Filter::add('psn_service_email_body', array($this, 'filterEmailBody'), 10, 3);
-        Ifw_Wp_Proxy_Filter::add('psn_service_email_subject', array($this, 'filterEmailSubject'), 10, 3);
+        IfwPsn_Wp_Proxy_Filter::add('transition_post_status', array($this, 'handlePostStatusTransition'), 10, 3);
+        // custom trigger. can be used to manually trigger the notification services on a post.
+        IfwPsn_Wp_Proxy_Filter::add('psn_trigger_notification_manager', array($this, 'handlePostStatusTransition'), 10, 3);
+
+        IfwPsn_Wp_Proxy_Filter::add('psn_service_email_body', array($this, 'filterEmailBody'), 10, 3);
+        IfwPsn_Wp_Proxy_Filter::add('psn_service_email_subject', array($this, 'filterEmailSubject'), 10, 3);
+
+        // add replacer filters
+        IfwPsn_Wp_Proxy_Filter::add('psn_notification_placeholders', array($this, 'addPlaceholders'));
+        IfwPsn_Wp_Proxy_Filter::add('psn_notification_placeholders', array($this, 'filterPlaceholders'));
+        IfwPsn_Wp_Proxy_Filter::add('psn_notification_dynamic_placeholders', array($this, 'filterPlaceholders'));
+
         $this->_loadServices();
     }
 
@@ -53,8 +77,10 @@ class Psn_Notification_Manager
      */
     protected function _loadServices()
     {
+        require_once $this->_pm->getPathinfo()->getRootLib() . 'Psn/Notification/Service/Email.php';
+
         $this->addService(new Psn_Notification_Service_Email());
-        Ifw_Wp_Proxy_Action::doPlugin($this->_pm, 'after_load_services', $this);
+        IfwPsn_Wp_Proxy_Action::doAction('psn_after_load_services', $this);
     }
 
     /**
@@ -64,13 +90,25 @@ class Psn_Notification_Manager
      */
     public function handlePostStatusTransition($statusAfter, $statusBefore, $post)
     {
+        if ($this->isBlockNotifications($post->ID)) {
+            // skip if option to block notifications is set
+            return;
+        }
+
+        $this->_pm->getErrorHandler()->enableErrorReporting();
+
         $this->_statusBefore = $statusBefore;
         $this->_statusAfter = $statusAfter;
 
-        $activeRules = Ifw_Wp_ORM_Model::factory('Psn_Model_Rule')->filter('active')->find_many();
+        // get all active rules
+        $activeRules = IfwPsn_Wp_ORM_Model::factory('Psn_Model_Rule')->filter('active')->find_many();
         
         if (Psn_Model_Rule::hasMax()) {
             $activeRules = array_slice($activeRules, 0, Psn_Model_Rule::getMax());
+        }
+
+        if ($this->isDeferredExecution()) {
+            $deferredHandler = new Psn_Notification_Deferred_Handler();
         }
 
         /**
@@ -82,24 +120,48 @@ class Psn_Notification_Manager
                 $rule->setIgnoreInherit(true);
             }
 
-            if ($rule->matchesPostType($post->post_type) &&
-                $rule->matchesStatus($statusBefore, $statusAfter) &&
-                $rule->matchesCategories($post)
-                ) {
+            // to skip a rulematch return false
+            $doMatch = IfwPsn_Wp_Proxy_Filter::apply('psn_do_match', true, array(
+                'rule' => $rule,
+                'post' => $post,
+                'status_before' => $statusBefore,
+                'status_after' => $statusAfter
+            ));
+            if (!is_bool($doMatch)) {
+                // for safety:
+                $doMatch = true;
+            }
+
+            if ($doMatch && $rule->matches($post, $statusBefore, $statusAfter)) {
 
                 // rule matches
-                Ifw_Wp_Proxy_Action::addPlugin($this->_pm, 'notification_placeholders', array($this, 'addPlaceholders'));
-                Ifw_Wp_Proxy_Action::addPlugin($this->_pm, 'notification_placeholders', array($this, 'filterPlaceholders'));
-                Ifw_Wp_Proxy_Action::addPlugin($this->_pm, 'notification_dynamic_placeholders', array($this, 'filterPlaceholders'));
 
                 /**
+                 * Execute all registered notification services
+                 *
                  * @var $service Psn_Notification_Service_Interface
                  */
                 foreach($this->getServices() as $service) {
-                    $service->execute($rule, $post);
+                    if ($this->isDeferredExecution()) {
+
+                        // prepare for deferred execution
+                        $deferredContainer = new Psn_Notification_Deferred_Container();
+                        $deferredContainer->setService($service)->setRule($rule)->setPost($post);
+                        $deferredHandler->addCotainer($deferredContainer);
+
+                    } else {
+                        // execute directly
+
+                        // set the replacer
+                        $rule->setReplacer(Psn_Notification_Placeholders::getInstance($post));
+
+                        $service->execute($rule, $post);
+                    }
                 }
             }
         }
+
+        $this->_pm->getErrorHandler()->disableErrorReporting();
     }
 
     /**
@@ -143,7 +205,7 @@ class Psn_Notification_Manager
                                 $filter_string = '{{ '. $filter_string . ' }}';
                             }
 
-                            $placeholders[$placeholder_name] = Ifw_Wp_Tpl::renderString($filter_string);
+                            $placeholders[$placeholder_name] = IfwPsn_Wp_Tpl::renderString($filter_string);
                         }
                     }
                 }
@@ -157,9 +219,10 @@ class Psn_Notification_Manager
 
     /**
      * @param $subject
+     * @param Psn_Notification_Service_Email $email
      * @return string
      */
-    public function filterEmailSubject($subject)
+    public function filterEmailSubject($subject, Psn_Notification_Service_Email $email)
     {
         $subject = $this->_handleSpecialChars($subject);
 
@@ -168,13 +231,15 @@ class Psn_Notification_Manager
 
     /**
      * @param $body
+     * @param Psn_Notification_Service_Email $email
      * @return string
      */
-    public function filterEmailBody($body)
+    public function filterEmailBody($body, Psn_Notification_Service_Email $email)
     {
         $body = $this->_handleSpecialChars($body);
 
         if (!$this->_pm->isPremium()) {
+            // please respect my work and buy the premium version if you want this plugin to stay alive!
             $body .= PHP_EOL . PHP_EOL .
                 sprintf(__('This email was sent by WordPress plugin "%s". Visit the plugin homepage: %s'),
                 $this->_pm->getEnv()->getName(),
@@ -210,4 +275,44 @@ class Psn_Notification_Manager
     {
         return $this->_services;
     }
+
+    /**
+     * @param null $postId
+     * @return bool
+     */
+    public function isBlockNotifications($postId = null)
+    {
+        if ($postId == null) {
+            global $post;
+            $postId = $post->ID;
+        } else {
+            $postId = intval($postId);
+        }
+
+        if (!empty($postId)) {
+            $result = get_post_meta($postId, self::POST_CUSTOM_FIELD_KEY_BLOCK_NOTIFICATIONS, true);
+            return $result === '1';
+        }
+
+        return false;
+    }
+
+    /**
+     * @param boolean $deferredExecution
+     */
+    public function setDeferredExecution($deferredExecution = true)
+    {
+        if (is_bool($deferredExecution)) {
+            $this->_deferredExecution = $deferredExecution;
+        }
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isDeferredExecution()
+    {
+        return $this->_deferredExecution === true;
+    }
+
 }

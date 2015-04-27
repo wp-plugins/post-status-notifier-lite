@@ -7,22 +7,24 @@
  * @copyright   Copyright (c) ifeelweb.de
  * @package     Psn_Admin
  */
-class Psn_Admin_ListTable_Rules extends Ifw_Wp_Plugin_ListTable_Abstract
+class Psn_Admin_ListTable_Rules extends IfwPsn_Wp_Plugin_ListTable_Abstract
 {
     /**
      *
      */
-    public function __construct(Ifw_Wp_Plugin_Manager $pm, $options = array())
+    public function __construct(IfwPsn_Wp_Plugin_Manager $pm, $options = array())
     {
         $args = array('singular' => 'Rule', 'plural' => 'Rules');
         if (!empty($options)) {
             $args = array_merge($args, $options);
         }
+
+        require_once dirname(__FILE__) . '/Data/Rules.php';
         $data = new Psn_Admin_ListTable_Data_Rules();
 
         parent::__construct($args, $data, $pm);
 
-        Ifw_Wp_Proxy_Action::add($this->_wpActionPrefix . 'after_display', array($this, 'afterDisplay'));
+        IfwPsn_Wp_Proxy_Action::add($this->_wpActionPrefix . 'after_display', array($this, 'afterDisplay'));
     }
 
     /**
@@ -35,17 +37,19 @@ class Psn_Admin_ListTable_Rules extends Ifw_Wp_Plugin_ListTable_Abstract
 
     /**
      * (non-PHPdoc)
-     * @see Ifw_Wp_Plugin_Admin_Menu_ListTable_Abstract::getColumns()
+     * @see IfwPsn_Wp_Plugin_Admin_Menu_ListTable_Abstract::getColumns()
      */
     public function getColumns()
     {
         $columns = array(
             'cb' => '<input type="checkbox" />',
+            'active' => __('Active', 'psn'),
             'name' => __('Rule name', 'psn'),
+            'services' => __('Services', 'psn'),
+            'filters' => __('Filter', 'psn'),
             'posttype' => __('Post type', 'psn'),
             'status_before' => __('Status before', 'psn'),
             'status_after' => __('Status after', 'psn'),
-            'active' => __('Active', 'psn'),
         );
 
         if ($this->isMetaboxEmbedded()) {
@@ -56,16 +60,16 @@ class Psn_Admin_ListTable_Rules extends Ifw_Wp_Plugin_ListTable_Abstract
     }
 
     /** (non-PHPdoc)
-     * @see Ifw_Wp_Plugin_Admin_Menu_ListTable_Data_Interface::getSortableColumns()
+     * @see IfwPsn_Wp_Plugin_Admin_Menu_ListTable_Data_Interface::getSortableColumns()
      */
     public function getSortableColumns()
     {
         return $sortable_columns = array(
+            'active' => array('active', false),
             'name' => array('name', true),
             'posttype' => array('posttype', false),
             'status_before' => array('status_before', false),
             'status_after' => array('status_after', false),
-            'active' => array('active', false),
         );
     }
 
@@ -77,12 +81,25 @@ class Psn_Admin_ListTable_Rules extends Ifw_Wp_Plugin_ListTable_Abstract
      */
     public function getColumnActive($item)
     {
-        $format = '<img src="%sicons/%s.png" />';
+        $formatImg = '<img src="%s/%s.png" />';
+        $formatLink = '<a href="%s" title="%s">'. $formatImg .'</a>';
 
-        $skinUrl = $this->_pm->getEnv()->getSkinUrl();
-        $icon = $item['active'] == '1' ? 'true' : 'false';
+        $skinUrl = $this->_pm->getEnv()->getSkinUrl() . 'icons';
+        $icon = $item['active'] == '1' ? 'button-white-check' : 'cross';
 
-        return sprintf($format, $skinUrl, $icon);
+        if ($this->isMetaboxEmbedded()) {
+            $output = sprintf($formatImg, $skinUrl, $icon);
+        } else {
+
+            $appaction = $item['active'] == '1' ? 'deactivate' : 'activate';
+            $title = $item['active'] == '1' ? __('Deactivate', 'ifw') : __('Activate', 'ifw');
+            $urlFormat = '?page=%s&controller=rules&appaction=%s&id=%s';
+
+            $url = wp_nonce_url(sprintf($urlFormat, $_REQUEST['page'], $appaction, $item['id']), $appaction . $item['id']);
+            $output = sprintf($formatLink, $url, $title, $skinUrl, $icon);
+        }
+
+        return $output;
     }
 
     /**
@@ -92,7 +109,6 @@ class Psn_Admin_ListTable_Rules extends Ifw_Wp_Plugin_ListTable_Abstract
      */
     public function getColumnPosttype($items)
     {
-        $result = '';
         $posttype = $items['posttype'];
 
         switch($posttype) {
@@ -100,10 +116,57 @@ class Psn_Admin_ListTable_Rules extends Ifw_Wp_Plugin_ListTable_Abstract
                 $result = __('all types', 'psn');
                 break;
             default:
-                $result = Ifw_Wp_Proxy_Post::getTypeLabel($posttype);
+                $result = IfwPsn_Wp_Proxy_Post::getTypeLabel($posttype);
         }
 
         return $result;
+    }
+
+    /**
+     * @param $items
+     * @internal param $item
+     * @return string
+     */
+    public function getColumnServices($items)
+    {
+        $services = array();
+
+        $email = $items['service_email'];
+        $log = $items['service_log'];
+
+        if ($email == '1') {
+            array_push($services, '<a class="rule-service ifw-wp-icon-mail hint--bottom" data-hint="'. __('Email', 'psn') .'"></a>');
+        }
+        if ($log == '1') {
+            array_push($services, '<a class="rule-service ifw-wp-icon-log hint--bottom" data-hint="'. __('Log', 'psn_log') .'"></a>');
+        }
+
+        return implode('', $services);
+    }
+
+    /**
+     * @param $items
+     * @internal param $item
+     * @return string
+     */
+    public function getColumnFilters($items)
+    {
+        $filter = array();
+
+        $categories = $items['categories'];
+        $editor_restriction = $items['editor_restriction'];
+
+        if (!empty($categories)) {
+            array_push($filter, __('Categories', 'psn'));
+        }
+        if (!empty($editor_restriction)) {
+            array_push($filter, __('Editor restriction', 'psn_rec'));
+        }
+
+        if (count($filter) > 0) {
+            return '<a class="rule-service ifw-wp-icon-filter hint--bottom" data-hint="'. implode(', ', $filter) .'"></a>';
+        }
+        return '';
     }
 
     /**
@@ -139,8 +202,14 @@ class Psn_Admin_ListTable_Rules extends Ifw_Wp_Plugin_ListTable_Abstract
             $result = __('anything', 'psn');
         } elseif ($status == 'not_published') {
             $result = __('Not published', 'psn');
+        } elseif ($status == 'not_private') {
+            $result = __('Not private', 'psn');
+        } elseif ($status == 'not_pending') {
+            $result = __('Not pending', 'psn');
+        } elseif ($status == 'not_trash') {
+            $result = __('Not trash', 'psn');
         } else {
-            $result = Ifw_Wp_Proxy_Post::getStatusLabel($status);
+            $result = IfwPsn_Wp_Proxy_Post::getStatusLabel($status);
         }
         return $result;
     }
@@ -159,14 +228,15 @@ class Psn_Admin_ListTable_Rules extends Ifw_Wp_Plugin_ListTable_Abstract
             //Build row actions
             $actions = array();
             $actions['edit'] = sprintf('<a href="?page=%s&controller=rules&appaction=edit&id=%s">'. __('Edit', 'psn') .'</a>', $_REQUEST['page'], $item['id']);
-            $actions['delete'] = sprintf('<a href="?page=%s&controller=rules&appaction=delete&id=%s" class="delConfirm">'. __('Delete', 'psn') .'</a>', $_REQUEST['page'], $item['id']);
+            $actions['delete'] = sprintf('<a href="?page=%s&controller=rules&appaction=delete&id=%s&nonce=%s" class="delConfirm">'. __('Delete', 'psn') .'</a>',
+                $_REQUEST['page'], $item['id'], wp_create_nonce('rule-delete-' . $item['id']));
 
-            $actionsFilter = Ifw_Wp_Proxy_Filter::apply('psn_rules_col_name_actions', array('actions' => $actions, 'item' => $item));
+            $actionsFilter = IfwPsn_Wp_Proxy_Filter::apply('psn_rules_col_name_actions', array('actions' => $actions, 'item' => $item));
 
             $actions = $actionsFilter['actions'];
 
             //Return the title contents
-            $result = sprintf('%1$s%2$s',
+            $result = sprintf('<b>%1$s</b>%2$s',
                 /*$1%s*/ $item['name'],
                 /*$2%s*/ $this->row_actions($actions)
             );
@@ -205,7 +275,7 @@ class Psn_Admin_ListTable_Rules extends Ifw_Wp_Plugin_ListTable_Abstract
                 'activate' => __('Activate', 'psn'),
                 'deactivate' => __('Deactivate', 'psn'),
             );
-            $actions = Ifw_Wp_Proxy_Filter::apply('psn_rules_bulk_actions', $actions);
+            $actions = IfwPsn_Wp_Proxy_Filter::apply('psn_rules_bulk_actions', $actions);
         }
 
         return $actions;
